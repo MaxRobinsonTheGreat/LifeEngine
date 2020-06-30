@@ -1,0 +1,26 @@
+{
+  "name": "EvolutionSimulatorV2",
+  "version": "1.0.0",
+  "description": "Version 2 of the evolution simulator",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build":  "webpack --mode=production",
+    "build-dev": "webpack --mode=development",
+    "build-watch": "webpack --watch --mode=development"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MaxRobinsonTheGreat/EvolutionSimulatorV2.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MaxRobinsonTheGreat/EvolutionSimulatorV2/issues"
+  },
+  "homepage": "https://github.com/MaxRobinsonTheGreat/EvolutionSimulatorV2#readme",
+  "devDependencies": {
+    "webpack-cli": "^3.3.12"
+  }
+}
