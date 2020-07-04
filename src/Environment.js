@@ -17,13 +17,6 @@ class Environment{
         this.organisms = [];
     }
 
-    
-    // {
-    //     running: 0,
-    //     paused: 1,
-    //     headless: 2
-    // };
-
     update(delta_time) {
         var to_remove = [];
         for (var i in this.organisms) {

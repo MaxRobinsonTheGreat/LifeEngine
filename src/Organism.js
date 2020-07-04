@@ -15,6 +15,10 @@ class Organism {
         this.cells = [];
         this.is_producer = false;
         this.is_mover = false;
+        this.direction = this.getRandomDirection();
+        this.move_count = 0;
+        this.move_range = 1;
+        this.mutability = 5;
         if (parent != null) {
             this.inherit(parent);
         }
@@ -59,6 +63,8 @@ class Organism {
     }
 
     inherit(parent) {
+        this.move_range = parent.move_range;
+        this.mutability = parent.mutability;
         for (var c of parent.cells){
             //deep copy parent cells
             this.addCell(c.type, c.loc_col, c.loc_row);
@@ -78,18 +84,22 @@ class Organism {
         //produce mutated child
         //check nearby locations (is there room and a direct path)
         var org = new Organism(0, 0, this.env, this);
-        if (Math.random() * 100 <= 5) { 
+        if (Math.random() * 100 <= this.mutability) { 
             org.mutate();
+        }
+        else if (Math.random() * 100 <= 2) { 
+            org.mutability--;
+            if (org.mutability < 1)
+                org.mutability = 1;
         }
 
         var direction = this.getRandomDirection();
         var direction_c = direction[0];
         var direction_r = direction[1];
-        var boost = Math.floor(Math.random() * 2) + 1;
-        boost = 1;
+        var offset = (Math.floor(Math.random() * 2));
 
-        var new_c = this.c + (direction_c*this.cells.length*2) + (direction_c*boost);
-        var new_r = this.r + (direction_r*this.cells.length*2) + (direction_r*boost);
+        var new_c = this.c + (direction_c*this.cells.length*2) + (direction_c*offset);
+        var new_r = this.r + (direction_r*this.cells.length*2) + (direction_r*offset);
         if (org.isClear(new_c, new_r)){// && org.isStraightPath(new_c, new_r, this.c, this.r, this)){
             org.c = new_c;
             org.r = new_r;
@@ -103,6 +113,7 @@ class Organism {
     }
 
     mutate() {
+        this.mutability += 2;
         var choice = Math.floor(Math.random() * 3);
         if (choice == 0) {
             var type = CellTypes.getRandomLivingType();
@@ -125,11 +136,14 @@ class Organism {
                 return true;
             }
         }
+
+        if (this.is_mover) {
+            this.move_range += Math.floor(Math.random() * 4) - 2;
+        }
         return false;
     }
 
-    attemptMove(col, row) {
-        var direction = this.getRandomDirection();
+    attemptMove(direction) {
         var direction_c = direction[0];
         var direction_r = direction[1];
         var new_c = this.c + direction_c;
@@ -229,7 +243,12 @@ class Organism {
             return this.living
         }
         if (this.is_mover) {
-            this.attemptMove();
+            this.move_count++;
+            if (this.move_count > this.move_range){
+                this.move_count = 0;
+                this.direction = this.getRandomDirection()
+            }
+            this.attemptMove(this.direction);
         }
         if (this.food_collected >= this.foodNeeded()) {
             this.reproduce();
