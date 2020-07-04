@@ -2,10 +2,10 @@
   "name": "EvolutionSimulatorV2",
   "version": "1.0.0",
   "description": "Version 2 of the evolution simulator",
-  "main": "index.js",
+  "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build":  "webpack --mode=production",
+    "build": "webpack --mode=production",
     "build-dev": "webpack --mode=development",
     "build-watch": "webpack --watch --mode=development"
   },
@@ -21,6 +21,8 @@
   },
   "homepage": "https://github.com/MaxRobinsonTheGreat/EvolutionSimulatorV2#readme",
   "devDependencies": {
+    "webpack": "^4.43.0",
     "webpack-cli": "^3.3.12"
-  }
+  },
+  "dependencies": {}
 }
