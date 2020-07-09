@@ -5,9 +5,9 @@ class Renderer {
         this.cell_size = cell_size;
         this.env = env;
         this.canvas = document.getElementById(canvas_id);
-        this.ctx = canvas.getContext("2d");
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
+        this.ctx = this.canvas.getContext("2d");
+        this.canvas.width = $('.env').width();
+        this.canvas.height = $('.env').height();
 		this.height = canvas.height;
         this.width = canvas.width;
         this.cells_to_render = new Set();

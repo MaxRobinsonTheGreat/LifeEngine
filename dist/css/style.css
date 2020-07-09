@@ -6,9 +6,44 @@ body{
 
 canvas {
     display: block;
+
 }
 
 * {
     margin: 0;
     padding: 0;
+}
+
+.env {
+    height: 80vh;
+    position: static;
+}
+
+.control-panel {
+    height: 20vh;
+    width: 100vw;
+    background-color: gray;
+    position: fixed;
+    display: grid;
+}
+
+.control-set {
+    margin: 5px;
+    padding: 5px;
+    border: 10px;
+    border-color: black;
+    grid-row: 1;
+    height: 100%;
+}
+
+#speed-controller {
+    grid-column: 1;
+}
+
+#hyperparameters {
+    grid-column: 2;
+}
+
+#powers {
+    grid-column: 3;
 }

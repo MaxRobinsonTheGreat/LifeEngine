@@ -64,7 +64,7 @@ function growFood(self, env){
             if (r==0 && c==0)
                 continue;
             var cell = env.grid_map.cellAt(self.col+c, self.row+r);
-            if (cell != null && cell.type == CellTypes.empty && Math.random() * 100 <= 0.5){
+            if (cell != null && cell.type == CellTypes.empty && Math.random() * 100 <= 1){
                 env.changeCell(self.col+c, self.row+r, CellTypes.food, null);
                 return;
             }
@@ -73,21 +73,38 @@ function growFood(self, env){
 }
 
 function killNeighbors(self, env) {
-    killNeighbor(env.grid_map.cellAt(self.col+1, self.row));
-    killNeighbor(env.grid_map.cellAt(self.col-1, self.row));
-    killNeighbor(env.grid_map.cellAt(self.col, self.row+1));
-    killNeighbor(env.grid_map.cellAt(self.col, self.row-1));
+    killNeighbor(self, env.grid_map.cellAt(self.col+1, self.row));
+    killNeighbor(self, env.grid_map.cellAt(self.col-1, self.row));
+    killNeighbor(self, env.grid_map.cellAt(self.col, self.row+1));
+    killNeighbor(self, env.grid_map.cellAt(self.col, self.row-1));
 }
 
-function killNeighbor(n_cell) {
+function killNeighbor(self, n_cell) {
     if(n_cell == null) {
+        // console.log("null cell")
+        return;
+    }
+    if(n_cell.owner == null) {
+        // console.log("is no one's cell")
+        return;
+    }
+    if(n_cell.owner == self.owner) {
+        // console.log("is my cell")
+        return;
+    }
+    if (!n_cell.owner.living) {
+        // console.log("cell is dead")
+        return;
+    }
+    if (n_cell.type == CellTypes.armor) {
+        // console.log("armor block")
+        // self.owner.die();
         return
     }
-    if (n_cell.type != CellTypes.armor && n_cell.owner != null && n_cell.owner != self.owner && n_cell.owner.living){
-        n_cell.owner.die();
-        if (n_cell == CellTypes.killer){
-            self.owner.die();
-        }
+    var should_die = n_cell.type == CellTypes.killer; // has to be calculated before death
+    n_cell.owner.die();
+    if (should_die){
+        self.owner.die();
     }
 }
 

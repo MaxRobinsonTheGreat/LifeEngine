@@ -4,9 +4,29 @@
 		<meta charste="UTF-8">
 		<title>Evolution Simulator</title>
 		<link rel="stylesheet" href="../css/style.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	</head>
 	<body>
-		<canvas id='canvas'></canvas>
 		<script src="../bundle.js"></script>
+		<div class='env'>
+			<canvas id='canvas'></canvas>
+		</div>
+
+		<div class='control-panel'>
+			<div id='speed-controller' class='control-set'>
+				<h2>Simulation Speed</h2>
+				<input id="slider" type="range" min="1" max="300" value="60">
+				<button id='pause-button'>Pause</button>
+			</div>
+			
+			<div id='hyperparameters' class='control-set'>
+				<h2>Hyperparameters</h2>
+			</div>
+
+			<div id='powers' class='control-set'>
+				<h2>Powers</h2>
+			</div>
+		</div>
+		
 	</body>
 </html>

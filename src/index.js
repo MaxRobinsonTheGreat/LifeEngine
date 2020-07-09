@@ -2,5 +2,7 @@
 
 import Engine from './Engine';
 
-var engine = new Engine();
-engine.start(45);
+$('document').ready(function(){
+    var engine = new Engine();
+    engine.start(60);
+});

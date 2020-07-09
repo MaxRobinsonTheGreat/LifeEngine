@@ -39,7 +39,7 @@ class Organism {
         for (var i=0; i<this.cells.length; i++) {
             var cell = this.cells[i];
             if (cell.loc_col == c && cell.loc_row == r){
-                if (cell.type == this.producer || cell.type == this.mover) {
+                if (cell.type == CellTypes.producer || cell.type == CellTypes.mover) {
                     check_change = true;
                 }
                 this.cells.splice(i, 1);
@@ -77,7 +77,7 @@ class Organism {
     }
 
     lifespan() {
-        return this.cells.length * 150;
+        return this.cells.length * 100;
     }
 
     reproduce() {
@@ -87,7 +87,9 @@ class Organism {
         if (Math.random() * 100 <= this.mutability) { 
             org.mutate();
         }
-        else if (Math.random() * 100 <= 2) { 
+        if (Math.random() <= 0.5)
+            org.mutability++;
+        else{ 
             org.mutability--;
             if (org.mutability < 1)
                 org.mutability = 1;
@@ -96,7 +98,7 @@ class Organism {
         var direction = this.getRandomDirection();
         var direction_c = direction[0];
         var direction_r = direction[1];
-        var offset = (Math.floor(Math.random() * 2));
+        var offset = (Math.floor(Math.random() * 2)) * 2;
 
         var new_c = this.c + (direction_c*this.cells.length*2) + (direction_c*offset);
         var new_r = this.r + (direction_r*this.cells.length*2) + (direction_r*offset);
@@ -113,14 +115,17 @@ class Organism {
     }
 
     mutate() {
-        this.mutability += 2;
         var choice = Math.floor(Math.random() * 3);
         if (choice == 0) {
+            // add cell
             var type = CellTypes.getRandomLivingType();
-            var branch = this.cells[Math.floor(Math.random() * this.cells.length)];
-            var c = branch.loc_col+Math.floor(Math.random() * 2) - 1;
-            var r = branch.loc_row+Math.floor(Math.random() * 2) - 1;
-            return this.addCell(type, c, r);
+            var num_to_add = Math.floor(Math.random() * 3) + 1;
+            for (var i=0; i<num_to_add; i++){
+                var branch = this.cells[Math.floor(Math.random() * this.cells.length)];
+                var c = branch.loc_col+Math.floor(Math.random() * 2) - 1;
+                var r = branch.loc_row+Math.floor(Math.random() * 2) - 1;
+                return this.addCell(type, c, r);
+            }
         }
         else if (choice == 1){
             // change cell
@@ -157,7 +162,9 @@ class Organism {
             this.c = new_c;
             this.r = new_r;
             this.updateGrid();
+            return true;
         }
+        return false;
     }
 
     getRandomDirection(){
@@ -236,6 +243,9 @@ class Organism {
             this.die();
             return this.living;
         }
+        if (this.food_collected >= this.foodNeeded()) {
+            this.reproduce();
+        }
         for (var cell of this.cells) {
             this.getRealCell(cell).performFunction(this.env);
         }
@@ -244,14 +254,11 @@ class Organism {
         }
         if (this.is_mover) {
             this.move_count++;
-            if (this.move_count > this.move_range){
+            var success = this.attemptMove(this.direction);
+            if (this.move_count > this.move_range || !success){
                 this.move_count = 0;
                 this.direction = this.getRandomDirection()
             }
-            this.attemptMove(this.direction);
-        }
-        if (this.food_collected >= this.foodNeeded()) {
-            this.reproduce();
         }
 
         return this.living;
