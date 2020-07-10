@@ -17,10 +17,25 @@
 				<h2>Simulation Speed</h2>
 				<input id="slider" type="range" min="1" max="300" value="60">
 				<button id='pause-button'>Pause</button>
+				<p id='fps'>Target FPS: 60</p>
+				<p id='fps-actual'></p>
+			</div>
+
+			<div id='stats' class='control-set'>
+				<h2>Stats</h2>
+				<p id='org-count'>Organism count: </p>
+				<p id='org-record'>Highest count: </p>
 			</div>
 			
 			<div id='hyperparameters' class='control-set'>
 				<h2>Hyperparameters</h2>
+				<label for="food-prod-prob">Probability of producing food:</label>
+				<input type="number" id="food-prod-prob" min=".001" max="100" value=1 step="1">
+				<label for="lifespan-multiplier">Lifespan multiplier:</label>
+				<input type="number" id="lifespan-multiplier" min="1" max="10000" value=100 step="1">
+				<br/>
+				<label for="fixed-ratio">Use fixed ratio</label>
+				<input type="checkbox" id="fixed-ratio" name="scales" checked>
 			</div>
 
 			<div id='powers' class='control-set'>

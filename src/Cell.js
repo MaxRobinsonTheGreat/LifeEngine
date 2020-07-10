@@ -1,4 +1,5 @@
 const CellTypes = require("./CellTypes");
+var Hyperparams = require("./Hyperparameters");
 
 // A cell exists in a grid system.
 class Cell{
@@ -41,13 +42,13 @@ class Cell{
 }
 
 function eatFood(self, env){
-    eatNeighborFood(env.grid_map.cellAt(self.col+1, self.row), self, env);
-    eatNeighborFood(env.grid_map.cellAt(self.col-1, self.row), self, env);
-    eatNeighborFood(env.grid_map.cellAt(self.col, self.row+1), self, env);
-    eatNeighborFood(env.grid_map.cellAt(self.col, self.row-1), self, env);
+    for (var loc of Hyperparams.edibleNeighbors){
+        var cell = env.grid_map.cellAt(self.col+loc[0], self.row+loc[1]);
+        eatNeighborFood(self, cell, env);
+    }
 }
 
-function eatNeighborFood(n_cell, self, env){
+function eatNeighborFood(self, n_cell, env){
     if (n_cell == null)
         return;
     if (n_cell.type == CellTypes.food){
@@ -59,48 +60,29 @@ function eatNeighborFood(n_cell, self, env){
 function growFood(self, env){
     if (self.owner.is_mover)
         return;
-    for (var c=-1; c<=1; c++){
-        for (var r=-1; r<=1; r++){
-            if (r==0 && c==0)
-                continue;
-            var cell = env.grid_map.cellAt(self.col+c, self.row+r);
-            if (cell != null && cell.type == CellTypes.empty && Math.random() * 100 <= 1){
-                env.changeCell(self.col+c, self.row+r, CellTypes.food, null);
-                return;
-            }
+    var prob = Hyperparams.foodProdProb;
+    // console.log(prob)
+    for (var loc of Hyperparams.growableNeighbors){
+        var c=loc[0];
+        var r=loc[1];
+        var cell = env.grid_map.cellAt(self.col+c, self.row+r);
+        if (cell != null && cell.type == CellTypes.empty && Math.random() * 100 <= prob){
+            env.changeCell(self.col+c, self.row+r, CellTypes.food, null);
+            return;
         }
     }
 }
 
 function killNeighbors(self, env) {
-    killNeighbor(self, env.grid_map.cellAt(self.col+1, self.row));
-    killNeighbor(self, env.grid_map.cellAt(self.col-1, self.row));
-    killNeighbor(self, env.grid_map.cellAt(self.col, self.row+1));
-    killNeighbor(self, env.grid_map.cellAt(self.col, self.row-1));
+    for (var loc of Hyperparams.killableNeighbors){
+        var cell = env.grid_map.cellAt(self.col+loc[0], self.row+loc[1]);
+        killNeighbor(self, cell);
+    }
 }
 
 function killNeighbor(self, n_cell) {
-    if(n_cell == null) {
-        // console.log("null cell")
+    if(n_cell == null || n_cell.owner == null || n_cell.owner == self.owner || !n_cell.owner.living || n_cell.type == CellTypes.armor) 
         return;
-    }
-    if(n_cell.owner == null) {
-        // console.log("is no one's cell")
-        return;
-    }
-    if(n_cell.owner == self.owner) {
-        // console.log("is my cell")
-        return;
-    }
-    if (!n_cell.owner.living) {
-        // console.log("cell is dead")
-        return;
-    }
-    if (n_cell.type == CellTypes.armor) {
-        // console.log("armor block")
-        // self.owner.die();
-        return
-    }
     var should_die = n_cell.type == CellTypes.killer; // has to be calculated before death
     n_cell.owner.die();
     if (should_die){

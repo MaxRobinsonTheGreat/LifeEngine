@@ -32,18 +32,32 @@ canvas {
     padding: 5px;
     border: 10px;
     border-color: black;
-    grid-row: 1;
-    height: 100%;
+    background-color: lightgray;
+    /* height: 100%; */
 }
 
 #speed-controller {
     grid-column: 1;
+    grid-row: 1;
+    /* background-color: blue; */
+}
+
+#stats {
+    grid-column: 1;
+    grid-row: 2;
+    /* background-color: blue; */
 }
 
 #hyperparameters {
     grid-column: 2;
+    grid-row: 1 / 2;
+    /* background-color: green; */
+
 }
 
 #powers {
     grid-column: 3;
+    grid-row: 1 / 2;
+    /* background-color: yellow; */
+
 }

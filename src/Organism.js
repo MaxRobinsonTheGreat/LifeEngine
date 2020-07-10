@@ -3,6 +3,10 @@ const Cell = require("./Cell");
 const GridMap = require("./GridMap");
 const LocalCell = require("./LocalCell");
 const { producer } = require("./CellTypes");
+const Neighbors = require("./Neighbors");
+var Hyperparams = require("./Hyperparameters");
+
+const directions = [[0,1],[0,-1],[1,0],[-1,0]]
 
 class Organism {
     constructor(col, row, env, parent=null) {
@@ -17,7 +21,7 @@ class Organism {
         this.is_mover = false;
         this.direction = this.getRandomDirection();
         this.move_count = 0;
-        this.move_range = 1;
+        this.move_range = 5;
         this.mutability = 5;
         if (parent != null) {
             this.inherit(parent);
@@ -77,7 +81,8 @@ class Organism {
     }
 
     lifespan() {
-        return this.cells.length * 100;
+        // console.log(Hyperparams.lifespanMultiplier)
+        return this.cells.length * Hyperparams.lifespanMultiplier;
     }
 
     reproduce() {
@@ -122,8 +127,9 @@ class Organism {
             var num_to_add = Math.floor(Math.random() * 3) + 1;
             for (var i=0; i<num_to_add; i++){
                 var branch = this.cells[Math.floor(Math.random() * this.cells.length)];
-                var c = branch.loc_col+Math.floor(Math.random() * 2) - 1;
-                var r = branch.loc_row+Math.floor(Math.random() * 2) - 1;
+                var growth_direction = Neighbors.all[Math.floor(Math.random() * Neighbors.all.length)]
+                var c = branch.loc_col+growth_direction[0];
+                var r = branch.loc_row+growth_direction[1];
                 return this.addCell(type, c, r);
             }
         }
@@ -168,7 +174,6 @@ class Organism {
     }
 
     getRandomDirection(){
-        var directions = [[0,1],[0,-1],[1,0],[-1,0]]
         return directions[Math.floor(Math.random() * directions.length)];
     }
 

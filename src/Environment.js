@@ -29,7 +29,6 @@ class Environment{
     }
 
     render() {
-        // console.log(this.cells_to_render);
         this.renderer.renderCells();
         this.renderer.renderHighlights();
     }
