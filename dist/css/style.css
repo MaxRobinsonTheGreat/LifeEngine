@@ -1,5 +1,5 @@
 body{
-    background: #121D29;
+    background: black;
     margin: 0;
     padding: 0;
 }
@@ -25,6 +25,8 @@ canvas {
     background-color: gray;
     position: fixed;
     display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
 }
 
 .control-set {
@@ -33,6 +35,7 @@ canvas {
     border: 10px;
     border-color: black;
     background-color: lightgray;
+    max-width: 100%;
     /* height: 100%; */
 }
 
@@ -50,14 +53,22 @@ canvas {
 
 #hyperparameters {
     grid-column: 2;
-    grid-row: 1 / 2;
-    /* background-color: green; */
+    grid-row: 1 / 3;
 
 }
 
-#powers {
+#abilities {
     grid-column: 3;
-    grid-row: 1 / 2;
+    grid-row: 1 / 3;
     /* background-color: yellow; */
 
+}
+
+.control-mode-button {
+    border-color: gray;
+    background-color: lightgray;
+}
+
+#none-button {
+    background-color: gray;
 }

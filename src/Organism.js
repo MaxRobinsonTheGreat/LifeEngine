@@ -89,7 +89,7 @@ class Organism {
         //produce mutated child
         //check nearby locations (is there room and a direct path)
         var org = new Organism(0, 0, this.env, this);
-        if (Math.random() * 100 <= this.mutability) { 
+        if (Math.random() * 100 <= 3) { 
             org.mutate();
         }
         if (Math.random() <= 0.5)
@@ -107,7 +107,7 @@ class Organism {
 
         var new_c = this.c + (direction_c*this.cells.length*2) + (direction_c*offset);
         var new_r = this.r + (direction_r*this.cells.length*2) + (direction_r*offset);
-        if (org.isClear(new_c, new_r)){// && org.isStraightPath(new_c, new_r, this.c, this.r, this)){
+        if (org.isClear(new_c, new_r) && org.isStraightPath(new_c, new_r, this.c, this.r, this)){
             org.c = new_c;
             org.r = new_r;
             this.env.addOrganism(org);
@@ -125,13 +125,13 @@ class Organism {
             // add cell
             var type = CellTypes.getRandomLivingType();
             var num_to_add = Math.floor(Math.random() * 3) + 1;
-            for (var i=0; i<num_to_add; i++){
+            // for (var i=0; i<num_to_add; i++){
                 var branch = this.cells[Math.floor(Math.random() * this.cells.length)];
                 var growth_direction = Neighbors.all[Math.floor(Math.random() * Neighbors.all.length)]
                 var c = branch.loc_col+growth_direction[0];
                 var r = branch.loc_row+growth_direction[1];
                 return this.addCell(type, c, r);
-            }
+            // }
         }
         else if (choice == 1){
             // change cell
@@ -211,7 +211,7 @@ class Organism {
     }
 
     isPassableCell(cell, parent){
-        return cell.type == CellTypes.empty || cell.owner == this || cell.owner == parent;
+        return cell != null && (cell.type == CellTypes.empty || cell.owner == this || cell.owner == parent || cell.type == CellTypes.food);
     }
 
     isClear(col, row) {

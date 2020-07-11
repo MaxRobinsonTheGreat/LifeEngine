@@ -1,12 +1,16 @@
 var Hyperparams = require("./Hyperparameters");
+var Modes = require("./ControlModes");
+const CellTypes = require("./CellTypes");
 
 class ControlPanel {
     constructor(engine) {
         this.engine = engine;
         this.defineEngineSpeedControls();
         this.defineHyperparameterControls();
+        this.defineModeControls();
         this.fps = engine.fps;
         this.organism_record=0;
+        this.env_controller = this.engine.env.controller;
     }
 
     defineEngineSpeedControls(){
@@ -21,14 +25,14 @@ class ControlPanel {
         }.bind(this);
         $('#pause-button').click(function() {
             if ($('#pause-button').text() == "Pause" && this.engine.running) {
-                $('#pause-button').text("Play")
+                $('#pause-button').text("Play");
                 this.engine.stop();
             }
             else if (!this.engine.running){
-                $('#pause-button').text("Pause")
+                $('#pause-button').text("Pause");
+                console.log(this.fps)
                 this.engine.start(this.fps);
             }
-            console.log()
         }.bind(this));
     }
 
@@ -57,6 +61,28 @@ class ControlPanel {
         }.bind(this));
     }
 
+    defineModeControls() {
+        var self = this;
+        $('.control-mode-button').click( function() {
+            switch(this.id){
+                case "food-button":
+                    self.env_controller.mode = Modes.FoodDrop;
+                    break;
+                case "wall-button":
+                    self.env_controller.mode = Modes.WallDrop;
+                    break;
+                case "kill-button":
+                    self.env_controller.mode = Modes.ClickKill;
+                    break;
+                case "none-button":
+                    self.env_controller.mode = Modes.None;
+                    break;
+            }
+            $(".control-mode-button" ).css( "background-color", "lightgray" );
+            $("#"+this.id).css("background-color", "darkgray");
+        });
+    }
+
     changeEngineSpeed(change_val) {
         this.engine.stop();
         this.engine.start(change_val)
@@ -70,7 +96,7 @@ class ControlPanel {
         if (org_count > this.organism_record) 
             this.organism_record = org_count;
         $('#org-record').text("Highest count: " + this.organism_record);
-
+        // this.env_controller.performModeAction();
     }
 
 }

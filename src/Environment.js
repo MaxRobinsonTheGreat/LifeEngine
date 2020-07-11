@@ -21,7 +21,7 @@ class Environment{
         var to_remove = [];
         for (var i in this.organisms) {
             var org = this.organisms[i];
-            if (!org.update()) {
+            if (!org.living || !org.update()) {
                 to_remove.push(i);
             }
         }
@@ -42,9 +42,9 @@ class Environment{
     OriginOfLife() {
         var center = this.grid_map.getCenter();
         var org = new Organism(center[0], center[1], this);
-        org.addCell(CellTypes.mouth, -1, -1);
-        org.addCell(CellTypes.producer, 0, 0);
         org.addCell(CellTypes.mouth, 1, 1);
+        org.addCell(CellTypes.producer, 0, 0);
+        // org.addCell(CellTypes.mouth, 1, -1);
         this.addOrganism(org);
     }
 
