@@ -1,4 +1,4 @@
-var Modes = require("./ControlModes");
+const Modes = require("./ControlModes");
 const CellTypes = require("./CellTypes");
 
 class EnvironmentController{

@@ -2,9 +2,8 @@ const CellTypes = require("./CellTypes");
 const Cell = require("./Cell");
 const GridMap = require("./GridMap");
 const LocalCell = require("./LocalCell");
-const { producer } = require("./CellTypes");
 const Neighbors = require("./Neighbors");
-var Hyperparams = require("./Hyperparameters");
+const Hyperparams = require("./Hyperparameters");
 
 const directions = [[0,1],[0,-1],[1,0],[-1,0]]
 
@@ -89,7 +88,10 @@ class Organism {
         //produce mutated child
         //check nearby locations (is there room and a direct path)
         var org = new Organism(0, 0, this.env, this);
-        if (Math.random() * 100 <= 3) { 
+        var prob = this.mutability;
+        if (Hyperparams.useGlobalMutability)
+            prob = Hyperparams.globalMutability;
+        if (Math.random() * 100 <= this.mutability) { 
             org.mutate();
         }
         if (Math.random() <= 0.5)
@@ -120,27 +122,25 @@ class Organism {
     }
 
     mutate() {
-        var choice = Math.floor(Math.random() * 3);
-        if (choice == 0) {
+        var choice = Math.floor(Math.random() * 100);
+        if (choice <= Hyperparams.addProb) {
             // add cell
             var type = CellTypes.getRandomLivingType();
             var num_to_add = Math.floor(Math.random() * 3) + 1;
-            // for (var i=0; i<num_to_add; i++){
-                var branch = this.cells[Math.floor(Math.random() * this.cells.length)];
-                var growth_direction = Neighbors.all[Math.floor(Math.random() * Neighbors.all.length)]
-                var c = branch.loc_col+growth_direction[0];
-                var r = branch.loc_row+growth_direction[1];
-                return this.addCell(type, c, r);
-            // }
+            var branch = this.cells[Math.floor(Math.random() * this.cells.length)];
+            var growth_direction = Neighbors.all[Math.floor(Math.random() * Neighbors.all.length)]
+            var c = branch.loc_col+growth_direction[0];
+            var r = branch.loc_row+growth_direction[1];
+            return this.addCell(type, c, r);
         }
-        else if (choice == 1){
+        else if (choice <= Hyperparams.addProb + Hyperparams.changeProb){
             // change cell
             var cell = this.cells[Math.floor(Math.random() * this.cells.length)];
             cell.type = CellTypes.getRandomLivingType();
             this.checkProducerMover(cell.type);
             return true;
         }
-        else {
+        else if (choice <= Hyperparams.addProb + Hyperparams.changeProb + Hyperparams.removeProb){
             // remove cell
             if(this.cells.length > 1) {
                 this.cells.splice(Math.floor(Math.random() * this.cells.length), 1);

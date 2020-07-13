@@ -1,5 +1,5 @@
-var Hyperparams = require("./Hyperparameters");
-var Modes = require("./ControlModes");
+const Hyperparams = require("./Hyperparameters");
+const Modes = require("./ControlModes");
 const CellTypes = require("./CellTypes");
 
 class ControlPanel {
@@ -59,6 +59,25 @@ class ControlPanel {
                 Hyperparams.lifespanMultiplier = lifespan;
             }
         }.bind(this));
+        $('.mut-prob').change( function() {
+            switch(this.id){
+                case "add-prob":
+                    Hyperparams.addProb = this.value;
+                    Hyperparams.balanceMutationProbs(1);
+                    break;
+                case "change-prob":
+                    Hyperparams.changeProb = this.value;
+                    Hyperparams.balanceMutationProbs(2);
+                    break;
+                case "remove-prob":
+                    Hyperparams.removeProb = this.value;
+                    Hyperparams.balanceMutationProbs(3);
+                    break;
+            }
+            $('#add-prob').val(Math.floor(Hyperparams.addProb));
+            $('#change-prob').val(Math.floor(Hyperparams.changeProb));
+            $('#remove-prob').val(Math.floor(Hyperparams.removeProb));
+        });
     }
 
     defineModeControls() {
@@ -81,6 +100,17 @@ class ControlPanel {
             $(".control-mode-button" ).css( "background-color", "lightgray" );
             $("#"+this.id).css("background-color", "darkgray");
         });
+
+
+        $('#reset-env').click( function() {
+            this.engine.env.reset();
+        }.bind(this));
+        $('#kill-all').click( function() {
+            this.engine.env.clearOrganisms();
+        }.bind(this));
+        $('#clear-walls').click( function() {
+            this.engine.env.clearWalls();
+        }.bind(this));
     }
 
     changeEngineSpeed(change_val) {
@@ -96,7 +126,7 @@ class ControlPanel {
         if (org_count > this.organism_record) 
             this.organism_record = org_count;
         $('#org-record').text("Highest count: " + this.organism_record);
-        // this.env_controller.performModeAction();
+        $('#avg-mut').text("Average Mutation Rate: " + Math.round(this.engine.env.averageMutability() * 100) / 100);
     }
 
 }

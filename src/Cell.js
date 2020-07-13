@@ -1,5 +1,5 @@
 const CellTypes = require("./CellTypes");
-var Hyperparams = require("./Hyperparameters");
+const Hyperparams = require("./Hyperparameters");
 
 // A cell exists in a grid system.
 class Cell{
@@ -61,12 +61,12 @@ function growFood(self, env){
     if (self.owner.is_mover)
         return;
     var prob = Hyperparams.foodProdProb;
-    // console.log(prob)
-    for (var loc of Hyperparams.growableNeighbors){
+    if (Math.random() * 100 <= prob){
+        var loc = Hyperparams.growableNeighbors[Math.floor(Math.random() * Hyperparams.growableNeighbors.length)]
         var c=loc[0];
         var r=loc[1];
         var cell = env.grid_map.cellAt(self.col+c, self.row+r);
-        if (cell != null && cell.type == CellTypes.empty && Math.random() * 100 <= prob){
+        if (cell != null && cell.type == CellTypes.empty){
             env.changeCell(self.col+c, self.row+r, CellTypes.food, null);
             return;
         }

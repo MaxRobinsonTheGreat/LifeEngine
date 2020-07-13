@@ -15,6 +15,8 @@ class Environment{
         this.grid_map = new GridMap(this.grid_cols, this.grid_rows, cell_size);
         this.renderer.renderFullGrid();
         this.organisms = [];
+        this.walls = [];
+        this.total_mutability = 0;
     }
 
     update(delta_time) {
@@ -35,6 +37,7 @@ class Environment{
 
     removeOrganisms(org_indeces) {
         for (var i of org_indeces.reverse()){
+            this.total_mutability -= this.organisms[i].mutability;
             this.organisms.splice(i, 1);
         }
     }
@@ -44,19 +47,47 @@ class Environment{
         var org = new Organism(center[0], center[1], this);
         org.addCell(CellTypes.mouth, 1, 1);
         org.addCell(CellTypes.producer, 0, 0);
-        // org.addCell(CellTypes.mouth, 1, -1);
+        org.addCell(CellTypes.mouth, -1, -1);
         this.addOrganism(org);
     }
 
     addOrganism(organism) {
         organism.updateGrid();
+        this.total_mutability += organism.mutability;
         this.organisms.push(organism);
+    }
+
+    averageMutability() {
+        if (this.organisms.length < 1)
+            return 0;
+        return this.total_mutability / this.organisms.length;
     }
 
     changeCell(c, r, type, owner) {
         this.grid_map.setCellType(c, r, type);
         this.grid_map.setCellOwner(c, r, owner);
         this.renderer.addToRender(this.grid_map.cellAt(c, r));
+        if(type == CellTypes.wall)
+            this.walls.push(this.grid_map.cellAt(c, r));
+    }
+
+    clearWalls() {
+        for(var wall of this.walls)
+            this.changeCell(wall.col, wall.row, CellTypes.empty, null);
+    }
+
+    clearOrganisms() {
+        for (var org of this.organisms)
+            org.die();
+        this.organisms = [];
+    }
+
+    reset() {
+        this.organisms = [];
+        this.grid_map.fillGrid(CellTypes.empty);
+        this.renderer.renderFullGrid();
+        this.total_mutability = 0;
+        this.OriginOfLife();
     }
 }
 

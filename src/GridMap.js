@@ -19,9 +19,10 @@ class GridMap {
     }
 
     fillGrid(type) {
-        for (var col of grid) {
+        for (var col of this.grid) {
             for (var cell of col){
                 cell.setType(type);
+                cell.owner = null;
             }
         }
     }
