@@ -15,6 +15,11 @@ const Hyperparams = {
     changeProb: 33,
     removeProb: 33,
 
+    moversCanRotate: true,
+    offspringRotate: true,
+
+    instaKill: false,
+
     // calculates the optimal ratio where a producer cell is most likely to produce 1 food in its lifespan * a scalar of my choice :)
     calcProducerFoodRatio : function(lifespan_fixed=true) {
         if (lifespan_fixed) {

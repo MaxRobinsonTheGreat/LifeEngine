@@ -30,7 +30,6 @@ class ControlPanel {
             }
             else if (!this.engine.running){
                 $('#pause-button').text("Pause");
-                console.log(this.fps)
                 this.engine.start(this.fps);
             }
         }.bind(this));
@@ -77,6 +76,16 @@ class ControlPanel {
             $('#add-prob').val(Math.floor(Hyperparams.addProb));
             $('#change-prob').val(Math.floor(Hyperparams.changeProb));
             $('#remove-prob').val(Math.floor(Hyperparams.removeProb));
+        });
+
+        $('#mover-rot').change(function() {
+            Hyperparams.moversCanRotate = this.checked;
+        });
+        $('#offspring-rot').change(function() {
+            Hyperparams.offspringRotate = this.checked;
+        });
+        $('#insta-kill').change(function() {
+            Hyperparams.instaKill = this.checked;
         });
     }
 

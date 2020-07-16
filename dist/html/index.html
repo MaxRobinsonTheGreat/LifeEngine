@@ -4,14 +4,15 @@
 		<meta charste="UTF-8">
 		<title>Evolution Simulator</title>
 		<link rel="stylesheet" href="../css/style.css">
+		<!-- <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	</head>
 	<body>
 		<script src="../bundle.js"></script>
+		
 		<div class='env'>
 			<canvas id='canvas'></canvas>
 		</div>
-
 		<div class='control-panel'>
 			<div id='speed-controller' class='control-set'>
 				<h2>Simulation Speed</h2>
@@ -48,6 +49,15 @@
 				<label for="remove-prob">Remove Cell:</label>
 				<input class="mut-prob" type="number" id="remove-prob" min="0" max="100" value=33>
 				<br/>
+				<h4>Organism Rotation</h4>
+				<label for="mover-rot">Movers can rotate</label>
+				<input type="checkbox" id="mover-rot" name="scales" checked>
+				<br/>
+				<label for="offspring-rot">Offspring rotate</label>
+				<input type="checkbox" id="offspring-rot" name="scales" checked>
+				<br/>
+				<label for="insta-kill">Insta Kill</label>
+				<input type="checkbox" id="insta-kill" name="scales">
 			</div>
 
 			<div id='abilities' class='control-set'>
@@ -62,6 +72,5 @@
 				<button id='clear-walls'>Clear All Walls</button>
 			</div>
 		</div>
-		
 	</body>
 </html>

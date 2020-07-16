@@ -2,6 +2,8 @@ body{
     background: black;
     margin: 0;
     padding: 0;
+    height: 100%;
+    width: 100%;
 }
 
 canvas {
@@ -15,15 +17,18 @@ canvas {
 }
 
 .env {
-    height: 80vh;
-    position: static;
+    position: absolute;
+    top: 0;
+    bottom: 300px; /* must correspond to control-panel height*/
+    width: 100%; 
 }
 
 .control-panel {
-    height: 20vh;
-    width: 100vw;
+    height: 300px;
+    width: 100%;
+    bottom: 0;
+    position: absolute;
     background-color: gray;
-    position: fixed;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(2, 1fr);
@@ -35,20 +40,16 @@ canvas {
     border: 10px;
     border-color: black;
     background-color: lightgray;
-    max-width: 100%;
-    /* height: 100%; */
 }
 
 #speed-controller {
     grid-column: 1;
     grid-row: 1;
-    /* background-color: blue; */
 }
 
 #stats {
     grid-column: 1;
     grid-row: 2;
-    /* background-color: blue; */
 }
 
 #hyperparameters {
@@ -60,8 +61,6 @@ canvas {
 #abilities {
     grid-column: 3;
     grid-row: 1 / 3;
-    /* background-color: yellow; */
-
 }
 
 .control-mode-button {

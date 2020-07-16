@@ -4,6 +4,7 @@ const GridMap = require("./GridMap");
 const LocalCell = require("./LocalCell");
 const Neighbors = require("./Neighbors");
 const Hyperparams = require("./Hyperparameters");
+const Directions = require("./Directions");
 
 const directions = [[0,1],[0,-1],[1,0],[-1,0]]
 
@@ -18,10 +19,13 @@ class Organism {
         this.cells = [];
         this.is_producer = false;
         this.is_mover = false;
-        this.direction = this.getRandomDirection();
+        this.direction = Directions.up;
+        this.rotation = Directions.up;
+        this.can_rotate = Hyperparams.moversCanRotate;
         this.move_count = 0;
-        this.move_range = 5;
+        this.move_range = 4;
         this.mutability = 5;
+        this.damage = 0;
         if (parent != null) {
             this.inherit(parent);
         }
@@ -38,6 +42,8 @@ class Organism {
     }
 
     removeCell(c, r) {
+        if (c == 0 && r == 0)
+            return false;
         var check_change = false;
         for (var i=0; i<this.cells.length; i++) {
             var cell = this.cells[i];
@@ -56,6 +62,7 @@ class Organism {
                 this.checkProducerMover(cell.type);
             }
         }
+        return true;
     }
 
     checkProducerMover(type) {
@@ -84,25 +91,36 @@ class Organism {
         return this.cells.length * Hyperparams.lifespanMultiplier;
     }
 
+    maxHealth() {
+        return this.cells.length;
+    }
+
     reproduce() {
         //produce mutated child
         //check nearby locations (is there room and a direct path)
         var org = new Organism(0, 0, this.env, this);
+        if(Hyperparams.offspringRotate){
+            org.rotation = Directions.getRandomDirection();
+        }
         var prob = this.mutability;
-        if (Hyperparams.useGlobalMutability)
+        if (Hyperparams.useGlobalMutability){
             prob = Hyperparams.globalMutability;
-        if (Math.random() * 100 <= this.mutability) { 
+        }
+        else {
+            //mutate the mutability
+            if (Math.random() <= 0.5)
+                org.mutability++;
+            else{ 
+                org.mutability--;
+                if (org.mutability < 1)
+                    org.mutability = 1;
+            }
+        } 
+        if (Math.random() * 100 <= prob) { 
             org.mutate();
         }
-        if (Math.random() <= 0.5)
-            org.mutability++;
-        else{ 
-            org.mutability--;
-            if (org.mutability < 1)
-                org.mutability = 1;
-        }
 
-        var direction = this.getRandomDirection();
+        var direction = Directions.getRandomScalar();
         var direction_c = direction[0];
         var direction_r = direction[1];
         var offset = (Math.floor(Math.random() * 2)) * 2;
@@ -123,6 +141,7 @@ class Organism {
 
     mutate() {
         var choice = Math.floor(Math.random() * 100);
+        var mutated = false;
         if (choice <= Hyperparams.addProb) {
             // add cell
             var type = CellTypes.getRandomLivingType();
@@ -131,38 +150,42 @@ class Organism {
             var growth_direction = Neighbors.all[Math.floor(Math.random() * Neighbors.all.length)]
             var c = branch.loc_col+growth_direction[0];
             var r = branch.loc_row+growth_direction[1];
-            return this.addCell(type, c, r);
+            mutated = this.addCell(type, c, r);
         }
         else if (choice <= Hyperparams.addProb + Hyperparams.changeProb){
             // change cell
             var cell = this.cells[Math.floor(Math.random() * this.cells.length)];
             cell.type = CellTypes.getRandomLivingType();
             this.checkProducerMover(cell.type);
-            return true;
+            mutated = true;
         }
         else if (choice <= Hyperparams.addProb + Hyperparams.changeProb + Hyperparams.removeProb){
             // remove cell
             if(this.cells.length > 1) {
-                this.cells.splice(Math.floor(Math.random() * this.cells.length), 1);
-                return true;
+                cell = this.cells[Math.floor(Math.random() * this.cells.length)];
+                mutated = this.removeCell(cell.loc_col, cell.loc_row);
             }
         }
 
         if (this.is_mover) {
             this.move_range += Math.floor(Math.random() * 4) - 2;
+            if (this.move_range <= 0){
+                this.move_range = 1;
+            }
         }
-        return false;
+        return mutated;
     }
 
-    attemptMove(direction) {
+    attemptMove() {
+        var direction = Directions.scalars[this.direction];
         var direction_c = direction[0];
         var direction_r = direction[1];
         var new_c = this.c + direction_c;
         var new_r = this.r + direction_r;
         if (this.isClear(new_c, new_r)) {
             for (var cell of this.cells) {
-                var real_c = this.c + cell.loc_col;
-                var real_r = this.r + cell.loc_row;
+                var real_c = this.c + cell.rotatedCol(this.rotation);
+                var real_r = this.r + cell.rotatedRow(this.rotation);
                 this.env.changeCell(real_c, real_r, CellTypes.empty, null);
             }
             this.c = new_c;
@@ -173,13 +196,30 @@ class Organism {
         return false;
     }
 
-    getRandomDirection(){
-        return directions[Math.floor(Math.random() * directions.length)];
+    attemptRotate() {
+        if(!this.can_rotate){
+            this.direction = Directions.getRandomDirection();
+            this.move_count = 0;
+            return true;
+        }
+        var new_rotation = Directions.getRandomDirection();
+        if(this.isClear(this.c, this.r, new_rotation)){
+            for (var cell of this.cells) {
+                var real_c = this.c + cell.rotatedCol(this.rotation);
+                var real_r = this.r + cell.rotatedRow(this.rotation);
+                this.env.changeCell(real_c, real_r, CellTypes.empty, null);
+            }
+            this.rotation = new_rotation;
+            this.direction = Directions.getRandomDirection();
+            this.updateGrid();
+            this.move_count = 0;
+            return true;
+        }
+        return false;
     }
 
     // assumes either c1==c2 or r1==r2, returns true if there is a clear path from point a to b
     isStraightPath(c1, r1, c2, r2, parent){
-        // TODO FIX!!!
         if (c1 == c2) {
             if (r1 > r2){
                 var temp = r2;
@@ -214,9 +254,9 @@ class Organism {
         return cell != null && (cell.type == CellTypes.empty || cell.owner == this || cell.owner == parent || cell.type == CellTypes.food);
     }
 
-    isClear(col, row) {
+    isClear(col, row, rotation=this.rotation) {
         for(var loccell of this.cells) {
-            var cell = this.getRealCell(loccell, col, row);
+            var cell = this.getRealCell(loccell, col, row, rotation);
             if(cell == null || cell.type != CellTypes.empty && cell.owner != this) {
                 return false;
             }
@@ -224,10 +264,17 @@ class Organism {
         return true;
     }
 
+    harm() {
+        this.damage++;
+        if (this.damage >= this.maxHealth() || Hyperparams.instaKill) {
+            this.die();
+        }
+    }
+
     die() {
         for (var cell of this.cells) {
-            var real_c = this.c + cell.loc_col;
-            var real_r = this.r + cell.loc_row;
+            var real_c = this.c + cell.rotatedCol(this.rotation);
+            var real_r = this.r + cell.rotatedRow(this.rotation);
             this.env.changeCell(real_c, real_r, CellTypes.food, null);
         }
         this.living = false;
@@ -235,14 +282,13 @@ class Organism {
 
     updateGrid() {
         for (var cell of this.cells) {
-            var real_c = this.c + cell.loc_col;
-            var real_r = this.r + cell.loc_row;
+            var real_c = this.c + cell.rotatedCol(this.rotation);
+            var real_r = this.r + cell.rotatedRow(this.rotation);
             this.env.changeCell(real_c, real_r, cell.type, this);
         }
     }
 
     update() {
-        // this.food_collected++;
         this.lifetime++;
         if (this.lifetime > this.lifespan()) {
             this.die();
@@ -259,19 +305,18 @@ class Organism {
         }
         if (this.is_mover) {
             this.move_count++;
-            var success = this.attemptMove(this.direction);
-            if (this.move_count > this.move_range || !success){
-                this.move_count = 0;
-                this.direction = this.getRandomDirection()
+            var moved = this.attemptMove();
+            if (this.move_count > this.move_range){
+                this.attemptRotate();
             }
         }
 
         return this.living;
     }
 
-    getRealCell(local_cell, c=this.c, r=this.r){
-        var real_c = c + local_cell.loc_col;
-        var real_r = r + local_cell.loc_row;
+    getRealCell(local_cell, c=this.c, r=this.r, rotation=this.rotation){
+        var real_c = c + local_cell.rotatedCol(rotation);
+        var real_r = r + local_cell.rotatedRow(rotation);
         return this.env.grid_map.cellAt(real_c, real_r);
     }
 

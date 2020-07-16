@@ -81,12 +81,12 @@ function killNeighbors(self, env) {
 }
 
 function killNeighbor(self, n_cell) {
-    if(n_cell == null || n_cell.owner == null || n_cell.owner == self.owner || !n_cell.owner.living || n_cell.type == CellTypes.armor) 
+    if(n_cell == null || n_cell.owner == null || self.owner == null || n_cell.owner == self.owner || !n_cell.owner.living || n_cell.type == CellTypes.armor) 
         return;
-    var should_die = n_cell.type == CellTypes.killer; // has to be calculated before death
-    n_cell.owner.die();
-    if (should_die){
-        self.owner.die();
+    var is_hit = n_cell.type == CellTypes.killer; // has to be calculated before death
+    n_cell.owner.harm();
+    if (is_hit){
+        self.owner.harm();
     }
 }
 
