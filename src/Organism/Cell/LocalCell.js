@@ -1,6 +1,6 @@
 const CellTypes = require("./CellTypes");
-const Directions = require("./Directions");
-const Hyperparams = require("./Hyperparameters");
+const Directions = require("../Directions");
+const Hyperparams = require("../../Hyperparameters");
 
 // A local cell is a lightweight container for a cell in an organism. It does not directly exist in the grid 
 class LocalCell{

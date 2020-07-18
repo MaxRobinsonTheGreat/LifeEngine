@@ -1,5 +1,5 @@
 const CellTypes = require("./CellTypes");
-const Hyperparams = require("./Hyperparameters");
+const Hyperparams = require("../../Hyperparameters");
 
 // A cell exists in a grid system.
 class Cell{

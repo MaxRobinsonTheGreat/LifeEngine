@@ -1,5 +1,5 @@
-const Cell = require('./Cell');
-const CellTypes = require('./CellTypes');
+const Cell = require('../Organism/Cell/Cell');
+const CellTypes = require('../Organism/Cell/CellTypes');
 
 class GridMap {
     constructor(cols, rows, cell_size, filltype=CellTypes.empty) {

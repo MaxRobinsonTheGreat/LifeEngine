@@ -1,15 +1,14 @@
 
 // Renderer controls access to a canvas. There is one renderer for each canvas
 class Renderer {
-    constructor(canvas_id, env, cell_size) {
+    constructor(canvas_id, container_id, cell_size) {
         this.cell_size = cell_size;
-        this.env = env;
         this.canvas = document.getElementById(canvas_id);
         this.ctx = this.canvas.getContext("2d");
-        this.canvas.width = $('.env').width();
-        this.canvas.height = $('.env').height();
-		this.height = canvas.height;
-        this.width = canvas.width;
+        this.canvas.width = $('#'+container_id).width();
+        this.canvas.height = $('#'+container_id).height();
+		this.height = this.canvas.height;
+        this.width = this.canvas.width;
         this.cells_to_render = new Set();
         this.cells_to_highlight = new Set();
         this.highlighted_cells = new Set();
@@ -20,8 +19,7 @@ class Renderer {
         this.ctx.fillRect(0, 0, this.height, this.width);
     }
 
-    renderFullGrid() {
-        var grid = this.env.grid_map.grid;
+    renderFullGrid(grid) {
         for (var col of grid) {
             for (var cell of col){
                 this.ctx.fillStyle = cell.getColor();

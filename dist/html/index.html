@@ -4,14 +4,13 @@
 		<meta charste="UTF-8">
 		<title>Evolution Simulator</title>
 		<link rel="stylesheet" href="../css/style.css">
-		<!-- <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	</head>
 	<body>
 		<script src="../bundle.js"></script>
 		
-		<div class='env'>
-			<canvas id='canvas'></canvas>
+		<div id='env'>
+			<canvas id='env-canvas'></canvas>
 		</div>
 		<div class='control-panel'>
 			<div id='speed-controller' class='control-set'>
@@ -20,6 +19,8 @@
 				<button id='pause-button'>Pause</button>
 				<p id='fps'>Target FPS: 60</p>
 				<p id='fps-actual'></p>
+				<br/>
+				<button id='reset-env'>Reset Environment</button>
 			</div>
 
 			<div id='stats' class='control-set'>
@@ -28,48 +29,84 @@
 				<p id='org-record'>Highest count: </p>
 				<p id='avg-mut'>Average Mutation Rate: </p>
 			</div>
-			
-			<div id='hyperparameters' class='control-set'>
-				<h2>Hyperparameters</h2>
-				<label for="food-prod-prob">Probability of producing food:</label>
-				<input type="number" id="food-prod-prob" min=".001" max="100" value=4 step="1">
-				<label for="lifespan-multiplier">Lifespan multiplier:</label>
-				<input type="number" id="lifespan-multiplier" min="1" max="10000" value=100 step="1">
-				<br/>
-				<label for="fixed-ratio">Use fixed ratio</label>
-				<input type="checkbox" id="fixed-ratio" name="scales" checked>
-				<br><br/>
-				<h4>Mutation Probabilities</h4>
-				<label for="add-prob">Add Cell:</label>
-				<input class="mut-prob" type="number" id="add-prob" min="0" max="100" value=33>
-				<br/>
-				<label for="change-prob">Change Cell:</label>
-				<input class="mut-prob" type="number" id="change-prob" min="0" max="100" value=33>
-				<br/>
-				<label for="remove-prob">Remove Cell:</label>
-				<input class="mut-prob" type="number" id="remove-prob" min="0" max="100" value=33>
-				<br/>
-				<h4>Organism Rotation</h4>
-				<label for="mover-rot">Movers can rotate</label>
-				<input type="checkbox" id="mover-rot" name="scales" checked>
-				<br/>
-				<label for="offspring-rot">Offspring rotate</label>
-				<input type="checkbox" id="offspring-rot" name="scales" checked>
-				<br/>
-				<label for="insta-kill">Insta Kill</label>
-				<input type="checkbox" id="insta-kill" name="scales">
-			</div>
 
-			<div id='abilities' class='control-set'>
-				<h2>Control Mode</h2>
-				<button class='control-mode-button' id='food-button' value='Inset Border'>Drop Food</button>
-				<button class='control-mode-button' id='wall-button'>Drop Wall</button>
-				<button class='control-mode-button' id='kill-button'>Kill Organism</button>
-				<button class='control-mode-button' id='none-button'>None</button>
-				<br><br/>
-				<button id='reset-env'>Reset Environment</button>
-				<button id='kill-all'>Kill All Organisms</button>
-				<button id='clear-walls'>Clear All Walls</button>
+			<div id='tab-container' class='control-set'>
+
+				<div class="tabnav">
+					<p class='tabnav-item' id='editor'>Editor</p>
+					<p class='tabnav-item' id='hyperparameters'>Hyperparameters</p>
+				</div>
+
+				<div id='editor' class='tab'>
+					<div class='left-half'>
+						<h2>Editor</h2>
+						<label for="editor-mode">Edit Mode</label>
+						<select name="values" id="editor-mode">
+							<option value="none">None</option>
+							<option value="food">Drop Food</option>
+							<option value="wall">Drop Wall</option>
+							<option value="kill">Kill Organism</option>
+							<option value="select">Select Organism</option>
+							<option value="edit">Edit Selection</option>
+							<option value="clone">Clone Selection</option>
+						</select>
+						<br><br/>
+						<button id='kill-all'>Kill All Organisms</button>
+						<button id='clear-walls'>Clear All Walls</button>
+					</div>
+					<div class='right-half'>
+						<div id='editor-env'>
+							<canvas id='editor-canvas'></canvas>
+						</div>
+						<div id='cell-selections'>
+							<div class='cell-type' id='mouth' title="Mouth: Eats adjacent food."></div>
+							<div class='cell-type' id='producer' title="Producer: Produces adjacent food."></div>
+							<div class='cell-type' id='mover' title="Mover: Allows for movement and rotation. Disables food production."></div>
+							<div class='cell-type' id='killer' title="Killer: Harms oranisms in adjacent cells."></div>
+							<div class='cell-type' id='armor' title="Armor: Negates affects of killer cell."></div>
+							<button id='clear-editor'>Clear</button>
+						</div>
+					</div>
+					
+				</div>
+				<div id='hyperparameters' class='tab'>
+					<div class='left-half'>
+						<h2>Hyperparameters</h2>
+						<h4>Food Production vs Lifespan</h4>
+						<label for="food-prod-prob">Probability of producing food:</label>
+						<input type="number" id="food-prod-prob" min=".001" max="100" value=4 step="1">
+						<br/>
+						<label for="lifespan-multiplier">Lifespan multiplier:</label>
+						<input type="number" id="lifespan-multiplier" min="1" max="10000" value=100 step="1">
+						<br/>
+						<label for="fixed-ratio">Use fixed ratio</label>
+						<input type="checkbox" id="fixed-ratio" name="scales" checked>
+						<br><br/>
+						<h4>Mutation Probabilities</h4>
+						<label for="add-prob">Add Cell:</label>
+						<input class="mut-prob" type="number" id="add-prob" min="0" max="100" value=33>
+						<br/>
+						<label for="change-prob">Change Cell:</label>
+						<input class="mut-prob" type="number" id="change-prob" min="0" max="100" value=33>
+						<br/>
+						<label for="remove-prob">Remove Cell:</label>
+						<input class="mut-prob" type="number" id="remove-prob" min="0" max="100" value=33>
+						<br/>
+						
+					</div>
+					<div class='right-half'>
+						<h4>Organism Rotation</h4>
+						<label for="mover-rot">Movers can rotate</label>
+						<input type="checkbox" id="mover-rot" name="scales" checked>
+						<br/>
+						<label for="offspring-rot">Offspring rotate</label>
+						<input type="checkbox" id="offspring-rot" name="scales" checked>
+						<br/>
+						<h4>Killer Cell Effects</h4>
+						<label for="insta-kill">One touch kill</label>
+						<input type="checkbox" id="insta-kill" name="scales">
+					</div>
+				</div>
 			</div>
 		</div>
 	</body>

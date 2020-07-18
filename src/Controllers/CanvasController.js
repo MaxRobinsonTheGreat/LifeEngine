@@ -1,7 +1,6 @@
-const Modes = require("./ControlModes");
-const CellTypes = require("./CellTypes");
 
-class EnvironmentController{
+
+class CanvasController{
     constructor(env, canvas) {
         this.env = env;
         this.canvas = canvas;
@@ -13,8 +12,12 @@ class EnvironmentController{
         this.right_click = false;
         this.cur_cell = null;
         this.cur_org = null;
-        this.mode = Modes.None;
+        this.highlight_org = true;
         this.defineEvents();
+    }
+
+    setControlPanel(panel){
+        this.control_panel = panel;
     }
 
     defineEvents() {
@@ -32,14 +35,14 @@ class EnvironmentController{
 
             if (this.cur_org != prev_org || this.cur_cell != prev_cell) {
                 this.env.renderer.clearAllHighlights(true);
-                if (this.cur_org != null) {
+                if (this.cur_org != null && this.highlight_org) {
                     this.env.renderer.highlightOrganism(this.cur_org);
                 }
                 else if (this.cur_cell != null) {
                     this.env.renderer.highlightCell(this.cur_cell, true);
                 }
             }
-            this.performModeAction();
+            this.mouseMove();
         });
 
         this.canvas.addEventListener('mouseup', function(evt) {
@@ -55,7 +58,7 @@ class EnvironmentController{
             }
             if (evt.button == 2) 
                 this.right_click = true;
-            this.performModeAction();
+            this.mouseDown();
         }.bind(this));
 
         this.canvas.addEventListener('contextmenu', function(evt) {
@@ -65,44 +68,18 @@ class EnvironmentController{
         this.canvas.addEventListener('mouseleave', function(){
             this.right_click = false;
             this.left_click = false;
+            this.env.renderer.clearAllHighlights(true);
         }.bind(this));
 
     }
 
-    performModeAction() {
-        var mode = this.mode;
-        var right_click = this.right_click;
-        var left_click = this.left_click;
-        if (mode != Modes.None && (right_click || left_click)) {
-            var cell = this.cur_cell;
-            if (cell == null){
-                return;
-            }
-            switch(mode) {
-                case Modes.FoodDrop:
-                    if (left_click && cell.type == CellTypes.empty){
-                        this.env.changeCell(cell.col, cell.row, CellTypes.food, null);
-                    }
-                    else if (right_click && cell.type == CellTypes.food){
-                        this.env.changeCell(cell.col, cell.row, CellTypes.empty, null);
-                    }
-                    break;
-                case Modes.WallDrop:
-                        if (left_click && (cell.type == CellTypes.empty || cell.type == CellTypes.food)){
-                            this.env.changeCell(cell.col, cell.row, CellTypes.wall, null);
-                        }
-                        else if (right_click && cell.type == CellTypes.wall){
-                            this.env.changeCell(cell.col, cell.row, CellTypes.empty, null);
-                        }
-                        break;
-                case Modes.ClickKill:
-                    if (this.cur_org != null)
-                        this.cur_org.die();
-            }
-        }
+    mouseMove() {
+        alert("mouse move must be overriden");
     }
 
-
+    mouseDown() {
+        alert("mouse down must be overriden");
+    }
 }
 
-module.exports = EnvironmentController;
+module.exports = CanvasController;

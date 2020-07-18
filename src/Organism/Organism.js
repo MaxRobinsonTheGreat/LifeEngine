@@ -1,9 +1,9 @@
-const CellTypes = require("./CellTypes");
-const Cell = require("./Cell");
-const GridMap = require("./GridMap");
-const LocalCell = require("./LocalCell");
-const Neighbors = require("./Neighbors");
-const Hyperparams = require("./Hyperparameters");
+const CellTypes = require("./Cell/CellTypes");
+const Cell = require("./Cell/Cell");
+const GridMap = require("../Grid/GridMap");
+const LocalCell = require("./Cell/LocalCell");
+const Neighbors = require("../Grid/Neighbors");
+const Hyperparams = require("../Hyperparameters");
 const Directions = require("./Directions");
 
 const directions = [[0,1],[0,-1],[1,0],[-1,0]]
@@ -33,9 +33,11 @@ class Organism {
 
     addCell(type, c, r) {
         for (var cell of this.cells) {
-            if (cell.loc_col == c && cell.loc_row == r)
+            if (cell.loc_col == c && cell.loc_row == r){
                 return false;
+            }
         }
+
         this.checkProducerMover(type);
         this.cells.push(new LocalCell(type, c, r));
         return true;
@@ -63,6 +65,15 @@ class Organism {
             }
         }
         return true;
+    }
+
+    getLocalCell(c, r) {
+        for (var cell of this.cells) {
+            if (cell.loc_col == c && cell.loc_row == r){
+                return cell;
+            }
+        }
+        return null;
     }
 
     checkProducerMover(type) {
@@ -125,8 +136,11 @@ class Organism {
         var direction_r = direction[1];
         var offset = (Math.floor(Math.random() * 2)) * 2;
 
-        var new_c = this.c + (direction_c*this.cells.length*2) + (direction_c*offset);
-        var new_r = this.r + (direction_r*this.cells.length*2) + (direction_r*offset);
+        var new_c = this.c + (direction_c*Math.min(this.cells.length*2, 15)) + (direction_c*offset);
+        var new_r = this.r + (direction_r*Math.min(this.cells.length*2, 15)) + (direction_r*offset);
+
+        // var new_c = Math.min(this.cells.length*2, 10);
+        // var new_r = Math.min(this.cells.length*2, 10);
         if (org.isClear(new_c, new_r) && org.isStraightPath(new_c, new_r, this.c, this.r, this)){
             org.c = new_c;
             org.r = new_r;

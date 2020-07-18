@@ -8,7 +8,6 @@ body{
 
 canvas {
     display: block;
-
 }
 
 * {
@@ -16,7 +15,7 @@ canvas {
     padding: 0;
 }
 
-.env {
+#env {
     position: absolute;
     top: 0;
     bottom: 300px; /* must correspond to control-panel height*/
@@ -52,15 +51,49 @@ canvas {
     grid-row: 2;
 }
 
-#hyperparameters {
-    grid-column: 2;
+#tab-container {
+    grid-column: 2 / 4;
     grid-row: 1 / 3;
+}
+
+.tabnav {
+    overflow: hidden;
+    background-color: #333;
+}
+.tabnav p {
+    float: left;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+    user-select: none;
+}
+.tabnav p:hover {
+    background-color: rgb(121, 121, 121);
+    color: black;
+}
+
+.tab {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 1;
+}
+
+.tab#hyperparameters {
+    display: none;
 
 }
 
-#abilities {
-    grid-column: 3;
-    grid-row: 1 / 3;
+.tab#editor {
+    display: grid;
+}
+
+.left-half {
+    grid-column: 1;
+}
+
+.right-half {
+    grid-column: 2;
 }
 
 .control-mode-button {
@@ -70,4 +103,53 @@ canvas {
 
 #none-button {
     background-color: gray;
+}
+
+
+
+#editor-env {
+    position: absolute;
+    height: 220px;
+    width: 220px; 
+    padding: 10px;
+    float: left;
+}
+#cell-selections {
+    display: none;
+    padding: 10px;
+    grid-template-columns: 1;
+    grid-template-rows: 5;
+    float: right;
+}
+.cell-type {
+    grid-column: 1;
+    width: 30px;
+    height: 30px;
+    border: solid black;
+    border-width: 2px;
+    margin: 1px;
+    
+}
+#mouth{
+    background-color: orange;
+    grid-row: 1;
+}
+#producer{
+    background-color: white;
+    grid-row: 2;
+}
+#mover{
+    background-color: #3493eb;
+    grid-row: 3;
+}
+#killer{
+    background-color: red;
+    grid-row: 4;
+}
+#armor{
+    background-color: purple;
+    grid-row: 5;
+}
+#editor-mode-cont{
+    padding-top: 20px;
 }

@@ -1,19 +1,19 @@
-const Grid = require('./GridMap');
-const Renderer = require('./Rendering/Renderer');
-const GridMap = require('./GridMap');
-const Organism = require('./Organism');
-const CellTypes = require('./CellTypes');
-const Cell = require('./Cell');
-const EnvironmentController = require('./EnvironmentController');
+const Grid = require('../Grid/GridMap');
+const Renderer = require('../Rendering/Renderer');
+const GridMap = require('../Grid/GridMap');
+const Organism = require('../Organism/Organism');
+const CellTypes = require('../Organism/Cell/CellTypes');
+const Cell = require('../Organism/Cell/Cell');
+const EnvironmentController = require('../Controllers/EnvironmentController');
 
 class Environment{
     constructor(cell_size) {
-        this.renderer = new Renderer('canvas', this, cell_size);
+        this.renderer = new Renderer('env-canvas', 'env', cell_size);
         this.controller = new EnvironmentController(this, this.renderer.canvas);
         this.grid_rows = Math.floor(this.renderer.height / cell_size);
         this.grid_cols = Math.floor(this.renderer.width / cell_size);
         this.grid_map = new GridMap(this.grid_cols, this.grid_rows, cell_size);
-        this.renderer.renderFullGrid();
+        this.renderer.renderFullGrid(this.grid_map.grid);
         this.organisms = [];
         this.walls = [];
         this.total_mutability = 0;
@@ -85,7 +85,7 @@ class Environment{
     reset() {
         this.organisms = [];
         this.grid_map.fillGrid(CellTypes.empty);
-        this.renderer.renderFullGrid();
+        this.renderer.renderFullGrid(this.grid_map.grid);
         this.total_mutability = 0;
         this.OriginOfLife();
     }

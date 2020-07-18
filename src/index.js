@@ -1,4 +1,4 @@
-'user strict';
+'use strict';
 
 import Engine from './Engine';
 

@@ -1,5 +1,6 @@
-const Environment = require('./Environment');
-const ControlPanel = require('./ControlPanel');
+const Environment = require('./Environments/Environment');
+const ControlPanel = require('./Controllers/ControlPanel');
+const OrganismEditor = require('./Environments/OrganismEditor');
 
 const render_speed = 60;
 
@@ -7,6 +8,7 @@ class Engine{
     constructor(){
         this.fps = 60;
         this.env = new Environment(5);
+        this.organism_editor = new OrganismEditor();
         this.controlpanel = new ControlPanel(this);
         this.env.OriginOfLife();
         this.last_update = Date.now();
@@ -21,7 +23,7 @@ class Engine{
         if (fps > 300)
             fps = 300;
         this.fps = fps;
-        this.game_loop = setInterval(function(){this.update();}.bind(this), 1000/fps);
+        this.game_loop = setInterval(function(){this.environmentUpdate();}.bind(this), 1000/fps);
         this.running = true;
         if (this.fps >= render_speed) {
             if (this.render_loop != null) {
@@ -41,21 +43,26 @@ class Engine{
 
     setRenderLoop() {
         if (this.render_loop == null) {
-            this.render_loop = setInterval(function(){this.env.render();this.controlpanel.update();}.bind(this), 1000/render_speed);
+            this.render_loop = setInterval(function(){this.necessaryUpdate();}.bind(this), 1000/render_speed);
         }
     }
 
 
-    update() {
+    environmentUpdate() {
         this.delta_time = Date.now() - this.last_update;
         this.last_update = Date.now();
         this.env.update(this.delta_time);
         this.actual_fps = 1/this.delta_time*1000;
         if(this.render_loop == null){
-            this.env.render();
-            this.controlpanel.update();
+            this.necessaryUpdate();
         }
             
+    }
+
+    necessaryUpdate() {
+        this.env.render();
+        this.controlpanel.update();
+        this.organism_editor.update();
     }
 
 }

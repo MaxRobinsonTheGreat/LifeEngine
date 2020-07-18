@@ -1,16 +1,20 @@
-const Hyperparams = require("./Hyperparameters");
+const Hyperparams = require("../Hyperparameters");
 const Modes = require("./ControlModes");
-const CellTypes = require("./CellTypes");
+const CellTypes = require("../Organism/Cell/CellTypes");
 
 class ControlPanel {
     constructor(engine) {
         this.engine = engine;
         this.defineEngineSpeedControls();
+        this.defineTabNavigation();
         this.defineHyperparameterControls();
         this.defineModeControls();
         this.fps = engine.fps;
         this.organism_record=0;
         this.env_controller = this.engine.env.controller;
+        this.editor_controller = this.engine.organism_editor.controller;
+        this.env_controller.setControlPanel(this);
+        this.editor_controller.setControlPanel(this);
     }
 
     defineEngineSpeedControls(){
@@ -33,6 +37,16 @@ class ControlPanel {
                 this.engine.start(this.fps);
             }
         }.bind(this));
+    }
+
+    defineTabNavigation() {
+        var self = this;
+        $('.tabnav-item').click(function() {
+            $('.tab').css('display', 'none');
+            var tab = '#'+this.id+'.tab';
+            self.engine.organism_editor.is_active = (this.id == 'editor');
+            $(tab).css('display', 'grid');
+        });
     }
 
     defineHyperparameterControls() {
@@ -91,23 +105,45 @@ class ControlPanel {
 
     defineModeControls() {
         var self = this;
-        $('.control-mode-button').click( function() {
-            switch(this.id){
-                case "food-button":
-                    self.env_controller.mode = Modes.FoodDrop;
+        $('#editor-mode').change( function(el) {
+            var selection = $(this).children("option:selected").val();
+            var prev_mode = self.env_controller.mode;
+            $('#cell-selections').css('display', 'none');
+            switch(selection){
+                case "none":
+                    self.setMode(Modes.None);
                     break;
-                case "wall-button":
-                    self.env_controller.mode = Modes.WallDrop;
+                case "food":
+                    self.setMode(Modes.FoodDrop);
                     break;
-                case "kill-button":
-                    self.env_controller.mode = Modes.ClickKill;
+                case "wall":
+                    self.setMode(Modes.WallDrop);
                     break;
-                case "none-button":
-                    self.env_controller.mode = Modes.None;
+                case "kill":
+                    self.setMode(Modes.ClickKill);
+                    break;
+                case "select":
+                    if (prev_mode==Modes.Edit || prev_mode==Modes.Clone && self.engine.organism_editor.organism.cells.length > 1){
+                        if (confirm("Selecting a new organism will clear the current organism. Are you sure you wish to switch?")) {
+                            self.setMode(Modes.Select);
+                        }
+                        else {
+                            $("#editor-mode").val('edit');
+                        }
+                    }
+                    else {
+                        self.setMode(Modes.Select);
+                    }
+                    break;
+                case "edit":
+                    self.setMode(Modes.Edit);
+                    $('#cell-selections').css('display', 'grid');
+                    break;
+                case "clone":
+                    self.setMode(Modes.Clone);
+                    self.env_controller.org_to_clone = self.engine.organism_editor.getCopyOfOrg();
                     break;
             }
-            $(".control-mode-button" ).css( "background-color", "lightgray" );
-            $("#"+this.id).css("background-color", "darkgray");
         });
 
 
@@ -120,6 +156,18 @@ class ControlPanel {
         $('#clear-walls').click( function() {
             this.engine.env.clearWalls();
         }.bind(this));
+        $('#clear-editor').click( function() {
+            this.engine.organism_editor.clear();
+        }.bind(this));
+    }
+
+    setMode(mode) {
+        this.env_controller.mode = mode;
+        this.editor_controller.mode = mode;
+    }
+
+    setEditorOrganism(org) {
+        this.engine.organism_editor.setOrganismToCopyOf(org);
     }
 
     changeEngineSpeed(change_val) {

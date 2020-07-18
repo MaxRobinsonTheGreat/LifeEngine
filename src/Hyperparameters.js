@@ -1,4 +1,4 @@
-const Neighbors = require("./Neighbors");
+const Neighbors = require("./Grid/Neighbors");
 
 const Hyperparams = {
     lifespanMultiplier: 100,
