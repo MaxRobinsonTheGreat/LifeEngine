@@ -6,6 +6,7 @@ class ControlPanel {
     constructor(engine) {
         this.engine = engine;
         this.defineEngineSpeedControls();
+        this.defineGridSizeControls();
         this.defineTabNavigation();
         this.defineHyperparameterControls();
         this.defineModeControls();
@@ -36,6 +37,29 @@ class ControlPanel {
                 $('#pause-button').text("Pause");
                 this.engine.start(this.fps);
             }
+        }.bind(this));
+    }
+
+    defineGridSizeControls() {
+        $('#fill-window').change(function() {
+            if (this.checked)
+                $('.col-row-input').css('display' ,'none');
+            else
+                $('.col-row-input').css('display' ,'block');
+        });
+
+        $('#resize').click(function() {
+            var cell_size = $('#cell-size').val();
+            var fill_window = $('#fill-window').is(":checked");
+            if (fill_window) {
+                this.engine.env.resizeFillWindow(cell_size);
+            }
+            else {
+                var cols = $('#col-input').val();
+                var rows = $('#row-input').val();
+                this.engine.env.resizeGridColRow(cell_size, cols, rows);
+            }
+            
         }.bind(this));
     }
 
@@ -146,10 +170,13 @@ class ControlPanel {
             }
         });
 
-
+        var env = this.engine.env;
         $('#reset-env').click( function() {
             this.engine.env.reset();
         }.bind(this));
+        $('#auto-reset').change(function() {
+            env.auto_reset = this.checked;
+        });
         $('#kill-all').click( function() {
             this.engine.env.clearOrganisms();
         }.bind(this));

@@ -17,6 +17,7 @@ class Environment{
         this.organisms = [];
         this.walls = [];
         this.total_mutability = 0;
+        this.auto_reset = true;
     }
 
     update(delta_time) {
@@ -40,6 +41,8 @@ class Environment{
             this.total_mutability -= this.organisms[i].mutability;
             this.organisms.splice(i, 1);
         }
+        if (this.organisms.length == 0 && this.auto_reset)
+            this.reset();
     }
 
     OriginOfLife() {
@@ -88,6 +91,22 @@ class Environment{
         this.renderer.renderFullGrid(this.grid_map.grid);
         this.total_mutability = 0;
         this.OriginOfLife();
+    }
+
+    resizeGridColRow(cell_size, cols, rows) {
+        this.renderer.cell_size = cell_size;
+        this.renderer.fillShape(rows*cell_size, cols*cell_size);
+        this.grid_map.resize(cols, rows, cell_size);
+        this.reset();
+    }
+
+    resizeFillWindow(cell_size) {
+        this.renderer.cell_size = cell_size;
+        this.renderer.fillWindow('env');
+        var cols = Math.floor(this.renderer.width / cell_size);
+        var rows = Math.floor(this.renderer.height / cell_size);
+        this.grid_map.resize(cols, rows, cell_size);
+        this.reset();
     }
 }
 

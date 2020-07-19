@@ -7,7 +7,8 @@ body{
 }
 
 canvas {
-    display: block;
+    /* display: block; */
+
 }
 
 * {
@@ -16,21 +17,22 @@ canvas {
 }
 
 #env {
-    position: absolute;
+    position: fixed;
     top: 0;
     bottom: 300px; /* must correspond to control-panel height*/
-    width: 100%; 
+    width: 100%;
+    text-align: center;
 }
 
 .control-panel {
     height: 300px;
     width: 100%;
     bottom: 0;
-    position: absolute;
+    position: fixed;
     background-color: gray;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(2, 1fr);
+    /* grid-template-rows: repeat(2, 1fr); */
 }
 
 .control-set {
@@ -39,21 +41,19 @@ canvas {
     border: 10px;
     border-color: black;
     background-color: lightgray;
+    grid-row: 1;
 }
 
 #speed-controller {
     grid-column: 1;
-    grid-row: 1;
 }
 
-#stats {
-    grid-column: 1;
-    grid-row: 2;
+.col-row-input {
+    display: none;
 }
 
 #tab-container {
     grid-column: 2 / 4;
-    grid-row: 1 / 3;
 }
 
 .tabnav {
@@ -77,14 +77,11 @@ canvas {
 .tab {
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: 1;
-}
-
-.tab#hyperparameters {
     display: none;
-
+    padding: 10px
 }
 
-.tab#editor {
+.tab#about {
     display: grid;
 }
 

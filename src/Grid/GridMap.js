@@ -2,7 +2,11 @@ const Cell = require('../Organism/Cell/Cell');
 const CellTypes = require('../Organism/Cell/CellTypes');
 
 class GridMap {
-    constructor(cols, rows, cell_size, filltype=CellTypes.empty) {
+    constructor(cols, rows, cell_size) {
+        this.resize(cols, rows, cell_size);
+    }
+
+    resize(cols, rows, cell_size) {
         this.grid = [];
         this.cols = cols;
         this.rows = rows;
@@ -10,8 +14,7 @@ class GridMap {
         for(var c=0; c<cols; c++) {
             var row = [];
             for(var r=0; r<rows; r++) {
-                var cell = new Cell(filltype, c, r, c*cell_size, r*cell_size);
-
+                var cell = new Cell(CellTypes.empty, c, r, c*cell_size, r*cell_size);
                 row.push(cell);
             }            
             this.grid.push(row);
@@ -20,7 +23,7 @@ class GridMap {
 
     fillGrid(type) {
         for (var col of this.grid) {
-            for (var cell of col){
+            for (var cell of col) {
                 cell.setType(type);
                 cell.owner = null;
             }

@@ -21,20 +21,44 @@
 				<p id='fps-actual'></p>
 				<br/>
 				<button id='reset-env'>Reset Environment</button>
-			</div>
-
-			<div id='stats' class='control-set'>
-				<h2>Stats</h2>
-				<p id='org-count'>Organism count: </p>
-				<p id='org-record'>Highest count: </p>
-				<p id='avg-mut'>Average Mutation Rate: </p>
+				<label for="auto-reset">Auto Reset</label>
+				<input type="checkbox" id="auto-reset" checked>
+				<br><br/>
+				<h2>Grid Size</h2>
+				<label for="cell-size">Cell Size:</label>
+				<input type="number" id="cell-size" min="1" max="100" value=5 step="1">
+				<label for="fill-window">Fill Window</label>
+				<input type="checkbox" id="fill-window" checked>
+				<br/>
+				<div class='col-row-input'>
+					<label for="col-input">Columns:</label>
+					<input type="number" id="col-input" min="1" value=100 step="1">
+					<br/>
+					<label for="row-input">Rows:</label>
+					<input type="number" id="row-input" min="1" value=100 step="1">
+				</div>
+				<br/>
+				<button id='resize'>Resize and Reset</button>
 			</div>
 
 			<div id='tab-container' class='control-set'>
 
 				<div class="tabnav">
+					<p class='tabnav-item' id='about'>About</p>
 					<p class='tabnav-item' id='editor'>Editor</p>
 					<p class='tabnav-item' id='hyperparameters'>Hyperparameters</p>
+					<p class='tabnav-item' id='stats'>Stats</p>
+				</div>
+
+				<div id='about' class='tab'>
+					<div class='left-half'>
+						<h2>Welcome to the Life Engine</h2>
+						<p>The life engine is a simulation of a living ecosystem, and allows organisms to survive, reproduce, spread, and compete in a very simple world. The world is a grid, and organisms are made up of cells that occupy different grid locations. Different colored cells do different things for the organism.</p>
+						<p>To understand more about how the simulation works, take a look at the readme (LINK).</p>
+					</div>
+					<div class='right-half'>
+						<p></p>
+					</div>
 				</div>
 
 				<div id='editor' class='tab'>
@@ -80,7 +104,7 @@
 						<input type="number" id="lifespan-multiplier" min="1" max="10000" value=100 step="1">
 						<br/>
 						<label for="fixed-ratio">Use fixed ratio</label>
-						<input type="checkbox" id="fixed-ratio" name="scales" checked>
+						<input type="checkbox" id="fixed-ratio" checked>
 						<br><br/>
 						<h4>Mutation Probabilities</h4>
 						<label for="add-prob">Add Cell:</label>
@@ -97,15 +121,25 @@
 					<div class='right-half'>
 						<h4>Organism Rotation</h4>
 						<label for="mover-rot">Movers can rotate</label>
-						<input type="checkbox" id="mover-rot" name="scales" checked>
+						<input type="checkbox" id="mover-rot" checked>
 						<br/>
 						<label for="offspring-rot">Offspring rotate</label>
-						<input type="checkbox" id="offspring-rot" name="scales" checked>
+						<input type="checkbox" id="offspring-rot" checked>
 						<br/>
 						<h4>Killer Cell Effects</h4>
 						<label for="insta-kill">One touch kill</label>
-						<input type="checkbox" id="insta-kill" name="scales">
+						<input type="checkbox" id="insta-kill"  >
 					</div>
+				</div>
+				<div id='stats' class='tab'>
+					<div class='left-half'>
+						<h2>Stats</h2>
+						<p id='org-count'>Organism count: </p>
+						<p id='org-record'>Highest count: </p>
+						<p id='avg-mut'>Average Mutation Rate: </p>
+					</div>
+					<div class='right-half'></div>
+					
 				</div>
 			</div>
 		</div>

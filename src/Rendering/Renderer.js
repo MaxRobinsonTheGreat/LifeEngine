@@ -5,13 +5,23 @@ class Renderer {
         this.cell_size = cell_size;
         this.canvas = document.getElementById(canvas_id);
         this.ctx = this.canvas.getContext("2d");
-        this.canvas.width = $('#'+container_id).width();
-        this.canvas.height = $('#'+container_id).height();
+        this.fillWindow(container_id)
 		this.height = this.canvas.height;
         this.width = this.canvas.width;
         this.cells_to_render = new Set();
         this.cells_to_highlight = new Set();
         this.highlighted_cells = new Set();
+    }
+
+    fillWindow(container_id) {
+        this.fillShape($('#'+container_id).height(), $('#'+container_id).width());
+    }
+
+    fillShape(height, width) {
+        this.canvas.width = width;
+        this.canvas.height = height;
+        this.height = this.canvas.height;
+        this.width = this.canvas.width;
     }
 
     clear() {
