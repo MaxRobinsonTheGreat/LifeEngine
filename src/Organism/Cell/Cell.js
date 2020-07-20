@@ -58,7 +58,7 @@ function eatNeighborFood(self, n_cell, env){
 }
 
 function growFood(self, env){
-    if (self.owner.is_mover)
+    if (self.owner.is_mover && !Hyperparams.moversCanProduce)
         return;
     var prob = Hyperparams.foodProdProb;
     if (Math.random() * 100 <= prob){

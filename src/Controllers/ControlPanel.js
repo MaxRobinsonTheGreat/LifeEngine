@@ -96,6 +96,31 @@ class ControlPanel {
                 Hyperparams.lifespanMultiplier = lifespan;
             }
         }.bind(this));
+
+        $('#mover-rot').change(function() {
+            Hyperparams.moversCanRotate = this.checked;
+        });
+        $('#offspring-rot').change(function() {
+            Hyperparams.offspringRotate = this.checked;
+        });
+        $('#insta-kill').change(function() {
+            Hyperparams.instaKill = this.checked;
+        });
+
+        $('#evolved-mutation').change( function() {
+            if (this.checked) {
+                $('.global-mutation-in').css('display', 'none');
+                $('#avg-mut').css('display', 'block');
+            }
+            else {
+                $('.global-mutation-in').css('display', 'block');
+                $('#avg-mut').css('display', 'none');
+            }
+            Hyperparams.useGlobalMutability = !this.checked;
+        });
+        $('#global-mutation').change( function() {
+            Hyperparams.globalMutability = $('#global-mutation').val();
+        });
         $('.mut-prob').change( function() {
             switch(this.id){
                 case "add-prob":
@@ -115,15 +140,11 @@ class ControlPanel {
             $('#change-prob').val(Math.floor(Hyperparams.changeProb));
             $('#remove-prob').val(Math.floor(Hyperparams.removeProb));
         });
-
-        $('#mover-rot').change(function() {
-            Hyperparams.moversCanRotate = this.checked;
+        $('#movers-produce').change( function() {
+            Hyperparams.moversCanProduce = this.checked;
         });
-        $('#offspring-rot').change(function() {
-            Hyperparams.offspringRotate = this.checked;
-        });
-        $('#insta-kill').change(function() {
-            Hyperparams.instaKill = this.checked;
+        $('#food-blocks').change( function() {
+            Hyperparams.foodBlocksReproduction = this.checked;        
         });
     }
 

@@ -9,7 +9,7 @@ const Hyperparams = {
     growableNeighbors: Neighbors.adjacent,
     
     useGlobalMutability: false,
-    globalMutability: 0,
+    globalMutability: 5,
 
     addProb: 33,
     changeProb: 33,
@@ -17,6 +17,9 @@ const Hyperparams = {
 
     moversCanRotate: true,
     offspringRotate: true,
+
+    foodBlocksReproduction: true,
+    moversCanProduce: false,
 
     instaKill: false,
 

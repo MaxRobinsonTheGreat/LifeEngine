@@ -105,20 +105,6 @@
 						<br/>
 						<label for="fixed-ratio">Use fixed ratio</label>
 						<input type="checkbox" id="fixed-ratio" checked>
-						<br><br/>
-						<h4>Mutation Probabilities</h4>
-						<label for="add-prob">Add Cell:</label>
-						<input class="mut-prob" type="number" id="add-prob" min="0" max="100" value=33>
-						<br/>
-						<label for="change-prob">Change Cell:</label>
-						<input class="mut-prob" type="number" id="change-prob" min="0" max="100" value=33>
-						<br/>
-						<label for="remove-prob">Remove Cell:</label>
-						<input class="mut-prob" type="number" id="remove-prob" min="0" max="100" value=33>
-						<br/>
-						
-					</div>
-					<div class='right-half'>
 						<h4>Organism Rotation</h4>
 						<label for="mover-rot">Movers can rotate</label>
 						<input type="checkbox" id="mover-rot" checked>
@@ -128,7 +114,32 @@
 						<br/>
 						<h4>Killer Cell Effects</h4>
 						<label for="insta-kill">One touch kill</label>
-						<input type="checkbox" id="insta-kill"  >
+						<input type="checkbox" id="insta-kill">
+						
+					</div>
+					<div class='right-half'>
+						<br><br/>
+						<h4>Mutation Rate</h4>
+						<label for="evolved-mutation">Use evolved mutation rate</label>
+						<input type="checkbox" id="evolved-mutation" checked>
+						<label class="global-mutation-in" for="global-mutation">Global mutation rate</label>
+						<input class="global-mutation-in" type="number" id="global-mutation" min="1" max="100" value=5 step="1">
+						<h4>Mutation Type Probabilities</h4>
+						<label for="add-prob">Add Cell:</label>
+						<input class="mut-prob" type="number" id="add-prob" min="0" max="100" value=33>
+						<br/>
+						<label for="change-prob">Change Cell:</label>
+						<input class="mut-prob" type="number" id="change-prob" min="0" max="100" value=33>
+						<br/>
+						<label for="remove-prob">Remove Cell:</label>
+						<input class="mut-prob" type="number" id="remove-prob" min="0" max="100" value=33>
+						<br/>
+						<label for="movers-produce">Movers can produce food</label>
+						<input type="checkbox" id="movers-produce">
+						<br/>
+						<label for="food-blocks">Food blocks reproduction</label>
+						<input type="checkbox" id="food-blocks" checked>
+						
 					</div>
 				</div>
 				<div id='stats' class='tab'>

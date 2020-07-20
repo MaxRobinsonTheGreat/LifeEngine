@@ -102,6 +102,10 @@ canvas {
     background-color: gray;
 }
 
+.global-mutation-in {
+    display: none;
+}
+
 
 
 #editor-env {

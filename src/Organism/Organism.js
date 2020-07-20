@@ -134,13 +134,11 @@ class Organism {
         var direction = Directions.getRandomScalar();
         var direction_c = direction[0];
         var direction_r = direction[1];
-        var offset = (Math.floor(Math.random() * 2)) * 2;
+        var offset = (Math.floor(Math.random() * 3)) * 1;
+        var basemovement = (Math.min(2+this.cells.length, 15));
+        var new_c = this.c + (direction_c*basemovement) + (direction_c*offset);
+        var new_r = this.r + (direction_r*basemovement) + (direction_r*offset);
 
-        var new_c = this.c + (direction_c*Math.min(this.cells.length*2, 15)) + (direction_c*offset);
-        var new_r = this.r + (direction_r*Math.min(this.cells.length*2, 15)) + (direction_r*offset);
-
-        // var new_c = Math.min(this.cells.length*2, 10);
-        // var new_r = Math.min(this.cells.length*2, 10);
         if (org.isClear(new_c, new_r) && org.isStraightPath(new_c, new_r, this.c, this.r, this)){
             org.c = new_c;
             org.r = new_r;
@@ -149,8 +147,6 @@ class Organism {
         }
 
         this.food_collected -= this.foodNeeded();
-        
-
     }
 
     mutate() {
@@ -271,9 +267,13 @@ class Organism {
     isClear(col, row, rotation=this.rotation) {
         for(var loccell of this.cells) {
             var cell = this.getRealCell(loccell, col, row, rotation);
-            if(cell == null || cell.type != CellTypes.empty && cell.owner != this) {
+            if(cell==null) {
                 return false;
             }
+            if (cell.owner==this || cell.type==CellTypes.empty || (!Hyperparams.foodBlocksReproduction && cell.type==CellTypes.food)){
+                continue;
+            }
+            return false;
         }
         return true;
     }

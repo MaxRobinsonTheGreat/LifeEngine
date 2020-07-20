@@ -67,6 +67,14 @@ class EnvironmentController extends CanvasController{
         }
     }
 
+    dropWall(cell) {
+
+    }
+
+    dropFood(cell) {
+
+    }
+
 
 }
 
