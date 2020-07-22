@@ -29,12 +29,12 @@ class ControlPanel {
             $('#fps').text("Target FPS: "+this.fps);
         }.bind(this);
         $('#pause-button').click(function() {
+            $('#pause-button').find("i").toggleClass("fa fa-pause");
+            $('#pause-button').find("i").toggleClass("fa fa-play");
             if (this.engine.running) {
-                $('#pause-button').text("Play");
                 this.engine.stop();
             }
             else if (!this.engine.running){
-                $('#pause-button').text("Pause");
                 this.engine.start(this.fps);
             }
         }.bind(this));
@@ -146,6 +146,29 @@ class ControlPanel {
         $('#food-blocks').change( function() {
             Hyperparams.foodBlocksReproduction = this.checked;        
         });
+        $('#reset-rules').click( function() {
+            Hyperparams.setDefaults();
+            $('#food-prod-prob').val(Hyperparams.foodProdProb);
+            $('#lifespan-multiplier').val(Hyperparams.lifespanMultiplier);
+            $('#fixed-ratio').prop('checked', true);
+            $('#mover-rot').prop('checked', Hyperparams.moversCanRotate);
+            $('#offspring-rot').prop('checked', Hyperparams.offspringRotate);
+            $('#insta-kill').prop('checked', Hyperparams.instaKill);
+            $('#evolved-mutation').prop('checked', !Hyperparams.useGlobalMutability);
+            $('#add-prob').val(Hyperparams.addProb);
+            $('#change-prob').val(Hyperparams.changeProb);
+            $('#remove-prob').val(Hyperparams.removeProb);
+            $('#movers-produce').prop('checked', Hyperparams.moversCanProduce);
+            $('#food-blocks').prop('checked', Hyperparams.foodBlocksReproduction);
+            if (!Hyperparams.useGlobalMutability) {
+                $('.global-mutation-in').css('display', 'none');
+                $('#avg-mut').css('display', 'block');
+            }
+            else {
+                $('.global-mutation-in').css('display', 'block');
+                $('#avg-mut').css('display', 'none');
+            }
+        });
     }
 
     defineModeControls() {
@@ -154,13 +177,13 @@ class ControlPanel {
             var prev_mode = self.env_controller.mode;
             $('#cell-selections').css('display', 'none');
             switch(this.id){
-                case "food":
+                case "food-drop":
                     self.setMode(Modes.FoodDrop);
                     break;
-                case "wall":
+                case "wall-drop":
                     self.setMode(Modes.WallDrop);
                     break;
-                case "kill":
+                case "click-kill":
                     self.setMode(Modes.ClickKill);
                     break;
                 case "select":
@@ -175,8 +198,8 @@ class ControlPanel {
                     self.env_controller.org_to_clone = self.engine.organism_editor.getCopyOfOrg();
                     break;
             }
-            $('.edit-mode-btn').css('background-color', 'white');
-            $('#'+this.id).css('background-color', 'lightblue');
+            $('.edit-mode-btn').css('background-color', '#9099c2');
+            $('#'+this.id).css('background-color', '#81d2c7');
 
         });
 

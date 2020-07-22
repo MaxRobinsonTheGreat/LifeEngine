@@ -1,27 +1,28 @@
 const Neighbors = require("./Grid/Neighbors");
 
 const Hyperparams = {
-    lifespanMultiplier: 100,
-    foodProdProb: 4,
-    foodProdProbScalar: 4,
-    killableNeighbors: Neighbors.adjacent,
-    edibleNeighbors: Neighbors.adjacent,
-    growableNeighbors: Neighbors.adjacent,
-    
-    useGlobalMutability: false,
-    globalMutability: 5,
+    setDefaults: function() {
+        this.lifespanMultiplier= 100;
+        this.foodProdProb= 4;
+        this.foodProdProbScalar= 4;
+        this.killableNeighbors= Neighbors.adjacent;
+        this.edibleNeighbors= Neighbors.adjacent;
+        this.growableNeighbors= Neighbors.adjacent;
 
-    addProb: 33,
-    changeProb: 33,
-    removeProb: 33,
+        this.useGlobalMutability= false;
+        this.globalMutability= 5;
+        this.addProb= 33;
+        this.changeProb= 33;
+        this.removeProb= 33;
+        
+        this.moversCanRotate= true;
+        this.offspringRotate= true;
 
-    moversCanRotate: true,
-    offspringRotate: true,
+        this.foodBlocksReproduction= true;
+        this.moversCanProduce= false;
 
-    foodBlocksReproduction: true,
-    moversCanProduce: false,
-
-    instaKill: false,
+        this.instaKill= false;
+    },
 
     // calculates the optimal ratio where a producer cell is most likely to produce 1 food in its lifespan * a scalar of my choice :)
     calcProducerFoodRatio : function(lifespan_fixed=true) {
@@ -53,5 +54,7 @@ const Hyperparams = {
         }
     }
 }
+
+Hyperparams.setDefaults();
 
 module.exports = Hyperparams;

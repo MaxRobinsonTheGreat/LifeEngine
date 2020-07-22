@@ -1,14 +1,9 @@
 body{
-    background: black;
+    background: #3a4b68;
     margin: 0;
     padding: 0;
     height: 100%;
     width: 100%;
-}
-
-canvas {
-    /* display: block; */
-
 }
 
 * {
@@ -30,7 +25,7 @@ canvas {
     width: 100%;
     bottom: 0;
     position: fixed;
-    background-color: gray;
+    background-color: #3a4b68;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     /* grid-template-rows: repeat(2, 1fr); */
@@ -40,9 +35,37 @@ canvas {
     margin: 5px;
     padding: 5px;
     border: 10px;
-    border-color: black;
-    background-color: lightgray;
+    border-radius: 15px;
+    background-color: #e1e3ec;
     grid-row: 1;
+}
+
+img {
+    image-rendering: pixelated;
+    width: 60%;
+    border-radius: 10px;
+}
+
+button {
+    border: none;
+    color: black;
+    background-color: #9099c2;
+    border-radius: 8px;
+    padding: 5px 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+button:hover{
+    background-color: #81d2c7;
+}
+
+.icon-links {
+    font-size: 35px;
+    position: fixed;
+    bottom: 10px;
+    right: 20px;
 }
 
 #speed-controller {
@@ -59,19 +82,20 @@ canvas {
 
 .tabnav {
     overflow: hidden;
-    background-color: #333;
+    background-color: #416788;
+    border-radius: 15px;
 }
 .tabnav p {
     float: left;
-    color: #f2f2f2;
+    color: white;
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
-    font-size: 17px;
+    font-size: 18px;
     user-select: none;
 }
 .tabnav p:hover {
-    background-color: rgb(121, 121, 121);
+    background-color: #81d2c7;
     color: black;
 }
 
@@ -82,7 +106,7 @@ canvas {
     padding: 10px
 }
 
-.tab#editor {
+.tab#about {
     display: grid;
 }
 
@@ -103,8 +127,6 @@ canvas {
     display: flex;
 }
 .edit-mode-btn {
-    /* border-color: gray; */
-    background-color: white;
     width: 30px;
     height: 30px;
 }
@@ -115,11 +137,17 @@ canvas {
 #editor-env {
     height: 195px;
     width: 195px; 
-    /* padding: 10px; */
-    /* float: left; */
 }
 #cell-selections {
     display: none;
+}
+#cell-legend {
+    display: flex;
+    width: max-content;
+    padding: 10px;
+    align-items: center;
+    background-color: #121D29;
+    border-radius: 10px;
 }
 .cell-type {
     width: 30px;
@@ -129,11 +157,13 @@ canvas {
     margin: 1px;
 }
 .cell-legend-type {
-    width: 30px;
-    height: 30px;
-    border: solid black;
-    border-width: 2px;
+    width: 50px;
+    height: 50px;
     margin: 1px;
+}
+.cell-legend-hover {
+    border-color: black;
+    border: 5px;
 }
 #mouth{
     background-color: orange;
@@ -149,6 +179,12 @@ canvas {
 }
 #armor{
     background-color: purple;
+}
+#food{
+    background-color: green;
+}
+#wall{
+    background-color: gray;
 }
 #editor-mode-cont{
     padding-top: 20px;

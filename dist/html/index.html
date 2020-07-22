@@ -20,18 +20,17 @@
 				<button id='pause-button'><i class="fa fa-pause"></i></button>
 				<p id='fps'>Target FPS: 60</p>
 				<p id='fps-actual'></p>
-				<br>
 				<button id='reset-env'>Reset Environment</button>
 				<label for="auto-reset">Auto Reset</label>
 				<input type="checkbox" id="auto-reset" checked>
 				<br>
 				<p id='reset-count'>Auto reset count: </p>
-				<h2>Grid Size</h2>
+				<br>
+				<h3>Grid Size</h3>
 				<label for="cell-size">Cell Size:</label>
-				<input type="number" id="cell-size" min="1" max="100" value=5 step="1">
+				<input type="number" id="cell-size" min="1" max="100" value=3 step="1">
 				<label for="fill-window">Fill Window</label>
 				<input type="checkbox" id="fill-window" checked>
-				<br>
 				<div class='col-row-input'>
 					<label for="col-input">Columns:</label>
 					<input type="number" id="col-input" min="1" value=100 step="1">
@@ -41,6 +40,10 @@
 				</div>
 				<br>
 				<button id='resize'>Resize and Reset</button>
+				<div class='icon-links'>
+					<a href="https://github.com/MaxRobinsonTheGreat/EvolutionSimulatorV2"><i class="fa fa-github"></i></a>
+					<a href="https://twitter.com/max_romana"><i class="fa fa-twitter"></i></a>
+				</div>
 			</div>
 
 			<div id='tab-container' class='control-set'>
@@ -48,26 +51,32 @@
 				<div class="tabnav">
 					<p class='tabnav-item' id='about'>About</p>
 					<p class='tabnav-item' id='editor'>Editor</p>
-					<p class='tabnav-item' id='hyperparameters'>Hyperparameters</p>
+					<p class='tabnav-item' id='hyperparameters'>Rule Tuning</p>
 					<p class='tabnav-item' id='stats'>Stats</p>
 				</div>
 
 				<div id='about' class='tab'>
 					<div class='left-half'>
-						<h2>Welcome to the Life Engine</h2>
-						<p>The Life Engine simulates an evolving ecosystem and organisms that are made of cells. Different colored cells do different things.</p>
-						<!-- <div id='cell-selections'>
+						<img src="../img/title.png" alt="Life Engine">
+						<p>The Life Engine is a virtual ecosystem that allows organisms to grow, spread, and compete.</p>
+						<p>Each organism is made up by a structure of cells, which provide different benefits based on their color.</p>
+						
+					</div>
+					<div class='right-half'>
+						<h4>Cell Types</h4>
+						<div id='cell-legend'>
 							<div class='cell-legend-type' id='mouth' title="Mouth: Eats adjacent food."></div>
 							<div class='cell-legend-type' id='producer' title="Producer: Produces adjacent food."></div>
 							<div class='cell-legend-type' id='mover' title="Mover: Allows for movement and rotation."></div>
 							<div class='cell-legend-type' id='killer' title="Killer: Harms oranisms in adjacent cells."></div>
 							<div class='cell-legend-type' id='armor' title="Armor: Negates affects of killer cell."></div>
 							<div class='cell-legend-type' id='food' title="Food: Not part of an organism. Once an organism has eaten enough food, it will reproduce."></div>
-							<div class='cell-legend-type' id='wall' title="Wall: Not part of an organism. BLocks movement and reproduction."></div>
-						</div> -->
-					</div>
-					<div class='right-half'>
-						<p></p>
+							<div class='cell-legend-type' id='wall' title="Wall: Not part of an organism. Blocks movement and reproduction."></div>
+						</div>
+						<br>
+						<p>Hover over each color to learn what it does. For a more in depth explanation of the simulation, view the 
+							<a href="https://github.com/MaxRobinsonTheGreat/EvolutionSimulatorV2/blob/master/README.md">readme</a>.
+						</p>
 					</div>
 				</div>
 
@@ -75,9 +84,9 @@
 					<div class='left-half'>
 						<h2>Editor</h2>
 
-						<button class="edit-mode-btn" id="wall" title="Drop/Remove Wall"><i class="fa fa-square"></i></button>
-						<button class="edit-mode-btn" id="food" title="Drop/Remove Food"><i class="fa fa-cutlery"></i></button>
-						<button class="edit-mode-btn" id="kill" title="Click to kill"><i class="fa fa-bolt"></i></button>
+						<button class="edit-mode-btn" id="wall-drop" title="Drop/Remove Wall"><i class="fa fa-square"></i></button>
+						<button class="edit-mode-btn" id="food-drop" title="Drop/Remove Food"><i class="fa fa-cutlery"></i></button>
+						<button class="edit-mode-btn" id="click-kill" title="Click to kill"><i class="fa fa-bolt"></i></button>
 
 						<br><br/>
 						<button id="clear-walls" title="Clear All Walls"><i class="fa fa-window-close"></i></button>
@@ -103,49 +112,50 @@
 				</div>
 				<div id='hyperparameters' class='tab'>
 					<div class='left-half'>
-						<h2>Hyperparameters</h2>
+						<h2>Rule Tuning</h2>
 						<h4>Food Production vs Lifespan</h4>
-						<label for="food-prod-prob">Probability of producing food:</label>
+						<label for="food-prod-prob" title='The probability that a producer cell will produce food each tick.'>Probability of producing food:</label>
 						<input type="number" id="food-prod-prob" min=".001" max="100" value=4 step="1">
 						<br>
-						<label for="lifespan-multiplier">Lifespan multiplier:</label>
+						<label for="lifespan-multiplier" title='An organism lives for this many ticks per cell in its body.'>Lifespan multiplier:</label>
 						<input type="number" id="lifespan-multiplier" min="1" max="10000" value=100 step="1">
 						<br>
-						<label for="fixed-ratio">Use fixed ratio</label>
+						<label for="fixed-ratio" title='When on, the food production probability and lifespan multiplier obey a fixed ratio.'>Use fixed ratio</label>
 						<input type="checkbox" id="fixed-ratio" checked>
 						<h4>Organism Rotation</h4>
-						<label for="mover-rot">Movers can rotate</label>
+						<label for="mover-rot" title='Movers rotate randomly when they change directions.'>Movers can rotate</label>
 						<input type="checkbox" id="mover-rot" checked>
 						<br>
-						<label for="offspring-rot">Offspring rotate</label>
+						<label for="offspring-rot" title='Offspring will randomly rotate'>Offspring rotate</label>
 						<input type="checkbox" id="offspring-rot" checked>
 						<br>
 						<h4>Killer Cell Effects</h4>
-						<label for="insta-kill">One touch kill</label>
+						<label for="insta-kill" title='When on, killer cells immediatly kill organisms they touch. When off, organisms have as much health as they have cells and only take 1 damage from killer cells.'>One touch kill</label>
 						<input type="checkbox" id="insta-kill">
 						
 					</div>
 					<div class='right-half'>
 						<br><br/>
 						<h4>Mutation Rate</h4>
-						<label for="evolved-mutation">Use evolved mutation rate</label>
+						<label for="evolved-mutation" title='When on, each organism has its own mutation rate that can increase or decrease. When off, all organisms have the same mutation rate.'>Use evolved mutation rate</label>
 						<input type="checkbox" id="evolved-mutation" checked> </br>
 						<label class="global-mutation-in" for="global-mutation">Global mutation rate: </label>
 						<input class="global-mutation-in" type="number" id="global-mutation" min="1" max="100" value=5 step="1">
-						<h4>Mutation Type Probabilities</h4>
-						<label for="add-prob">Add Cell:</label>
+						<h4 title='When an organism mutates, it can choose from one of the following mutation types.'>Mutation Type Probabilities</h4>
+						<label for="add-prob" title='A new cell will stem from an existing one'>Add Cell:</label>
 						<input class="mut-prob" type="number" id="add-prob" min="0" max="100" value=33>
-						<label for="change-prob">Change Cell:</label>
+						<label for="change-prob" title='A currently existing cell will change its color.'>Change Cell:</label>
 						<input class="mut-prob" type="number" id="change-prob" min="0" max="100" value=33>
-						<label for="remove-prob">Remove Cell:</label>
+						<label for="remove-prob" title='An existing cell will be removed.'>Remove Cell:</label>
 						<input class="mut-prob" type="number" id="remove-prob" min="0" max="100" value=33>
 						<br/>
-						<label for="movers-produce">Movers can produce food</label>
+						<label for="movers-produce" title='When on, movers can produce food from producer cells. When off, producer cells are disabled on mover organisms.'>Movers can produce food</label>
 						<input type="checkbox" id="movers-produce">
 						<br/>
-						<label for="food-blocks">Food blocks reproduction</label>
+						<label for="food-blocks" title='When on, reproduction will fail if offspring intersect with food. When off, offspring will remove blocking food.'>Food blocks reproduction</label>
 						<input type="checkbox" id="food-blocks" checked>
-						
+						<br>
+						<button id='reset-rules'>Reset all rules</button>
 					</div>
 				</div>
 				<div id='stats' class='tab'>
