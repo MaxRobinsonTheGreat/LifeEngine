@@ -14,6 +14,7 @@ canvas {
 * {
     margin: 0;
     padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 #env {
@@ -81,7 +82,7 @@ canvas {
     padding: 10px
 }
 
-.tab#about {
+.tab#editor {
     display: grid;
 }
 
@@ -93,63 +94,61 @@ canvas {
     grid-column: 2;
 }
 
-.control-mode-button {
-    border-color: gray;
-    background-color: lightgray;
-}
-
-#none-button {
-    background-color: gray;
-}
-
 .global-mutation-in {
     display: none;
 }
 
 
+#editor-panel{
+    display: flex;
+}
+.edit-mode-btn {
+    /* border-color: gray; */
+    background-color: white;
+    width: 30px;
+    height: 30px;
+}
 
+#drop-org {
+    bottom: 0;
+}
 #editor-env {
-    position: absolute;
-    height: 220px;
-    width: 220px; 
-    padding: 10px;
-    float: left;
+    height: 195px;
+    width: 195px; 
+    /* padding: 10px; */
+    /* float: left; */
 }
 #cell-selections {
     display: none;
-    padding: 10px;
-    grid-template-columns: 1;
-    grid-template-rows: 5;
-    float: right;
 }
 .cell-type {
-    grid-column: 1;
     width: 30px;
     height: 30px;
     border: solid black;
     border-width: 2px;
     margin: 1px;
-    
+}
+.cell-legend-type {
+    width: 30px;
+    height: 30px;
+    border: solid black;
+    border-width: 2px;
+    margin: 1px;
 }
 #mouth{
     background-color: orange;
-    grid-row: 1;
 }
 #producer{
     background-color: white;
-    grid-row: 2;
 }
 #mover{
     background-color: #3493eb;
-    grid-row: 3;
 }
 #killer{
     background-color: red;
-    grid-row: 4;
 }
 #armor{
     background-color: purple;
-    grid-row: 5;
 }
 #editor-mode-cont{
     padding-top: 20px;

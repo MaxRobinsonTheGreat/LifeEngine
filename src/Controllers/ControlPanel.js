@@ -29,7 +29,7 @@ class ControlPanel {
             $('#fps').text("Target FPS: "+this.fps);
         }.bind(this);
         $('#pause-button').click(function() {
-            if ($('#pause-button').text() == "Pause" && this.engine.running) {
+            if (this.engine.running) {
                 $('#pause-button').text("Play");
                 this.engine.stop();
             }
@@ -150,14 +150,10 @@ class ControlPanel {
 
     defineModeControls() {
         var self = this;
-        $('#editor-mode').change( function(el) {
-            var selection = $(this).children("option:selected").val();
+        $('.edit-mode-btn').click( function() {
             var prev_mode = self.env_controller.mode;
             $('#cell-selections').css('display', 'none');
-            switch(selection){
-                case "none":
-                    self.setMode(Modes.None);
-                    break;
+            switch(this.id){
                 case "food":
                     self.setMode(Modes.FoodDrop);
                     break;
@@ -168,27 +164,20 @@ class ControlPanel {
                     self.setMode(Modes.ClickKill);
                     break;
                 case "select":
-                    if (prev_mode==Modes.Edit || prev_mode==Modes.Clone && self.engine.organism_editor.organism.cells.length > 1){
-                        if (confirm("Selecting a new organism will clear the current organism. Are you sure you wish to switch?")) {
-                            self.setMode(Modes.Select);
-                        }
-                        else {
-                            $("#editor-mode").val('edit');
-                        }
-                    }
-                    else {
-                        self.setMode(Modes.Select);
-                    }
+                    self.setMode(Modes.Select);
                     break;
                 case "edit":
                     self.setMode(Modes.Edit);
-                    $('#cell-selections').css('display', 'grid');
+                    $('#cell-selections').css('display', 'block');
                     break;
-                case "clone":
+                case "drop-org":
                     self.setMode(Modes.Clone);
                     self.env_controller.org_to_clone = self.engine.organism_editor.getCopyOfOrg();
                     break;
             }
+            $('.edit-mode-btn').css('background-color', 'white');
+            $('#'+this.id).css('background-color', 'lightblue');
+
         });
 
         var env = this.engine.env;
@@ -198,11 +187,10 @@ class ControlPanel {
         $('#auto-reset').change(function() {
             env.auto_reset = this.checked;
         });
-        $('#kill-all').click( function() {
-            this.engine.env.clearOrganisms();
-        }.bind(this));
         $('#clear-walls').click( function() {
-            this.engine.env.clearWalls();
+            if (confirm("Are you sure you want to clear all the walls?")) {
+                this.engine.env.clearWalls();
+            }
         }.bind(this));
         $('#clear-editor').click( function() {
             this.engine.organism_editor.clear();
@@ -232,6 +220,8 @@ class ControlPanel {
             this.organism_record = org_count;
         $('#org-record').text("Highest count: " + this.organism_record);
         $('#avg-mut').text("Average Mutation Rate: " + Math.round(this.engine.env.averageMutability() * 100) / 100);
+        $('#largest-org').text("Largest Organism: " + this.engine.env.largest_cell_count + " cells");
+        $('#reset-count').text("Auto reset count: " + this.engine.env.reset_count);
     }
 
 }

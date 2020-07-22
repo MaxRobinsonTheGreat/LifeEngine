@@ -145,8 +145,8 @@ class Organism {
             this.env.addOrganism(org);
             org.updateGrid();
         }
-
         this.food_collected -= this.foodNeeded();
+
     }
 
     mutate() {

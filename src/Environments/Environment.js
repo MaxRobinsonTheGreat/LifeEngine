@@ -18,6 +18,8 @@ class Environment{
         this.walls = [];
         this.total_mutability = 0;
         this.auto_reset = true;
+        this.largest_cell_count = 0;
+        this.reset_count = 0;
     }
 
     update(delta_time) {
@@ -41,8 +43,10 @@ class Environment{
             this.total_mutability -= this.organisms[i].mutability;
             this.organisms.splice(i, 1);
         }
-        if (this.organisms.length == 0 && this.auto_reset)
+        if (this.organisms.length == 0 && this.auto_reset){
+            this.reset_count++;
             this.reset();
+        }
     }
 
     OriginOfLife() {
@@ -58,6 +62,8 @@ class Environment{
         organism.updateGrid();
         this.total_mutability += organism.mutability;
         this.organisms.push(organism);
+        if (organism.cells.length > this.largest_cell_count) 
+            this.largest_cell_count = organism.cells.length;
     }
 
     averageMutability() {
@@ -75,8 +81,10 @@ class Environment{
     }
 
     clearWalls() {
-        for(var wall of this.walls)
-            this.changeCell(wall.col, wall.row, CellTypes.empty, null);
+        for(var wall of this.walls){
+            if (this.grid_map.cellAt(wall.col, wall.row).type == CellTypes.wall)
+                this.changeCell(wall.col, wall.row, CellTypes.empty, null);
+        }
     }
 
     clearOrganisms() {
@@ -85,7 +93,7 @@ class Environment{
         this.organisms = [];
     }
 
-    reset() {
+    reset(clear_walls=true) {
         this.organisms = [];
         this.grid_map.fillGrid(CellTypes.empty);
         this.renderer.renderFullGrid(this.grid_map.grid);

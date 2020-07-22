@@ -8,8 +8,8 @@ const Cell = require("../Organism/Cell/Cell");
 class OrganismEditor {
     constructor() {
         this.is_active = true;
-        var cell_size = 20;
-        this.grid_map = new GridMap(11, 11, cell_size);
+        var cell_size = 13;
+        this.grid_map = new GridMap(15, 15, cell_size);
         this.renderer = new Renderer('editor-canvas', 'editor-env', cell_size);
         this.controller = new EditorController(this, this.renderer.canvas);
         this.clear();

@@ -12,10 +12,15 @@ class EditorController extends CanvasController{
     }
 
     mouseMove() {
-        
+        if (this.right_click || this.left_click)
+            this.editOrganism();
     }
 
     mouseDown() {
+        this.editOrganism();
+    }
+
+    editOrganism() {
         if (this.edit_cell_type == null || this.mode != Modes.Edit)
             return;
         if (this.left_click)
