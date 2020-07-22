@@ -7,7 +7,7 @@ const render_speed = 60;
 class Engine{
     constructor(){
         this.fps = 60;
-        this.env = new Environment(3);
+        this.env = new Environment(4);
         this.organism_editor = new OrganismEditor();
         this.controlpanel = new ControlPanel(this);
         this.env.OriginOfLife();
