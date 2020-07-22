@@ -50,7 +50,8 @@ class EditorController extends CanvasController{
                     break;
             }
             $(".cell-type" ).css( "border-color", "black" );
-            $("#"+this.id).css("border-color", "yellow");
+            var selected = '#'+this.id+'.cell-type';
+            $(selected).css("border-color", "yellow");
         });
     }
 }
