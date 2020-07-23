@@ -8,8 +8,42 @@ const Cell = require("../Organism/Cell/Cell");
 class EnvironmentController extends CanvasController{
     constructor(env, canvas) {
         super(env, canvas);
-        this.mode = Modes.None;
+        this.mode = Modes.Drag;
         this.org_to_clone = null;
+        this.defineZoomControls();
+        this.prev_x;
+        this.prev_y;
+        this.scale = 1;
+    }
+
+    defineZoomControls() {
+          var scale = 1;
+          var zoom_speed = 0.5;
+          const el = document.querySelector('#env-canvas');
+          el.onwheel = function zoom(event) {
+            event.preventDefault();
+            var sign = -1*Math.sign(event.deltaY);
+            
+            // Restrict scale
+            scale = Math.max(0.5, scale+(sign*zoom_speed));
+          
+            // Apply scale transform
+            el.style.transform = `scale(${scale})`;
+            this.scale = scale;
+          }.bind(this);
+    }
+
+    resetView() {
+        $('#env-canvas').css('transform', 'scale(1)');
+        $('#env-canvas').css('top', '0px');
+        $('#env-canvas').css('left', '0px');
+        this.scale = 1;
+    }
+
+    updateMouseLocation(offsetX, offsetY){
+        this.prev_x = this.mouse_x;
+        this.prev_y = this.mouse_y;
+        super.updateMouseLocation(offsetX, offsetY);
     }
 
     mouseMove() {
@@ -67,6 +101,14 @@ class EnvironmentController extends CanvasController{
                             this.env.addOrganism(new_org)
                         }
                     }
+                    break;
+                case Modes.Drag:
+                    var cur_top = parseInt($('#env-canvas').css('top'), 10);
+                    var cur_left = parseInt($('#env-canvas').css('left'), 10);
+                    var new_top = (cur_top + (this.mouse_y - this.prev_y)*this.scale);
+                    var new_left = (cur_left + (this.mouse_x - this.prev_x)*this.scale);
+                    $('#env-canvas').css('top', new_top+'px');
+                    $('#env-canvas').css('left', new_left+'px');
                     break;
             }
         }

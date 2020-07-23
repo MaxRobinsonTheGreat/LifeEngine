@@ -15,9 +15,17 @@ body{
 #env {
     position: fixed;
     top: 0;
-    bottom: 300px; /* must correspond to control-panel height*/
+    height: 100%;
     width: 100%;
     text-align: center;
+    transform: scale(1);
+    image-rendering: pixelated;
+}
+
+#env-canvas {
+    top: 0;
+    left: 0;
+    position: relative;
 }
 
 .control-panel {
@@ -56,6 +64,7 @@ button {
     text-decoration: none;
     display: inline-block;
     font-size: 16px;
+    min-width: 30px;
 }
 button:hover{
     background-color: #81d2c7;
@@ -70,6 +79,11 @@ button:hover{
 
 #speed-controller {
     grid-column: 1;
+}
+
+#view-controls {
+    float:right;
+    padding: 10px;
 }
 
 .col-row-input {
@@ -130,11 +144,15 @@ button:hover{
     width: 30px;
     height: 30px;
 }
+.edit-mode-btn#drag-view {
+    background-color: #81d2c7;
+}
 
 #drop-org {
     bottom: 0;
 }
 #editor-env {
+    image-rendering: pixelated;
     height: 195px;
     width: 195px; 
 }
@@ -188,4 +206,16 @@ button:hover{
 }
 #editor-mode-cont{
     padding-top: 20px;
+}
+
+#minimize {
+    margin: 10px;
+    /* align-self: center; */
+    float: right;
+}
+#maximize {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    display: none;
 }

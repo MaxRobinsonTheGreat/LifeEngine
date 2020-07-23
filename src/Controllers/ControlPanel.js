@@ -5,6 +5,7 @@ const CellTypes = require("../Organism/Cell/CellTypes");
 class ControlPanel {
     constructor(engine) {
         this.engine = engine;
+        this.defineMinMaxControls();
         this.defineEngineSpeedControls();
         this.defineGridSizeControls();
         this.defineTabNavigation();
@@ -16,6 +17,19 @@ class ControlPanel {
         this.editor_controller = this.engine.organism_editor.controller;
         this.env_controller.setControlPanel(this);
         this.editor_controller.setControlPanel(this);
+    }
+
+    defineMinMaxControls(){
+        $('#minimize').click ( function() {
+            console.log('hello')
+            $('.control-panel').css('display', 'none');
+            $('#maximize').css('display', 'block');
+        });
+        $('#maximize').click ( function() {
+            $('.control-panel').css('display', 'grid');
+            $('#maximize').css('display', 'none');
+
+        });
     }
 
     defineEngineSpeedControls(){
@@ -197,11 +211,17 @@ class ControlPanel {
                     self.setMode(Modes.Clone);
                     self.env_controller.org_to_clone = self.engine.organism_editor.getCopyOfOrg();
                     break;
+                case "drag-view":
+                    self.setMode(Modes.Drag);
             }
             $('.edit-mode-btn').css('background-color', '#9099c2');
             $('#'+this.id).css('background-color', '#81d2c7');
 
         });
+
+        $('#reset-view').click( function(){
+            this.env_controller.resetView();
+        }.bind(this));
 
         var env = this.engine.env;
         $('#reset-env').click( function() {

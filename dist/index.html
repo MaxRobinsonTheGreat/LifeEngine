@@ -6,6 +6,7 @@
 		<link rel="stylesheet" href="./css/style.css">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 	</head>
 	<body>
 		<script src="./js/bundle.js"></script>
@@ -15,6 +16,10 @@
 		</div>
 		<div class='control-panel'>
 			<div id='speed-controller' class='control-set'>
+				<div id='view-controls'>
+					<button id="reset-view" title="Reset View"><i class="fa fa-video-camera"></i></button>
+					<button class="edit-mode-btn" id="drag-view" title="Drag View"><i class="fa fa-arrows"></i></button>
+				</div>
 				<h2>Simulation Speed</h2>
 				<input id="slider" type="range" min="1" max="300" value="60">
 				<button id='pause-button'><i class="fa fa-pause"></i></button>
@@ -53,11 +58,12 @@
 					<p class='tabnav-item' id='editor'>Editor</p>
 					<p class='tabnav-item' id='hyperparameters'>Rule Tuning</p>
 					<p class='tabnav-item' id='stats'>Stats</p>
+					<button id="minimize" title="Minimze Control Panel"><i class="fa fa-minus"></i></button>
 				</div>
 
 				<div id='about' class='tab'>
 					<div class='left-half'>
-						<img src="../img/title.png" alt="Life Engine">
+						<img src="./img/title.png" alt="Life Engine">
 						<p>The Life Engine is a virtual ecosystem that allows organisms to grow, spread, and compete.</p>
 						<p>Each organism is made up by a structure of cells, which provide different benefits based on their color.</p>
 						
@@ -171,5 +177,6 @@
 				</div>
 			</div>
 		</div>
+		<button id="maximize" title="Show Control Panel"><i class="fa fa-plus-square"></i></button>
 	</body>
 </html>
