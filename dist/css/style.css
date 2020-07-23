@@ -19,7 +19,10 @@ body{
     width: 100%;
     text-align: center;
     transform: scale(1);
-    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
 }
 
 #env-canvas {
@@ -49,7 +52,10 @@ body{
 }
 
 img {
-    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
     width: 60%;
     border-radius: 10px;
 }
@@ -152,7 +158,10 @@ button:hover{
     bottom: 0;
 }
 #editor-env {
-    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
     height: 195px;
     width: 195px; 
 }

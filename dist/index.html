@@ -56,7 +56,7 @@
 				<div class="tabnav">
 					<p class='tabnav-item' id='about'>About</p>
 					<p class='tabnav-item' id='editor'>Editor</p>
-					<p class='tabnav-item' id='hyperparameters'>Rule Tuning</p>
+					<p class='tabnav-item' id='hyperparameters'>Simulation Controls</p>
 					<p class='tabnav-item' id='stats'>Stats</p>
 					<button id="minimize" title="Minimze Control Panel"><i class="fa fa-minus"></i></button>
 				</div>
@@ -118,7 +118,7 @@
 				</div>
 				<div id='hyperparameters' class='tab'>
 					<div class='left-half'>
-						<h2>Rule Tuning</h2>
+						<h2>Simulation Controls</h2>
 						<h4>Food Production vs Lifespan</h4>
 						<label for="food-prod-prob" title='The probability that a producer cell will produce food each tick.'>Probability of producing food:</label>
 						<input type="number" id="food-prod-prob" min=".001" max="100" value=4 step="1">
@@ -161,7 +161,7 @@
 						<label for="food-blocks" title='When on, reproduction will fail if offspring intersect with food. When off, offspring will remove blocking food.'>Food blocks reproduction</label>
 						<input type="checkbox" id="food-blocks" checked>
 						<br>
-						<button id='reset-rules'>Reset all rules</button>
+						<button id='reset-rules'>Reset all controls</button>
 					</div>
 				</div>
 				<div id='stats' class='tab'>
