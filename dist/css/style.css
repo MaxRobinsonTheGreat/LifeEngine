@@ -39,7 +39,11 @@ body{
     background-color: #3a4b68;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    /* grid-template-rows: repeat(2, 1fr); */
+    opacity: 0.8;
+}
+
+.control-panel:hover {
+    opacity: 1;
 }
 
 .control-set {

@@ -4,7 +4,6 @@ import Engine from './Engine';
 
 $('document').ready(function(){
     let isMobile = mobileCheck();
-    console.log(isMobile)
     if (isMobile) {
         alert("Though the simulation still works on mobile, most features are disabled. Try it on desktop for the full experience!");
         $('.control-panel').css('display', 'none');
