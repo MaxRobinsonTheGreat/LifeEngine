@@ -20,6 +20,8 @@ class EditorController extends CanvasController{
         this.editOrganism();
     }
 
+    mouseUp(){}
+
     editOrganism() {
         if (this.edit_cell_type == null || this.mode != Modes.Edit)
             return;

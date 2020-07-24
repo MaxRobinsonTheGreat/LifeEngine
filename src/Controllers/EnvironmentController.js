@@ -11,8 +11,6 @@ class EnvironmentController extends CanvasController{
         this.mode = Modes.Drag;
         this.org_to_clone = null;
         this.defineZoomControls();
-        this.prev_x;
-        this.prev_y;
         this.scale = 1;
     }
 
@@ -50,7 +48,13 @@ class EnvironmentController extends CanvasController{
     }
 
     mouseDown() {
+        this.start_x = this.mouse_x;
+        this.start_y = this.mouse_y;
         this.performModeAction();
+    }
+
+    mouseUp() {
+
     }
 
     performModeAction() {
@@ -104,10 +108,8 @@ class EnvironmentController extends CanvasController{
                 case Modes.Drag:
                     var cur_top = parseInt($('#env-canvas').css('top'), 10);
                     var cur_left = parseInt($('#env-canvas').css('left'), 10);
-                    var new_top = cur_top + ((this.mouse_y - this.prev_y)/this.scale);
-                    var new_left = cur_left + ((this.mouse_x - this.prev_x)/this.scale);
-                    this.prev_x = this.mouse_x;
-                    this.prev_y = this.mouse_y;
+                    var new_top = cur_top + ((this.mouse_y - this.start_y)*this.scale);
+                    var new_left = cur_left + ((this.mouse_x - this.start_x)*this.scale);
                     $('#env-canvas').css('top', new_top+'px');
                     $('#env-canvas').css('left', new_left+'px');
                     break;

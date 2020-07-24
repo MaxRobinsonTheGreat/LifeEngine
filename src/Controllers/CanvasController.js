@@ -29,6 +29,7 @@ class CanvasController{
         this.canvas.addEventListener('mouseup', function(evt) {
             evt.preventDefault();
             this.updateMouseLocation(evt.offsetX, evt.offsetY)
+            this.mouseUp();
             this.left_click=false;
             this.right_click=false;
         }.bind(this));
@@ -80,11 +81,15 @@ class CanvasController{
     }
 
     mouseMove() {
-        alert("mouse move must be overriden");
+        alert("mouse move must be overridden");
     }
 
     mouseDown() {
-        alert("mouse down must be overriden");
+        alert("mouse down must be overridden");
+    }
+
+    mouseUp(){
+        alert("mouse up must be overridden")
     }
 }
 
