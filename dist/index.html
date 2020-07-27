@@ -17,12 +17,12 @@
 		<div class='control-panel'>
 			<div id='speed-controller' class='control-set'>
 				<div id='view-controls'>
-					<button id="reset-view" title="Reset View"><i class="fa fa-video-camera"></i></button>
+					<button class="reset-view" title="Reset View"><i class="fa fa-video-camera"></i></button>
 					<button class="edit-mode-btn" id="drag-view" title="Drag View"><i class="fa fa-arrows"></i></button>
 				</div>
 				<h2>Simulation Speed</h2>
 				<input id="slider" type="range" min="1" max="300" value="60">
-				<button id='pause-button'><i class="fa fa-pause"></i></button>
+				<button class='pause-button'><i class="fa fa-pause"></i></button>
 				<p id='fps'>Target FPS: 60</p>
 				<p id='fps-actual'></p>
 				<button id='reset-env'>Reset Environment</button>
@@ -58,7 +58,8 @@
 					<p class='tabnav-item' id='editor'>Editor</p>
 					<p class='tabnav-item' id='hyperparameters'>Simulation Controls</p>
 					<p class='tabnav-item' id='stats'>Stats</p>
-					<button id="minimize" title="Minimze Control Panel"><i class="fa fa-minus"></i></button>
+					<p class='tabnav-item' id='challenges'>Challenges</p>
+					<button id="minimize" title="Minimze Control Panel"><i class="fa fa-minus-square"></i></button>
 				</div>
 
 				<div id='about' class='tab'>
@@ -113,8 +114,8 @@
 							<div class='cell-type' id='armor' title="Armor: Negates affects of killer cell."></div>
 							<button id='clear-editor'>Clear</button>
 						</div>
+						<p id='editor-cell-count'>1 cell</p>
 					</div>
-					
 				</div>
 				<div id='hyperparameters' class='tab'>
 					<div class='left-half'>
@@ -175,8 +176,36 @@
 					<div class='right-half'></div>
 					
 				</div>
+				<div id='challenges' class='tab'>
+					<div class='left-half'>
+						<h2>Challenges</h2>
+						<button class='challenge-btn' value='Without editing any organisms, evolve a static producer organism with 15 cells. '>Megaflora</button>
+						<button class='challenge-btn' value='Without editing any organisms, evolve a mover organism with 10 cells.'>Megafauna</button>
+						<button class='challenge-btn' value='Use the editor to create a new organism that dominates the current ecosystem and causes many species to go extinct.'>Invasive Species</button>
+						<button class='challenge-btn' value='Either through editing or evolving, create two different species that have a mutually beneficial relationship.'>Symbiosis</button>
+						<button class='challenge-btn' value='Evolve a stable ecosystem with 10 significantly different species.'>Biodiversity</button>
+						<button class='challenge-btn' value='Evolve a stable ecosystem without any killer cells.'>Utopia</button>
+					</div>
+					<div class='right-half'>
+						<h2 id='challenge-title'>Select a Challenge</h2>
+						<br>
+						<p id='challenge-description'>Challenge yourself to create interesting ecosystems and organisms. There is no formal way to win or lose, its just for fun! </p>
+					</div>
+				</div>
 			</div>
 		</div>
-		<button id="maximize" title="Show Control Panel"><i class="fa fa-plus-square"></i></button>
+		<div class='hot-controls'>
+			<button class="reset-view" title="Reset View"><i class="fa fa-video-camera"></i></button>
+			<button class="edit-mode-btn" id="drag-view" title="Drag View"><i class="fa fa-arrows"></i></button>
+			<button class="edit-mode-btn" id="wall-drop" title="Drop/Remove Wall"><i class="fa fa-square"></i></button>
+			<button class="edit-mode-btn" id="food-drop" title="Drop/Remove Food"><i class="fa fa-cutlery"></i></button>
+			<button class="edit-mode-btn" id="click-kill" title="Click to kill"><i class="fa fa-bolt"></i></button>
+			<button class='pause-button'><i class="fa fa-pause"></i></button>
+			
+		</div>
+		<div id='maximize-hot-control' class='hot-controls'>
+			<button id="maximize" title="Show Control Panel"><i class="fa fa-plus-square"></i></button>
+		</div>
+		
 	</body>
 </html>

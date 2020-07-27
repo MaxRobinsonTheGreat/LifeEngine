@@ -11,6 +11,7 @@ class ControlPanel {
         this.defineTabNavigation();
         this.defineHyperparameterControls();
         this.defineModeControls();
+        this.defineChallenges();
         this.fps = engine.fps;
         this.organism_record=0;
         this.env_controller = this.engine.env.controller;
@@ -21,13 +22,12 @@ class ControlPanel {
 
     defineMinMaxControls(){
         $('#minimize').click ( function() {
-            console.log('hello')
             $('.control-panel').css('display', 'none');
-            $('#maximize').css('display', 'block');
+            $('.hot-controls').css('display', 'block');
         });
         $('#maximize').click ( function() {
             $('.control-panel').css('display', 'grid');
-            $('#maximize').css('display', 'none');
+            $('.hot-controls').css('display', 'none');
 
         });
     }
@@ -42,9 +42,9 @@ class ControlPanel {
             }
             $('#fps').text("Target FPS: "+this.fps);
         }.bind(this);
-        $('#pause-button').click(function() {
-            $('#pause-button').find("i").toggleClass("fa fa-pause");
-            $('#pause-button').find("i").toggleClass("fa fa-play");
+        $('.pause-button').click(function() {
+            $('.pause-button').find("i").toggleClass("fa fa-pause");
+            $('.pause-button').find("i").toggleClass("fa fa-play");
             if (this.engine.running) {
                 this.engine.stop();
             }
@@ -219,7 +219,7 @@ class ControlPanel {
 
         });
 
-        $('#reset-view').click( function(){
+        $('.reset-view').click( function(){
             this.env_controller.resetView();
         }.bind(this));
 
@@ -238,6 +238,13 @@ class ControlPanel {
         $('#clear-editor').click( function() {
             this.engine.organism_editor.clear();
         }.bind(this));
+    }
+
+    defineChallenges() {
+        $('.challenge-btn').click(function() {
+            $('#challenge-title').text($(this).text());
+            $('#challenge-description').text($(this).val());
+        });
     }
 
     setMode(mode) {
@@ -265,6 +272,10 @@ class ControlPanel {
         $('#avg-mut').text("Average Mutation Rate: " + Math.round(this.engine.env.averageMutability() * 100) / 100);
         $('#largest-org').text("Largest Organism: " + this.engine.env.largest_cell_count + " cells");
         $('#reset-count').text("Auto reset count: " + this.engine.env.reset_count);
+        if (this.editor_controller.env.organism.cells.length > 1)
+            $('#editor-cell-count').text(this.editor_controller.env.organism.cells.length+' cells');
+        else
+            $('#editor-cell-count').text('1 cell');
     }
 
 }

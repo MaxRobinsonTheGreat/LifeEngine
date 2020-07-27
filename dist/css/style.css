@@ -221,14 +221,22 @@ button:hover{
     padding-top: 20px;
 }
 
-#minimize {
-    margin: 10px;
-    /* align-self: center; */
-    float: right;
+.challenge-btn {
+    height: 50px;
+    margin: 5px;
 }
-#maximize {
+
+.hot-controls {
     position: fixed;
     bottom: 10px;
-    right: 10px;
+    padding-left: 10px;
     display: none;
+}
+
+#minimize {
+    margin: 10px;
+    float: right;
+}
+#maximize-hot-control {
+    right: 10px;
 }
