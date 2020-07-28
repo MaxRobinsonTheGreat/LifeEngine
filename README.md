@@ -34,8 +34,9 @@ When touched by a killer cell, and organism will take damage. Once it has taken 
 ## Reproduction
 Once an organism has eaten as much food as it has cells in its body, it will attempt to reproduce. 
 First, offspring is formed by cloning the current organism and possibly mutating it.
-The offspring birth location is then chosen 2 + (number of cells) in a random direction (up, down, left, right). This ensures it will not be intersecting with its parent. 
+The offspring birth location is then chosen 2 + (number of cells) in a random direction (up, down, left, right). This ensures it will not be intersecting with its parent.
 Additionally, a random value between 1 and 3 is added to the location so they are not always failing to reproduce due to intersections.
+Finally, the distance between the parent and offspring maxes out at 30 cells.
 If reproduction fails, the food required to produce a child is wasted.
 
 ## Mutation
