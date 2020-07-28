@@ -134,8 +134,8 @@ class Organism {
         var direction = Directions.getRandomScalar();
         var direction_c = direction[0];
         var direction_r = direction[1];
-        var offset = (Math.floor(Math.random() * 3)) * 1;
-        var basemovement = (Math.min(2+this.cells.length, 15));
+        var offset = (Math.floor(Math.random() * 3));
+        var basemovement = 2+this.cells.length;
         var new_c = this.c + (direction_c*basemovement) + (direction_c*offset);
         var new_r = this.r + (direction_r*basemovement) + (direction_r*offset);
 
