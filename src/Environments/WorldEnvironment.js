@@ -9,8 +9,7 @@ const EnvironmentController = require('../Controllers/EnvironmentController');
 
 class WorldEnvironment extends Environment{
     constructor(cell_size) {
-        super(cell_size);
-
+        super();
         this.renderer = new Renderer('env-canvas', 'env', cell_size);
         this.controller = new EnvironmentController(this, this.renderer.canvas);
         var grid_rows = Math.floor(this.renderer.height / cell_size);

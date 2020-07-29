@@ -8,7 +8,7 @@ const Cell = require("../Organism/Cell/Cell");
 
 class OrganismEditor extends Environment{
     constructor() {
-        super(cell_size);
+        super();
         this.is_active = true;
         var cell_size = 13;
         this.renderer = new Renderer('editor-canvas', 'editor-env', cell_size);
