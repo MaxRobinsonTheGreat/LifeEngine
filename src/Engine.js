@@ -1,4 +1,4 @@
-const Environment = require('./Environments/Environment');
+const WorldEnvironment = require('./Environments/WorldEnvironment');
 const ControlPanel = require('./Controllers/ControlPanel');
 const OrganismEditor = require('./Environments/OrganismEditor');
 
@@ -7,7 +7,7 @@ const render_speed = 60;
 class Engine{
     constructor(){
         this.fps = 60;
-        this.env = new Environment(4);
+        this.env = new WorldEnvironment(4);
         this.organism_editor = new OrganismEditor();
         this.controlpanel = new ControlPanel(this);
         this.env.OriginOfLife();

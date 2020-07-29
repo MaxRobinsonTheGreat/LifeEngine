@@ -1,17 +1,19 @@
-const Organism = require("../Organism/Organism");
+const Environment = require('./Environment');
+const Organism = require('../Organism/Organism');
 const GridMap = require('../Grid/GridMap');
 const Renderer = require('../Rendering/Renderer');
 const CellTypes = require('../Organism/Cell/CellTypes');
 const EditorController = require("../Controllers/EditorController");
 const Cell = require("../Organism/Cell/Cell");
 
-class OrganismEditor {
+class OrganismEditor extends Environment{
     constructor() {
+        super(cell_size);
         this.is_active = true;
         var cell_size = 13;
-        this.grid_map = new GridMap(15, 15, cell_size);
         this.renderer = new Renderer('editor-canvas', 'editor-env', cell_size);
         this.controller = new EditorController(this, this.renderer.canvas);
+        this.grid_map = new GridMap(15, 15, cell_size);
         this.clear();
 
         this.renderer.renderFullGrid(this.grid_map.grid);
@@ -24,8 +26,7 @@ class OrganismEditor {
     }
 
     changeCell(c, r, type, owner) {
-        this.grid_map.setCellType(c, r, type);
-        this.grid_map.setCellOwner(c, r, owner);
+        super.changeCell(c, r, type, owner);
         this.renderer.renderFullGrid(this.grid_map.grid);
     }
 

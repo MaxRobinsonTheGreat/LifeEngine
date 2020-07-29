@@ -1,7 +1,7 @@
 const CellTypes = require("./CellTypes");
 const Hyperparams = require("../../Hyperparameters");
 
-// A cell exists in a grid system.
+// A cell exists in a grid map.
 class Cell{
     constructor(type, col, row, x, y){
         this.owner = null;
@@ -10,24 +10,29 @@ class Cell{
         this.row = row;
         this.x = x;
         this.y = y;
+        this.func = null;
     }
 
     setType(type) {
         this.type = type;
+        switch(this.type){
+            case CellTypes.mouth:
+                this.func = eatFood;
+                break;
+            case CellTypes.producer:
+                this.func = growFood;
+                break;
+            case CellTypes.killer:
+                this.func = killNeighbors;
+                break;
+            default:
+                this.func = null;
+        }
     }
 
     performFunction(env) {
-        switch(this.type){
-            case CellTypes.mouth:
-                eatFood(this, env);
-                break;
-            case CellTypes.producer:
-                growFood(this, env);
-                break;
-            case CellTypes.killer:
-                killNeighbors(this, env);
-                break;
-        }
+        if (this.func == null) return;
+        this.func(this, env);
     }
 
     getColor() {
