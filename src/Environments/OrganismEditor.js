@@ -66,6 +66,7 @@ class OrganismEditor extends Environment{
         var center = this.grid_map.getCenter();
         this.organism = new Organism(center[0], center[1], this, orig_org);
         this.organism.updateGrid();
+        this.controller.updateDetails();
     }
 
     getCopyOfOrg() {

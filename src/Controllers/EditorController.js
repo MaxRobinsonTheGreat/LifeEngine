@@ -32,6 +32,10 @@ class EditorController extends CanvasController{
             this.env.removeCellFromOrg(this.mouse_c, this.mouse_r);
     }
 
+    updateDetails() {
+        $('#birth-distance').val(this.env.organism.birth_distance);
+    }
+
     defineCellTypeSelection() {
         var self = this;
         $('.cell-type').click( function() {
