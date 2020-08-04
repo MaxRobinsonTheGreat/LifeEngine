@@ -115,7 +115,15 @@
 							<div class='cell-type' id='armor' title="Armor: Negates affects of killer cell."></div>
 							<button id='clear-editor'>Clear</button>
 						</div>
-						<p id='editor-cell-count'>1 cell</p>
+						<div id='editor-details'>
+							<div id='organism-details'>
+								<p id='editor-cell-count'>1 cell</p>
+							</div>
+							<div id='organism-options'>
+								<label for="birth-distance" title='The number of cells away offspring will spawn.'>Reproduction Distance:</label>
+								<input type="number" id="birth-distance" min="1" max="100" value=3 step="1">
+							</div>
+						</div>
 					</div>
 				</div>
 				<div id='hyperparameters' class='tab'>

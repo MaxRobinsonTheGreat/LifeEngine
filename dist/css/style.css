@@ -163,9 +163,9 @@ button:hover{
 }
 #editor-env {
     image-rendering: -moz-crisp-edges;
-  image-rendering: -webkit-crisp-edges;
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
     height: 195px;
     width: 195px; 
 }

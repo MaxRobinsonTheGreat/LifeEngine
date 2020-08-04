@@ -190,6 +190,7 @@ class ControlPanel {
         $('.edit-mode-btn').click( function() {
             var prev_mode = self.env_controller.mode;
             $('#cell-selections').css('display', 'none');
+            $('#organism-options').css('display', 'none');
             switch(this.id){
                 case "food-drop":
                     self.setMode(Modes.FoodDrop);
@@ -206,6 +207,7 @@ class ControlPanel {
                 case "edit":
                     self.setMode(Modes.Edit);
                     $('#cell-selections').css('display', 'block');
+                    $('#organism-options').css('display', 'block');
                     break;
                 case "drop-org":
                     self.setMode(Modes.Clone);

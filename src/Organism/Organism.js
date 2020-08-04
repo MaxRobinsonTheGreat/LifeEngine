@@ -26,6 +26,7 @@ class Organism {
         this.move_range = 4;
         this.mutability = 5;
         this.damage = 0;
+        this.birth_distance = 4;
         if (parent != null) {
             this.inherit(parent);
         }
@@ -86,6 +87,7 @@ class Organism {
     inherit(parent) {
         this.move_range = parent.move_range;
         this.mutability = parent.mutability;
+        this.birth_distance = parent.birth_distance;
         for (var c of parent.cells){
             //deep copy parent cells
             this.addCell(c.type, c.loc_col, c.loc_row);
@@ -130,12 +132,13 @@ class Organism {
         if (Math.random() * 100 <= prob) { 
             org.mutate();
         }
+        
 
         var direction = Directions.getRandomScalar();
         var direction_c = direction[0];
         var direction_r = direction[1];
         var offset = (Math.floor(Math.random() * 3));
-        var basemovement = Math.min(2+this.cells.length, 25);
+        var basemovement = this.birth_distance;//Math.min(2+this.cells.length, 25);
         var new_c = this.c + (direction_c*basemovement) + (direction_c*offset);
         var new_r = this.r + (direction_r*basemovement) + (direction_r*offset);
 
@@ -161,6 +164,7 @@ class Organism {
             var c = branch.loc_col+growth_direction[0];
             var r = branch.loc_row+growth_direction[1];
             mutated = this.addCell(type, c, r);
+            this.birth_distance++;
         }
         else if (choice <= Hyperparams.addProb + Hyperparams.changeProb){
             // change cell
@@ -177,11 +181,14 @@ class Organism {
             }
         }
 
-        if (this.is_mover) {
+        if (this.is_mover && Math.random() * 100 <= 10) { 
             this.move_range += Math.floor(Math.random() * 4) - 2;
             if (this.move_range <= 0){
                 this.move_range = 1;
-            }
+            };
+        }
+        if (Math.random() * 100 <= 10) { 
+            this.birth_distance += Math.floor(Math.random() * 4) - 2;
         }
         return mutated;
     }

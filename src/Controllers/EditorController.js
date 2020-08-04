@@ -9,6 +9,7 @@ class EditorController extends CanvasController{
         this.edit_cell_type = null;
         this.highlight_org = false;
         this.defineCellTypeSelection();
+        this.defineEditorOptions();
     }
 
     mouseMove() {
@@ -55,6 +56,13 @@ class EditorController extends CanvasController{
             var selected = '#'+this.id+'.cell-type';
             $(selected).css("border-color", "yellow");
         });
+    }
+
+    defineEditorOptions() {
+        $('#birth-distance').change ( function() {
+            this.env.organism.birth_distance = $('#birth-distance').val();
+        }.bind(this));
+        
     }
 }
 
