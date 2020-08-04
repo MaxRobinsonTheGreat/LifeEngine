@@ -157,7 +157,9 @@ button:hover{
 .edit-mode-btn#drag-view {
     background-color: #81d2c7;
 }
-
+#organism-options {
+    display: none;
+}
 #drop-org {
     bottom: 0;
 }
