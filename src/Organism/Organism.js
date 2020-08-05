@@ -188,7 +188,7 @@ class Organism {
             };
         }
         if (Math.random() * 100 <= 10) { 
-            this.birth_distance += Math.floor(Math.random() * 3) - 1;
+            this.birth_distance += Math.floor(Math.random() * 5) - 2;
             if (this.birth_distance < 1)
                 this.birth_distance = 1;
         }
