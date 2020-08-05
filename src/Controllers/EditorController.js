@@ -64,7 +64,7 @@ class EditorController extends CanvasController{
 
     defineEditorOptions() {
         $('#birth-distance').change ( function() {
-            this.env.organism.birth_distance = $('#birth-distance').val();
+            this.env.organism.birth_distance = parseInt($('#birth-distance').val());
         }.bind(this));
         
     }

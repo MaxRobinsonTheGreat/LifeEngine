@@ -138,7 +138,7 @@ class Organism {
         var direction_c = direction[0];
         var direction_r = direction[1];
         var offset = (Math.floor(Math.random() * 3));
-        var basemovement = this.birth_distance;//Math.min(2+this.cells.length, 25);
+        var basemovement = this.birth_distance;
         var new_c = this.c + (direction_c*basemovement) + (direction_c*offset);
         var new_r = this.r + (direction_r*basemovement) + (direction_r*offset);
 
@@ -188,7 +188,7 @@ class Organism {
             };
         }
         if (Math.random() * 100 <= 10) { 
-            this.birth_distance += Math.floor(Math.random() * 4) - 2;
+            this.birth_distance += Math.floor(Math.random() * 3) - 1;
             if (this.birth_distance < 1)
                 this.birth_distance = 1;
         }

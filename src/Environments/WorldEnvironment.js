@@ -62,6 +62,7 @@ class WorldEnvironment extends Environment{
 
     addOrganism(organism) {
         organism.updateGrid();
+        console.log(organism.birth_distance);
         this.total_mutability += organism.mutability;
         this.organisms.push(organism);
         if (organism.cells.length > this.largest_cell_count) 
