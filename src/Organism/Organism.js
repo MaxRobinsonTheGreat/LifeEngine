@@ -5,6 +5,7 @@ const LocalCell = require("./Cell/LocalCell");
 const Neighbors = require("../Grid/Neighbors");
 const Hyperparams = require("../Hyperparameters");
 const Directions = require("./Directions");
+const Eye = require("./Eye");
 
 const directions = [[0,1],[0,-1],[1,0],[-1,0]]
 
@@ -32,7 +33,7 @@ class Organism {
         }
     }
 
-    addCell(type, c, r) {
+    addCell(type, c, r, eye=null) {
         for (var cell of this.cells) {
             if (cell.loc_col == c && cell.loc_row == r){
                 return false;
@@ -40,7 +41,7 @@ class Organism {
         }
 
         this.checkProducerMover(type);
-        this.cells.push(new LocalCell(type, c, r));
+        this.cells.push(new LocalCell(type, c, r, eye));
         return true;
     }
 
@@ -90,7 +91,10 @@ class Organism {
         this.birth_distance = parent.birth_distance;
         for (var c of parent.cells){
             //deep copy parent cells
-            this.addCell(c.type, c.loc_col, c.loc_row);
+            if (c.type == CellTypes.eye)
+                this.addCell(c.type, c.loc_col, c.loc_row, c.eye);
+            else
+                this.addCell(c.type, c.loc_col, c.loc_row);
         }
     }
 
@@ -169,14 +173,20 @@ class Organism {
         else if (choice <= Hyperparams.addProb + Hyperparams.changeProb){
             // change cell
             var cell = this.cells[Math.floor(Math.random() * this.cells.length)];
+            if (cell.type == CellTypes.eye) {
+                delete cell.eye;
+            }
             cell.type = CellTypes.getRandomLivingType();
+            if (cell.type == CellTypes.eye) {
+                cell.eye = new Eye(cell);
+            }
             this.checkProducerMover(cell.type);
             mutated = true;
         }
         else if (choice <= Hyperparams.addProb + Hyperparams.changeProb + Hyperparams.removeProb){
             // remove cell
             if(this.cells.length > 1) {
-                cell = this.cells[Math.floor(Math.random() * this.cells.length)];
+                var cell = this.cells[Math.floor(Math.random() * this.cells.length)];
                 mutated = this.removeCell(cell.loc_col, cell.loc_row);
             }
         }
@@ -308,6 +318,9 @@ class Organism {
             var real_c = this.c + cell.rotatedCol(this.rotation);
             var real_r = this.r + cell.rotatedRow(this.rotation);
             this.env.changeCell(real_c, real_r, cell.type, this);
+            if (cell.type == CellTypes.eye){
+                this.getRealCell(cell).direction = cell.eye.getAbsoluteDirection(this.rotation);
+            }
         }
     }
 
@@ -322,9 +335,12 @@ class Organism {
         }
         for (var cell of this.cells) {
             this.getRealCell(cell).performFunction(this.env);
-        }
-        if (!this.living){
-            return this.living
+            if (!this.living){
+                return this.living
+            }
+            if (cell.type == CellTypes.eye && cell.eye == null){
+                console.log("whoe nellie");
+            }
         }
         if (this.is_mover) {
             this.move_count++;

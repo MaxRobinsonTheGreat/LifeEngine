@@ -7,9 +7,10 @@ const CellTypes = {
     mover: 5,
     killer: 6,
     armor: 7,
-    colors: ['#121D29', 'green', 'gray', 'orange', 'white', '#3493eb', 'red', 'purple'],
+    eye: 8,
+    colors: ['#121D29', 'green', 'gray', 'orange', 'white', '#3493EB', 'red', 'purple', '#8D73A3'],
     getRandomLivingType: function() {
-        return Math.floor(Math.random() * 5) + 3;
+        return Math.floor(Math.random() * 6) + 3;
     }
 }
 
