@@ -5,7 +5,8 @@ const LocalCell = require("./Cell/LocalCell");
 const Neighbors = require("../Grid/Neighbors");
 const Hyperparams = require("../Hyperparameters");
 const Directions = require("./Directions");
-const Eye = require("./Eye");
+const Eye = require("./Perception/Eye");
+const Brain = require("./Perception/Brain");
 
 const directions = [[0,1],[0,-1],[1,0],[-1,0]]
 
@@ -20,7 +21,7 @@ class Organism {
         this.cells = [];
         this.is_producer = false;
         this.is_mover = false;
-        this.direction = Directions.up;
+        this.direction = Directions.down;
         this.rotation = Directions.up;
         this.can_rotate = Hyperparams.moversCanRotate;
         this.move_count = 0;
@@ -28,6 +29,7 @@ class Organism {
         this.mutability = 5;
         this.damage = 0;
         this.birth_distance = 4;
+        this.brain = new Brain(this);
         if (parent != null) {
             this.inherit(parent);
         }
@@ -334,18 +336,23 @@ class Organism {
             this.reproduce();
         }
         for (var cell of this.cells) {
-            this.getRealCell(cell).performFunction(this.env);
-            if (!this.living){
-                return this.living
+            if (cell.type == CellTypes.eye){
+                var obs = cell.eye.look(this.getRealCol(cell), this.getRealRow(cell), this.rotation, this.env);
+                this.brain.observe(obs);
             }
-            if (cell.type == CellTypes.eye && cell.eye == null){
-                console.log("whoe nellie");
+            else {
+                this.getRealCell(cell).performFunction(this.env);
+                if (!this.living){
+                    return this.living
+                }
             }
         }
+        
         if (this.is_mover) {
             this.move_count++;
+            var changed_dir = this.brain.decide();
             var moved = this.attemptMove();
-            if (this.move_count > this.move_range){
+            if ((this.move_count > this.move_range && !changed_dir) || !moved){
                 this.attemptRotate();
             }
         }
@@ -357,6 +364,13 @@ class Organism {
         var real_c = c + local_cell.rotatedCol(rotation);
         var real_r = r + local_cell.rotatedRow(rotation);
         return this.env.grid_map.cellAt(real_c, real_r);
+    }
+
+    getRealCol(local_cell) {
+        return this.c + local_cell.rotatedCol(this.rotation);
+    }
+    getRealRow(local_cell) {
+        return this.r + local_cell.rotatedRow(this.rotation);
     }
 
 }
