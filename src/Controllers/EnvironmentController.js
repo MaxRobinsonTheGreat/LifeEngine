@@ -94,6 +94,7 @@ class EnvironmentController extends CanvasController{
                     }
                     if (this.cur_org != null){
                         this.control_panel.setEditorOrganism(this.cur_org);
+                        console.log(this.cur_org)
                     }
                     break;
 
@@ -139,7 +140,7 @@ class EnvironmentController extends CanvasController{
             var c = this.cur_cell.col + loc[0];
             var r = this.cur_cell.row + loc[1];
             var cell = this.env.grid_map.cellAt(c, r);
-            if (cell.owner != null)
+            if (cell != null && cell.owner != null)
                 return cell.owner;
         }
         return null;
@@ -150,7 +151,7 @@ class EnvironmentController extends CanvasController{
             var c = this.cur_cell.col + loc[0];
             var r = this.cur_cell.row + loc[1];
             var cell = this.env.grid_map.cellAt(c, r);
-            if (cell.owner != null)
+            if (cell != null && cell.owner != null)
                 cell.owner.die();
         }
     }

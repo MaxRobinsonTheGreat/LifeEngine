@@ -5,7 +5,10 @@ const Directions = require("../Directions");
 const Decision = {
     neutral: 0,
     retreat: 1,
-    chase: 2
+    chase: 2,
+    getRandom: function(){
+        return Math.floor(Math.random() * 3);
+    }
 }
 
 class Brain {
@@ -16,7 +19,7 @@ class Brain {
         // corresponds to CellTypes
         this.decisions = [
             Decision.neutral, // empty
-            Decision.chase, // food
+            Decision.chase,   // food
             Decision.neutral, // wall
             Decision.neutral, // mouth
             Decision.neutral, // producer
@@ -27,19 +30,19 @@ class Brain {
         ];
     }
 
-    observe(observation){
+    observe(observation) {
         this.observations.push(observation);
     }
 
-    decide(){
+    decide() {
         var decision = Decision.neutral;
         var closest = Hyperparams.lookRange + 1;
         var move_direction = 0;
         for (var obs of this.observations) {
-            if (obs.cell == null || obs.cell.owner == this.owner){
+            if (obs.cell == null || obs.cell.owner == this.owner) {
                 continue;
             }
-            if (obs.distance < closest){
+            if (obs.distance < closest) {
                 decision = this.decisions[obs.cell.type];
                 move_direction = obs.direction;
                 closest = obs.distance;
@@ -47,16 +50,19 @@ class Brain {
         }
         this.observations = [];
         if (decision == Decision.chase) {
-            this.owner.direction = move_direction;
-            this.owner.move_count = 0;
+            this.owner.changeDirection(move_direction);
             return true;
         }
         else if (decision == Decision.retreat) {
-            this.owner.direction = Directions.getOppositeDirection(move_direction);
-            this.owner.move_count = 0;
+            this.owner.changeDirection(Directions.getOppositeDirection(move_direction));
             return true;
         }
         return false;
+    }
+
+    mutate() {
+        var selection = Math.floor(Math.random() * (this.decisions.length-1))+1;
+        this.decisions[selection] = Decision.getRandom();
     }
 }
 

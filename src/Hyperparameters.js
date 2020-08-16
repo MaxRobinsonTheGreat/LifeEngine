@@ -23,19 +23,7 @@ const Hyperparams = {
 
         this.instaKill = false;
 
-        this.lookRange = 5;
-    },
-
-    // calculates the optimal ratio where a producer cell is most likely to produce 1 food in its lifespan * a scalar of my choice :)
-    calcProducerFoodRatio : function(lifespan_fixed=true) {
-        if (lifespan_fixed) {
-            // change the foodProdProb
-            this.foodProdProb = (100 / this.lifespanMultiplier) * this.foodProdProbScalar;
-        }
-        else {
-            // change the lifespanMultiplier
-            this.lifespanMultiplier = Math.floor(100 / (this.foodProdProb/this.foodProdProbScalar));
-        }
+        this.lookRange = 15;
     },
 
     balanceMutationProbs : function(choice) {

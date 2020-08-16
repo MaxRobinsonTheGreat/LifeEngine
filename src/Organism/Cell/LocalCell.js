@@ -10,7 +10,7 @@ class LocalCell{
         this.loc_col = loc_col;
         this.loc_row = loc_row;
         if (this.type == CellTypes.eye){
-            this.eye = new Eye(this);
+            this.eye = new Eye();
             if (eye != null) {
                 this.eye.direction = eye.direction;
             }

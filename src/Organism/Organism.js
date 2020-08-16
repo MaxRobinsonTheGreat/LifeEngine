@@ -21,6 +21,7 @@ class Organism {
         this.cells = [];
         this.is_producer = false;
         this.is_mover = false;
+        this.has_eyes = false;
         this.direction = Directions.down;
         this.rotation = Directions.up;
         this.can_rotate = Hyperparams.moversCanRotate;
@@ -42,7 +43,7 @@ class Organism {
             }
         }
 
-        this.checkProducerMover(type);
+        this.checkTypeChange(type);
         this.cells.push(new LocalCell(type, c, r, eye));
         return true;
     }
@@ -65,7 +66,7 @@ class Organism {
             this.is_producer = false;
             this.is_producer = false;
             for (var cell of this.cells) {
-                this.checkProducerMover(cell.type);
+                this.checkTypeChange(cell.type);
             }
         }
         return true;
@@ -80,11 +81,13 @@ class Organism {
         return null;
     }
 
-    checkProducerMover(type) {
+    checkTypeChange(type) {
         if (type == CellTypes.producer)
             this.is_producer = true;
         if (type == CellTypes.mover)
             this.is_mover = true;
+        if (type == CellTypes.eye)
+            this.has_eyes = true;
     }
 
     inherit(parent) {
@@ -93,10 +96,16 @@ class Organism {
         this.birth_distance = parent.birth_distance;
         for (var c of parent.cells){
             //deep copy parent cells
-            if (c.type == CellTypes.eye)
+            if (c.type == CellTypes.eye){
                 this.addCell(c.type, c.loc_col, c.loc_row, c.eye);
+            }
             else
                 this.addCell(c.type, c.loc_col, c.loc_row);
+        }
+        if(parent.is_mover) {
+            for (var i in parent.brain.decisions) {
+                this.brain.decisions[i] = parent.brain.decisions[i];
+            }
         }
     }
 
@@ -180,9 +189,9 @@ class Organism {
             }
             cell.type = CellTypes.getRandomLivingType();
             if (cell.type == CellTypes.eye) {
-                cell.eye = new Eye(cell);
+                cell.eye = new Eye();
             }
-            this.checkProducerMover(cell.type);
+            this.checkTypeChange(cell.type);
             mutated = true;
         }
         else if (choice <= Hyperparams.addProb + Hyperparams.changeProb + Hyperparams.removeProb){
@@ -203,6 +212,9 @@ class Organism {
             this.birth_distance += Math.floor(Math.random() * 5) - 2;
             if (this.birth_distance < 1)
                 this.birth_distance = 1;
+        }
+        if (this.is_mover && this.has_eyes && Math.random() * 100 <= 10) { 
+            this.brain.mutate();
         }
         return mutated;
     }
@@ -247,6 +259,11 @@ class Organism {
             return true;
         }
         return false;
+    }
+
+    changeDirection(dir) {
+        this.direction = dir;
+        this.move_count = 0;
     }
 
     // assumes either c1==c2 or r1==r2, returns true if there is a clear path from point a to b
@@ -320,7 +337,7 @@ class Organism {
             var real_c = this.c + cell.rotatedCol(this.rotation);
             var real_r = this.r + cell.rotatedRow(this.rotation);
             this.env.changeCell(real_c, real_r, cell.type, this);
-            if (cell.type == CellTypes.eye){
+            if (cell.type == CellTypes.eye) {
                 this.getRealCell(cell).direction = cell.eye.getAbsoluteDirection(this.rotation);
             }
         }

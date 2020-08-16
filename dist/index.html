@@ -17,9 +17,13 @@
 		</div>
 		<div class='control-panel'>
 			<div id='speed-controller' class='control-set'>
-				<div id='view-controls'>
+				<div class='vertical-buttons'>
 					<button class="reset-view" title="Reset View"><i class="fa fa-video-camera"></i></button>
 					<button class="edit-mode-btn" id="drag-view" title="Drag View"><i class="fa fa-arrows"></i></button>
+					<button class="edit-mode-btn" id="wall-drop" title="Drop/Remove Wall"><i class="fa fa-square"></i></button>
+					<button class="edit-mode-btn" id="food-drop" title="Drop/Remove Food"><i class="fa fa-cutlery"></i></button>
+					<button class="edit-mode-btn" id="click-kill" title="Click to kill"><i class="fa fa-bolt"></i></button>
+					<button id="clear-walls" title="Clear All Walls"><i class="fa fa-window-close"></i></button>
 				</div>
 				<h2>Simulation Speed</h2>
 				<input id="slider" type="range" min="1" max="300" value="60">
@@ -89,21 +93,12 @@
 				</div>
 
 				<div id='editor' class='tab'>
-					<div class='left-half'>
-						<h2>Editor</h2>
-
-						<button class="edit-mode-btn" id="wall-drop" title="Drop/Remove Wall"><i class="fa fa-square"></i></button>
-						<button class="edit-mode-btn" id="food-drop" title="Drop/Remove Food"><i class="fa fa-cutlery"></i></button>
-						<button class="edit-mode-btn" id="click-kill" title="Click to kill"><i class="fa fa-bolt"></i></button>
-
-						<br><br/>
-						<button id="clear-walls" title="Clear All Walls"><i class="fa fa-window-close"></i></button>
-
-					</div>
-					<div class='right-half' id='editor-panel'>
-						<button class="edit-mode-btn" id="select" title="Select organism from world"><i class="fa fa-hand-pointer-o"></i></button>
-						<button class="edit-mode-btn" id="edit" title="Edit organism"><i class="fa fa-pencil"></i></button>
-						<button class="edit-mode-btn" id="drop-org" title="Drop organism in world"><i class="fa fa-plus"></i></button>
+					<div class='left-half' id='editor-panel'>
+						<div class='editor-buttons'>
+							<button class="edit-mode-btn" id="select" title="Select organism from world"><i class="fa fa-hand-pointer-o"></i></button>
+							<button class="edit-mode-btn" id="edit" title="Edit organism"><i class="fa fa-pencil"></i></button>
+							<button class="edit-mode-btn" id="drop-org" title="Drop organism in world"><i class="fa fa-plus"></i></button>
+						</div>
 						<div id='editor-env'>
 							<canvas id='editor-canvas'></canvas>
 						</div>
@@ -113,8 +108,12 @@
 							<div class='cell-type' id='mover' title="Mover: Allows for movement and rotation."></div>
 							<div class='cell-type' id='killer' title="Killer: Harms oranisms in adjacent cells."></div>
 							<div class='cell-type' id='armor' title="Armor: Negates affects of killer cell."></div>
+							<div class='cell-type' id='eye' title="Eye: Looks for cells to move away from or towards"></div>
 							<button id='clear-editor'>Clear</button>
 						</div>
+						
+					</div>
+					<div class='right-half'>
 						<div id='editor-details'>
 							<div id='organism-details'>
 								<p id='editor-cell-count'>1 cell</p>
@@ -136,22 +135,21 @@
 						<label for="lifespan-multiplier" title='An organism lives for this many ticks per cell in its body.'>Lifespan multiplier:</label>
 						<input type="number" id="lifespan-multiplier" min="1" max="10000" value=100 step="1">
 						<br>
-						<label for="fixed-ratio" title='When on, the food production probability and lifespan multiplier obey a fixed ratio.'>Use fixed ratio</label>
-						<input type="checkbox" id="fixed-ratio" checked>
-						<h4>Organism Rotation</h4>
 						<label for="mover-rot" title='Movers rotate randomly when they change directions.'>Movers can rotate</label>
 						<input type="checkbox" id="mover-rot" checked>
 						<br>
 						<label for="offspring-rot" title='Offspring will randomly rotate'>Offspring rotate</label>
 						<input type="checkbox" id="offspring-rot" checked>
 						<br>
-						<h4>Killer Cell Effects</h4>
 						<label for="insta-kill" title='When on, killer cells immediatly kill organisms they touch. When off, organisms have as much health as they have cells and only take 1 damage from killer cells.'>One touch kill</label>
 						<input type="checkbox" id="insta-kill">
+						<br>
+						<label for="look-range" title='How far an eye cell can see (in number of cells)'>Look range:</label>
+						<input type="number" id="look-range" min="1" max="50" value=10 step="1">
 						
 					</div>
 					<div class='right-half'>
-						<br><br/>
+						<button id='reset-rules'>Reset all controls</button>
 						<h4>Mutation Rate</h4>
 						<label for="evolved-mutation" title='When on, each organism has its own mutation rate that can increase or decrease. When off, all organisms have the same mutation rate.'>Use evolved mutation rate</label>
 						<input type="checkbox" id="evolved-mutation" checked> </br>
@@ -171,7 +169,7 @@
 						<label for="food-blocks" title='When on, reproduction will fail if offspring intersect with food. When off, offspring will remove blocking food.'>Food blocks reproduction</label>
 						<input type="checkbox" id="food-blocks" checked>
 						<br>
-						<button id='reset-rules'>Reset all controls</button>
+						
 					</div>
 				</div>
 				<div id='stats' class='tab'>

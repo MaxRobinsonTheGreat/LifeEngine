@@ -21,6 +21,13 @@ const Directions = {
             case this.right:
                 return this.left;
         }
+    },
+    rotateRight: function(dir) {
+        dir++;
+        if (dir > 3){
+            dir = 0;
+        }
+        return dir;
     }
 }
 

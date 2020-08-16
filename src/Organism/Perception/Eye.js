@@ -4,12 +4,11 @@ const CellTypes = require("../Cell/CellTypes");
 const Observation = require("./Observation")
 
 class Eye {
-    constructor(loc_cell, direction=-1) {
+    constructor(direction=-1) {
         this.direction = direction;
         if (direction == -1){
             this.direction = Directions.getRandomDirection();
         }
-        this.loc_cell = loc_cell
     }
 
     getAbsoluteDirection(parent_dir) {
@@ -44,7 +43,7 @@ class Eye {
             col+=addCol;
             row+=addRow;
             cell = env.grid_map.cellAt(col, row);
-            if (cell == null){
+            if (cell == null) {
                 break;
             }
             if (cell.type != CellTypes.empty){

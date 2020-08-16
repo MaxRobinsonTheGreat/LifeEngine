@@ -8,7 +8,8 @@ const CellTypes = {
     killer: 6,
     armor: 7,
     eye: 8,
-    colors: ['#121D29', 'green', 'gray', 'orange', 'white', '#3493EB', 'red', 'purple', '#8D73A3'],
+    colors: ['#121D29', 'green', 'gray', 'orange', 'white', '#3493EB', 'red', 'purple', '#d4bb3f'],
+    names: ['Empty', 'Food', 'Wall', 'Mouth', 'Producer', 'Mover', 'Killer', 'Armor', 'Eye'],
     getRandomLivingType: function() {
         return Math.floor(Math.random() * 6) + 3;
     }

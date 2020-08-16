@@ -28,7 +28,6 @@ class ControlPanel {
         $('#maximize').click ( function() {
             $('.control-panel').css('display', 'grid');
             $('.hot-controls').css('display', 'none');
-
         });
     }
 
@@ -89,26 +88,11 @@ class ControlPanel {
 
     defineHyperparameterControls() {
         $('#food-prod-prob').change(function() {
-            var food_prob = $('#food-prod-prob').val();
-            if ($('#fixed-ratio').is(":checked")) {
-                Hyperparams.foodProdProb = food_prob;
-                Hyperparams.calcProducerFoodRatio(false);
-                $('#lifespan-multiplier').val(Hyperparams.lifespanMultiplier);
-            }
-            else{
-                Hyperparams.foodProdProb = food_prob;
-            }
+            var food_prob = 
+            Hyperparams.foodProdProb = $('#food-prod-prob').val();;
         }.bind(this));
         $('#lifespan-multiplier').change(function() {
-            var lifespan = $('#lifespan-multiplier').val();
-            if ($('#fixed-ratio').is(":checked")) {
-                Hyperparams.lifespanMultiplier = lifespan;
-                Hyperparams.calcProducerFoodRatio(true);
-                $('#food-prod-prob').val(Hyperparams.foodProdProb);
-            }
-            else {
-                Hyperparams.lifespanMultiplier = lifespan;
-            }
+            Hyperparams.lifespanMultiplier = $('#lifespan-multiplier').val();
         }.bind(this));
 
         $('#mover-rot').change(function() {
@@ -119,6 +103,9 @@ class ControlPanel {
         });
         $('#insta-kill').change(function() {
             Hyperparams.instaKill = this.checked;
+        });
+        $('#look-range').change(function() {
+            Hyperparams.lookRange = $('#look-range').val();
         });
 
         $('#evolved-mutation').change( function() {
@@ -164,7 +151,6 @@ class ControlPanel {
             Hyperparams.setDefaults();
             $('#food-prod-prob').val(Hyperparams.foodProdProb);
             $('#lifespan-multiplier').val(Hyperparams.lifespanMultiplier);
-            $('#fixed-ratio').prop('checked', true);
             $('#mover-rot').prop('checked', Hyperparams.moversCanRotate);
             $('#offspring-rot').prop('checked', Hyperparams.offspringRotate);
             $('#insta-kill').prop('checked', Hyperparams.instaKill);

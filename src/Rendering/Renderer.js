@@ -34,8 +34,7 @@ class Renderer {
     renderFullGrid(grid) {
         for (var col of grid) {
             for (var cell of col){
-                this.ctx.fillStyle = cell.getColor();
-                this.ctx.fillRect(cell.x, cell.y, this.cell_size, this.cell_size);
+                this.renderCell(cell);
             }
         }
     }
@@ -66,31 +65,17 @@ class Renderer {
             //odd
             var w = 1;
         }
-        var halfInt = Math.floor(this.cell_size/2);
+        var halfInt = Math.ceil(this.cell_size/2);
         var halfFloat = this.cell_size/2;
-        var h = this.cell_size/3;
+        var h = this.cell_size/2 + this.cell_size/4;
         var x = cell.x + h - Math.floor(w/2);
         var y = cell.y;
         
 
         this.ctx.translate(cell.x+halfFloat, cell.y+halfFloat);
-        this.ctx.rotate(cell.direction * 90 * Math.PI / 180);
-        // switch(cell.direction) {
-        //     case Directions.up:
-        //         this.ctx.rotate(90 * Math.PI / 180);
-        //         break;
-        //     case Directions.right:
-        //         this.ctx.rotate(Math.PI / 180);
-        //         break;
-        //     case Directions.down:
-        //         this.ctx.rotate(180 * Math.PI / 180);
-        //         break;
-        //     case Directions.left:
-        //         this.ctx.rotate(270 * Math.PI / 180);
-        //         break;
-        // }
-        this.ctx.fillStyle = '#FFFC5E';
-        this.ctx.fillRect(-halfFloat, -halfFloat, this.cell_size, h);
+        this.ctx.rotate((cell.direction * 90) * Math.PI / 180);
+        this.ctx.fillStyle = '#121D29';
+        this.ctx.fillRect(-(this.cell_size)/8, -halfFloat, this.cell_size/4, h);
         this.ctx.setTransform(1, 0, 0, 1, 0, 0);
     }
 

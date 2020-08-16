@@ -20,9 +20,9 @@ body{
     text-align: center;
     transform: scale(1);
     image-rendering: -moz-crisp-edges;
-  image-rendering: -webkit-crisp-edges;
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
 }
 
 #env-canvas {
@@ -91,9 +91,14 @@ button:hover{
     grid-column: 1;
 }
 
-#view-controls {
+.vertical-buttons {
     float:right;
-    padding: 10px;
+    display: grid;
+    grid-template-rows: 2;
+    grid-template-columns: 1;
+}
+.editor-buttons {
+    display: block;
 }
 
 .col-row-input {
@@ -154,6 +159,9 @@ button:hover{
     width: 30px;
     height: 30px;
 }
+.edit-mode-btn:hover{
+    background-color: #81d2c7;
+}
 .edit-mode-btn#drag-view {
     background-color: #81d2c7;
 }
@@ -212,6 +220,9 @@ button:hover{
 }
 #armor{
     background-color: purple;
+}
+#eye{
+    background-color: #d4bb3f;
 }
 #food{
     background-color: green;

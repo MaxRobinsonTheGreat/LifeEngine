@@ -5,6 +5,8 @@ const Renderer = require('../Rendering/Renderer');
 const CellTypes = require('../Organism/Cell/CellTypes');
 const EditorController = require("../Controllers/EditorController");
 const Cell = require("../Organism/Cell/Cell");
+const Eye = require('../Organism/Perception/Eye');
+const Directions = require('../Organism/Directions');
 
 class OrganismEditor extends Environment{
     constructor() {
@@ -37,6 +39,11 @@ class OrganismEditor extends Environment{
         var loc_r = r - center[1];
         var prev_cell = this.organism.getLocalCell(loc_c, loc_r)
         if (prev_cell != null) {
+            console.log(prev_cell.type)
+            if (type == CellTypes.eye && prev_cell.type != CellTypes.eye){
+                prev_cell.eye = new Eye(Directions.up);
+                
+            }
             prev_cell.type = type;
             this.changeCell(c, r, type, this.organism);
         }
