@@ -1,5 +1,5 @@
-const Cell = require('../Organism/Cell/Cell');
-const CellTypes = require('../Organism/Cell/CellTypes');
+const Cell = require('../Organism/Cell/GridCell');
+const CellStates = require('../Organism/Cell/CellStates');
 
 class GridMap {
     constructor(cols, rows, cell_size) {
@@ -14,18 +14,19 @@ class GridMap {
         for(var c=0; c<cols; c++) {
             var row = [];
             for(var r=0; r<rows; r++) {
-                var cell = new Cell(CellTypes.empty, c, r, c*cell_size, r*cell_size);
+                var cell = new Cell(CellStates.empty, c, r, c*cell_size, r*cell_size);
                 row.push(cell);
             }            
             this.grid.push(row);
         }
     }
 
-    fillGrid(type) {
+    fillGrid(state) {
         for (var col of this.grid) {
             for (var cell of col) {
-                cell.setType(type);
+                cell.setType(state);
                 cell.owner = null;
+                cell.cell_owner = null;
             }
         }
     }
@@ -37,18 +38,22 @@ class GridMap {
         return this.grid[col][row];
     }
 
-    setCellType(col, row, type) {
+    setCellType(col, row, state) {
         if (!this.isValidLoc(col, row)) {
             return;
         }
-        this.grid[col][row].setType(type);
+        this.grid[col][row].setType(state);
     }
 
-    setCellOwner(col, row, owner) {
+    setCellOwner(col, row, cell_owner) {
         if (!this.isValidLoc(col, row)) {
             return;
         }
-        this.grid[col][row].owner = owner;
+        this.grid[col][row].cell_owner = cell_owner;
+        if (cell_owner != null)
+            this.grid[col][row].owner = cell_owner.org;
+        else 
+            this.grid[col][row].owner = null;
     }
 
     isValidLoc(col, row){

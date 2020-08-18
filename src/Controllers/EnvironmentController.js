@@ -1,9 +1,9 @@
 const CanvasController = require("./CanvasController");
 const Organism = require('../Organism/Organism');
 const Modes = require("./ControlModes");
-const CellTypes = require("../Organism/Cell/CellTypes");
+const CellStates = require("../Organism/Cell/CellStates");
 const Neighbors = require("../Grid/Neighbors");
-const Cell = require("../Organism/Cell/Cell");
+const Cell = require("../Organism/Cell/GridCell");
 
 class EnvironmentController extends CanvasController{
     constructor(env, canvas) {
@@ -69,19 +69,19 @@ class EnvironmentController extends CanvasController{
             switch(mode) {
                 case Modes.FoodDrop:
                     if (left_click){
-                        this.dropCellType(cell.col, cell.row, CellTypes.food, false);
+                        this.dropCellType(cell.col, cell.row, CellStates.food, false);
                     }
                     else if (right_click){
-                        this.dropCellType(cell.col, cell.row, CellTypes.empty, false);
+                        this.dropCellType(cell.col, cell.row, CellStates.empty, false);
                     }
                     break;
                 case Modes.WallDrop:
                         if (left_click){
-                            this.dropCellType(cell.col, cell.row, CellTypes.wall, true);
+                            this.dropCellType(cell.col, cell.row, CellStates.wall, true);
 
                         }
                         else if (right_click){
-                            this.dropCellType(cell.col, cell.row, CellTypes.empty, false);
+                            this.dropCellType(cell.col, cell.row, CellStates.empty, false);
                         }
                         break;
                 case Modes.ClickKill:
@@ -118,7 +118,7 @@ class EnvironmentController extends CanvasController{
         }
     }
 
-    dropCellType(col, row, type, killBlocking=false) {
+    dropCellType(col, row, state, killBlocking=false) {
         for (var loc of Neighbors.allSelf){
             var c=col + loc[0];
             var r=row + loc[1];
@@ -131,7 +131,7 @@ class EnvironmentController extends CanvasController{
             else if (cell.owner != null) {
                 continue;
             }
-            this.env.changeCell(c, r, type, null);
+            this.env.changeCell(c, r, state, null);
         }
     }
 

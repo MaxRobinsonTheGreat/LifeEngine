@@ -1,11 +1,9 @@
-const CellTypes = require("./Cell/CellTypes");
-const Cell = require("./Cell/Cell");
-const GridMap = require("../Grid/GridMap");
-const LocalCell = require("./Cell/LocalCell");
+// const CellTypes = require("./Cell/CellTypes");
+const CellStates = require("../Organism/Cell/CellStates");
+const BodyCellFactory = require("./Cell/BodyCells/BodyCellFactory");
 const Neighbors = require("../Grid/Neighbors");
 const Hyperparams = require("../Hyperparameters");
 const Directions = require("./Directions");
-const Eye = require("./Perception/Eye");
 const Brain = require("./Perception/Brain");
 
 const directions = [[0,1],[0,-1],[1,0],[-1,0]]
@@ -36,39 +34,54 @@ class Organism {
         }
     }
 
-    addCell(type, c, r, eye=null) {
+    canAddCellAt(c, r) {
         for (var cell of this.cells) {
             if (cell.loc_col == c && cell.loc_row == r){
                 return false;
             }
         }
-
-        this.checkTypeChange(type);
-        this.cells.push(new LocalCell(type, c, r, eye));
         return true;
     }
 
-    removeCell(c, r) {
-        if (c == 0 && r == 0)
+    addDefaultCell(state, c, r) {
+        var new_cell = BodyCellFactory.createDefault(this, state, c, r);
+        this.cells.push(new_cell);
+        return new_cell;
+    }
+
+    addRandomizedCell(state, c, r) {
+        var new_cell = BodyCellFactory.createRandom(this, state, c, r);
+        this.cells.push(new_cell);
+        return new_cell;
+    }
+
+    addInheritCell(parent_cell) {
+        var new_cell = BodyCellFactory.createInherited(this, parent_cell);
+        this.cells.push(new_cell);
+        return new_cell;
+    }
+
+    replaceCell(state, c, r, randomize=true) {
+        this.removeCell(c, r, true);
+        if (randomize) {
+            return this.addRandomizedCell(state, c, r);
+        }
+        else {
+            return this.addDefaultCell(state, c, r);
+        }
+    }
+
+    removeCell(c, r, override_defense=false) {
+        if (c == 0 && r == 0 && !override_defense)
             return false;
-        var check_change = false;
         for (var i=0; i<this.cells.length; i++) {
             var cell = this.cells[i];
             if (cell.loc_col == c && cell.loc_row == r){
-                if (cell.type == CellTypes.producer || cell.type == CellTypes.mover) {
-                    check_change = true;
-                }
                 this.cells.splice(i, 1);
                 break;
             }
         }
-        if (check_change) {
-            this.is_producer = false;
-            this.is_producer = false;
-            for (var cell of this.cells) {
-                this.checkTypeChange(cell.type);
-            }
-        }
+        this.checkTypeChange(cell.state);
         return true;
     }
 
@@ -81,13 +94,18 @@ class Organism {
         return null;
     }
 
-    checkTypeChange(type) {
-        if (type == CellTypes.producer)
-            this.is_producer = true;
-        if (type == CellTypes.mover)
-            this.is_mover = true;
-        if (type == CellTypes.eye)
-            this.has_eyes = true;
+    checkTypeChange() {
+        this.is_producer = false;
+        this.is_mover = false;
+        this.has_eyes = false;
+        for (var cell of this.cells) {
+            if (cell.state == CellStates.producer)
+                this.is_producer = true;
+            if (cell.state == CellStates.mover)
+                this.is_mover = true;
+            if (cell.state == CellStates.eye)
+                this.has_eyes = true;
+        }
     }
 
     inherit(parent) {
@@ -96,11 +114,7 @@ class Organism {
         this.birth_distance = parent.birth_distance;
         for (var c of parent.cells){
             //deep copy parent cells
-            if (c.type == CellTypes.eye){
-                this.addCell(c.type, c.loc_col, c.loc_row, c.eye);
-            }
-            else
-                this.addCell(c.type, c.loc_col, c.loc_row);
+            this.addInheritCell(c);
         }
         if(parent.is_mover) {
             for (var i in parent.brain.decisions) {
@@ -172,30 +186,32 @@ class Organism {
         var mutated = false;
         if (choice <= Hyperparams.addProb) {
             // add cell
-            var type = CellTypes.getRandomLivingType();
-            var num_to_add = Math.floor(Math.random() * 3) + 1;
+            // console.log("add cell")
+
+            var state = CellStates.getRandomLivingType();
             var branch = this.cells[Math.floor(Math.random() * this.cells.length)];
             var growth_direction = Neighbors.all[Math.floor(Math.random() * Neighbors.all.length)]
             var c = branch.loc_col+growth_direction[0];
             var r = branch.loc_row+growth_direction[1];
-            mutated = this.addCell(type, c, r);
+            // mutated = this.addCell(state, c, r);
+            if (this.canAddCellAt(c, r)){
+                mutated = true;
+                this.addRandomizedCell(state, c, r);
+            }
             this.birth_distance++;
         }
         else if (choice <= Hyperparams.addProb + Hyperparams.changeProb){
             // change cell
             var cell = this.cells[Math.floor(Math.random() * this.cells.length)];
-            if (cell.type == CellTypes.eye) {
-                delete cell.eye;
-            }
-            cell.type = CellTypes.getRandomLivingType();
-            if (cell.type == CellTypes.eye) {
-                cell.eye = new Eye();
-            }
-            this.checkTypeChange(cell.type);
+            var state = CellStates.getRandomLivingType();
+            // console.log("change cell", state)
+            this.replaceCell(state, cell.loc_col, cell.loc_row);
             mutated = true;
         }
         else if (choice <= Hyperparams.addProb + Hyperparams.changeProb + Hyperparams.removeProb){
             // remove cell
+            // console.log("remove cell")
+
             if(this.cells.length > 1) {
                 var cell = this.cells[Math.floor(Math.random() * this.cells.length)];
                 mutated = this.removeCell(cell.loc_col, cell.loc_row);
@@ -229,7 +245,7 @@ class Organism {
             for (var cell of this.cells) {
                 var real_c = this.c + cell.rotatedCol(this.rotation);
                 var real_r = this.r + cell.rotatedRow(this.rotation);
-                this.env.changeCell(real_c, real_r, CellTypes.empty, null);
+                this.env.changeCell(real_c, real_r, CellStates.empty, null);
             }
             this.c = new_c;
             this.r = new_r;
@@ -250,7 +266,7 @@ class Organism {
             for (var cell of this.cells) {
                 var real_c = this.c + cell.rotatedCol(this.rotation);
                 var real_r = this.r + cell.rotatedRow(this.rotation);
-                this.env.changeCell(real_c, real_r, CellTypes.empty, null);
+                this.env.changeCell(real_c, real_r, CellStates.empty, null);
             }
             this.rotation = new_rotation;
             this.direction = Directions.getRandomDirection();
@@ -299,7 +315,7 @@ class Organism {
     }
 
     isPassableCell(cell, parent){
-        return cell != null && (cell.type == CellTypes.empty || cell.owner == this || cell.owner == parent || cell.type == CellTypes.food);
+        return cell != null && (cell.state == CellStates.empty || cell.owner == this || cell.owner == parent || cell.state == CellStates.food);
     }
 
     isClear(col, row, rotation=this.rotation) {
@@ -308,7 +324,7 @@ class Organism {
             if(cell==null) {
                 return false;
             }
-            if (cell.owner==this || cell.type==CellTypes.empty || (!Hyperparams.foodBlocksReproduction && cell.type==CellTypes.food)){
+            if (cell.owner==this || cell.state==CellStates.empty || (!Hyperparams.foodBlocksReproduction && cell.state==CellStates.food)){
                 continue;
             }
             return false;
@@ -327,7 +343,7 @@ class Organism {
         for (var cell of this.cells) {
             var real_c = this.c + cell.rotatedCol(this.rotation);
             var real_r = this.r + cell.rotatedRow(this.rotation);
-            this.env.changeCell(real_c, real_r, CellTypes.food, null);
+            this.env.changeCell(real_c, real_r, CellStates.food, null);
         }
         this.living = false;
     }
@@ -336,10 +352,7 @@ class Organism {
         for (var cell of this.cells) {
             var real_c = this.c + cell.rotatedCol(this.rotation);
             var real_r = this.r + cell.rotatedRow(this.rotation);
-            this.env.changeCell(real_c, real_r, cell.type, this);
-            if (cell.type == CellTypes.eye) {
-                this.getRealCell(cell).direction = cell.eye.getAbsoluteDirection(this.rotation);
-            }
+            this.env.changeCell(real_c, real_r, cell.state, cell);
         }
     }
 
@@ -353,16 +366,9 @@ class Organism {
             this.reproduce();
         }
         for (var cell of this.cells) {
-            if (cell.type == CellTypes.eye){
-                var obs = cell.eye.look(this.getRealCol(cell), this.getRealRow(cell), this.rotation, this.env);
-                this.brain.observe(obs);
-            }
-            else {
-                this.getRealCell(cell).performFunction(this.env);
-                if (!this.living){
-                    return this.living
-                }
-            }
+            cell.performFunction();
+            if (!this.living)
+                return this.living
         }
         
         if (this.is_mover) {
@@ -381,13 +387,6 @@ class Organism {
         var real_c = c + local_cell.rotatedCol(rotation);
         var real_r = r + local_cell.rotatedRow(rotation);
         return this.env.grid_map.cellAt(real_c, real_r);
-    }
-
-    getRealCol(local_cell) {
-        return this.c + local_cell.rotatedCol(this.rotation);
-    }
-    getRealRow(local_cell) {
-        return this.r + local_cell.rotatedRow(this.rotation);
     }
 
 }

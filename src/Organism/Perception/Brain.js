@@ -1,6 +1,6 @@
-const CellTypes = require("../Cell/CellTypes");
 const Hyperparams = require("../../Hyperparameters");
 const Directions = require("../Directions");
+const CellStates = require("../Cell/CellStates");
 
 const Decision = {
     neutral: 0,
@@ -17,17 +17,17 @@ class Brain {
         this.observations = [];
 
         // corresponds to CellTypes
-        this.decisions = [
-            Decision.neutral, // empty
-            Decision.chase,   // food
-            Decision.neutral, // wall
-            Decision.neutral, // mouth
-            Decision.neutral, // producer
-            Decision.neutral, // mover
-            Decision.retreat, // killer
-            Decision.neutral, // armor
-            Decision.neutral, // eye
-        ];
+        this.decisions = [];
+        this.decisions[CellStates.empty.name] = Decision.neutral;
+        this.decisions[CellStates.food.name] = Decision.chase;
+        this.decisions[CellStates.wall.name] = Decision.neutral;
+        this.decisions[CellStates.mouth.name] = Decision.neutral;
+        this.decisions[CellStates.producer.name] = Decision.neutral;
+        this.decisions[CellStates.mover.name] = Decision.neutral;
+        this.decisions[CellStates.killer.name] = Decision.retreat;
+        this.decisions[CellStates.armor.name] = Decision.neutral;
+        this.decisions[CellStates.eye.name] = Decision.neutral;
+        
     }
 
     observe(observation) {
@@ -43,7 +43,9 @@ class Brain {
                 continue;
             }
             if (obs.distance < closest) {
-                decision = this.decisions[obs.cell.type];
+                // console.log(obs.cell.state)
+                decision = this.decisions[obs.cell.state.name];
+                // console.log(decision)
                 move_direction = obs.direction;
                 closest = obs.distance;
             }
@@ -61,8 +63,8 @@ class Brain {
     }
 
     mutate() {
-        var selection = Math.floor(Math.random() * (this.decisions.length-1))+1;
-        this.decisions[selection] = Decision.getRandom();
+        this.decisions[CellStates.getRandomName()] = Decision.getRandom();
+        this.decisions[CellStates.empty.name] = Decision.neutral; // if the empty cell has a decision it gets weird
     }
 }
 

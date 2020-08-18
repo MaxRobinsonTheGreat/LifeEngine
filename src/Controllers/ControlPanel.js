@@ -1,6 +1,5 @@
 const Hyperparams = require("../Hyperparameters");
 const Modes = require("./ControlModes");
-const CellTypes = require("../Organism/Cell/CellTypes");
 
 class ControlPanel {
     constructor(engine) {
