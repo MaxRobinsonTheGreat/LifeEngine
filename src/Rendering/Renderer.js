@@ -1,4 +1,5 @@
-const CellTypes = require("../Organism/Cell/CellTypes");
+// const CellTypes = require("../Organism/Cell/CellTypes");
+const CellStates = require("../Organism/Cell/CellStates");
 const Directions = require("../Organism/Directions");
 
 // Renderer controls access to a canvas. There is one renderer for each canvas
@@ -47,36 +48,7 @@ class Renderer {
     }
 
     renderCell(cell) {
-        this.ctx.fillStyle = cell.getColor();
-        this.ctx.fillRect(cell.x, cell.y, this.cell_size, this.cell_size);
-        if (cell.type == CellTypes.eye) {
-            this.renderEyeCell(cell);
-        }
-    }
-
-    renderEyeCell(cell) {
-        if(this.cell_size == 1)
-            return;
-        if (this.cell_size % 2 == 0){
-            //even
-            var w = 2;
-        }
-        else{
-            //odd
-            var w = 1;
-        }
-        var halfInt = Math.ceil(this.cell_size/2);
-        var halfFloat = this.cell_size/2;
-        var h = this.cell_size/2 + this.cell_size/4;
-        var x = cell.x + h - Math.floor(w/2);
-        var y = cell.y;
-        
-
-        this.ctx.translate(cell.x+halfFloat, cell.y+halfFloat);
-        this.ctx.rotate((cell.direction * 90) * Math.PI / 180);
-        this.ctx.fillStyle = '#121D29';
-        this.ctx.fillRect(-(this.cell_size)/8, -halfFloat, this.cell_size/4, h);
-        this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+        cell.state.render(this.ctx, cell, this.cell_size);
     }
 
     renderOrganism(org) {

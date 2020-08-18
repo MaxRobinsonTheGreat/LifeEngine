@@ -3,8 +3,8 @@ const Grid = require('../Grid/GridMap');
 const Renderer = require('../Rendering/Renderer');
 const GridMap = require('../Grid/GridMap');
 const Organism = require('../Organism/Organism');
-const CellTypes = require('../Organism/Cell/CellTypes');
-const Cell = require('../Organism/Cell/Cell');
+const CellStates = require('../Organism/Cell/CellStates');
+const Cell = require('../Organism/Cell/GridCell');
 const EnvironmentController = require('../Controllers/EnvironmentController');
 
 class WorldEnvironment extends Environment{
@@ -54,12 +54,12 @@ class WorldEnvironment extends Environment{
     OriginOfLife() {
         var center = this.grid_map.getCenter();
         var org = new Organism(center[0], center[1], this);
-        // org.addCell(CellTypes.eye, 0, 0);
-        // org.addCell(CellTypes.mouth, 1, 1);
-        // org.addCell(CellTypes.mover, -1, -1);
-        org.addCell(CellTypes.mouth, 0, 0);
-        org.addCell(CellTypes.producer, 1, 1);
-        org.addCell(CellTypes.producer, -1, -1);
+        org.addDefaultCell(CellStates.eye, 0, 0);
+        org.addDefaultCell(CellStates.mouth, 1, 1);
+        org.addDefaultCell(CellStates.mover, 1, -1);
+        // org.addDefaultCell(CellStates.mouth, 0, 0);
+        // org.addDefaultCell(CellStates.producer, 1, 1);
+        // org.addDefaultCell(CellStates.producer, -1, -1);
         this.addOrganism(org);
     }
 
@@ -77,17 +77,17 @@ class WorldEnvironment extends Environment{
         return this.total_mutability / this.organisms.length;
     }
 
-    changeCell(c, r, type, owner) {
-        super.changeCell(c, r, type, owner);
+    changeCell(c, r, state, owner) {
+        super.changeCell(c, r, state, owner);
         this.renderer.addToRender(this.grid_map.cellAt(c, r));
-        if(type == CellTypes.wall)
+        if(state == CellStates.wall)
             this.walls.push(this.grid_map.cellAt(c, r));
     }
 
     clearWalls() {
         for(var wall of this.walls){
-            if (this.grid_map.cellAt(wall.col, wall.row).type == CellTypes.wall)
-                this.changeCell(wall.col, wall.row, CellTypes.empty, null);
+            if (this.grid_map.cellAt(wall.col, wall.row).state == CellStates.wall)
+                this.changeCell(wall.col, wall.row, CellStates.empty, null);
         }
     }
 
@@ -99,7 +99,7 @@ class WorldEnvironment extends Environment{
 
     reset(clear_walls=true) {
         this.organisms = [];
-        this.grid_map.fillGrid(CellTypes.empty);
+        this.grid_map.fillGrid(CellStates.empty);
         this.renderer.renderFullGrid(this.grid_map.grid);
         this.total_mutability = 0;
         this.OriginOfLife();

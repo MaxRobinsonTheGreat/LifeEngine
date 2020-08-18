@@ -1,6 +1,6 @@
 const CanvasController = require("./CanvasController");
 const Modes = require("./ControlModes");
-const CellTypes = require("../Organism/Cell/CellTypes");
+const CellStates = require("../Organism/Cell/CellStates");
 const Directions = require("../Organism/Directions");
 
 class EditorController extends CanvasController{
@@ -25,7 +25,6 @@ class EditorController extends CanvasController{
     mouseUp(){}
 
     getCurLocalCell(){
-        console.log(this.env.organism.getLocalCell(this.mouse_c-this.env.organism.c, this.mouse_r-this.env.organism.r))
         return this.env.organism.getLocalCell(this.mouse_c-this.env.organism.c, this.mouse_r-this.env.organism.r);
     }
 
@@ -37,25 +36,13 @@ class EditorController extends CanvasController{
         if (this.edit_cell_type == null || this.mode != Modes.Edit)
             return;
         if (this.left_click){
-            if(this.edit_cell_type == CellTypes.eye) {
-                if (this.cur_cell.type == CellTypes.eye){
-                    var loc_cell = this.getCurLocalCell();
-                    var dir = loc_cell.eye.direction;
-                    dir = Directions.rotateRight(dir);
-                    loc_cell.eye.direction = dir;
-                    this.cur_cell.direction = dir;
-                    this.env.addCellToOrg(this.mouse_c, this.mouse_r, this.edit_cell_type);
-                }
-                else {
-                    this.env.addCellToOrg(this.mouse_c, this.mouse_r, this.edit_cell_type);
-                    var loc_cell = this.getCurLocalCell();
-                    loc_cell.eye.direction = Directions.up;
-                    this.env.addCellToOrg(this.mouse_c, this.mouse_r, this.edit_cell_type);
-                }
+            if(this.edit_cell_type == CellStates.eye && this.cur_cell.state == CellStates.eye) {
+                var loc_cell = this.getCurLocalCell();
+                loc_cell.direction = Directions.rotateRight(loc_cell.direction);
+                this.env.renderFull();
             }
-            else{
+            else
                 this.env.addCellToOrg(this.mouse_c, this.mouse_r, this.edit_cell_type);
-            }
         }
         if (this.right_click)
             this.env.removeCellFromOrg(this.mouse_c, this.mouse_r);
@@ -70,22 +57,22 @@ class EditorController extends CanvasController{
         $('.cell-type').click( function() {
             switch(this.id){
                 case "mouth":
-                    self.edit_cell_type = CellTypes.mouth;
+                    self.edit_cell_type = CellStates.mouth;
                     break;
                 case "producer":
-                    self.edit_cell_type = CellTypes.producer;
+                    self.edit_cell_type = CellStates.producer;
                     break;
                 case "mover":
-                    self.edit_cell_type = CellTypes.mover;
+                    self.edit_cell_type = CellStates.mover;
                     break;
                 case "killer":
-                    self.edit_cell_type = CellTypes.killer;
+                    self.edit_cell_type = CellStates.killer;
                     break;
                 case "armor":
-                    self.edit_cell_type = CellTypes.armor;
+                    self.edit_cell_type = CellStates.armor;
                     break;
                 case "eye":
-                    self.edit_cell_type = CellTypes.eye;
+                    self.edit_cell_type = CellStates.eye;
                     break;
             }
             $(".cell-type" ).css( "border-color", "black" );

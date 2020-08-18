@@ -1,19 +1,46 @@
-const CellStates = require("./CellStates");
-const Directions = require("../Directions");;
-const Eye = require("../Perception/Eye.js");
+const CellStates = require("../CellStates");
+const Directions = require("../../Directions");
 
 // A body cell defines the relative location of the cell in it's parent organism. It also defines their functional behavior.
-class LocalCell{
-    constructor(state, loc_col, loc_row, eye=null){
+class BodyCell{
+    constructor(state, org, loc_col, loc_row){
         this.state = state;
+        this.org = org;
         this.loc_col = loc_col;
         this.loc_row = loc_row;
-        if (this.state == CellStates.eye){
-            this.eye = new Eye();
-            if (eye != null) {
-                this.eye.direction = eye.direction;
-            }
-        }
+    }
+
+    initInherit(parent) {
+        // deep copy parent values
+        this.loc_col = parent.loc_col;
+        this.loc_row = parent.loc_row;
+    }
+    
+    initRandom() {
+        // initialize values randomly
+    }
+
+    initDefault() {
+        // initialize to default values 
+    }
+
+    performFunction(env) {
+        // default behavior: none
+    }
+
+
+    getRealCol() {
+        return this.org.c + this.rotatedCol(this.org.rotation);
+    }
+    
+    getRealRow() {
+        return this.org.r + this.rotatedRow(this.org.rotation);
+    }
+
+    getRealCell() {
+        var real_c = this.getRealCol();
+        var real_r = this.getRealRow();
+        return this.org.env.grid_map.cellAt(real_c, real_r);
     }
 
     rotatedCol(dir){
@@ -43,4 +70,4 @@ class LocalCell{
     }
 }
 
-module.exports = LocalCell;
+module.exports = BodyCell;

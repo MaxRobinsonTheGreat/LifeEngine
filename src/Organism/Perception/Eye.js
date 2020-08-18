@@ -1,6 +1,6 @@
 const Directions = require("../Directions");
 const Hyperparams = require("../../Hyperparameters");
-const CellTypes = require("../Cell/CellTypes");
+const CellStates = require("../Cell/CellStates");
 const Observation = require("./Observation")
 
 class Eye {
@@ -46,7 +46,7 @@ class Eye {
             if (cell == null) {
                 break;
             }
-            if (cell.type != CellTypes.empty){
+            if (cell.state != CellStates.empty){
                 var distance = Math.abs(start_col-col) + Math.abs(start_row-row);
                 return new Observation(cell, distance, direction);
             }

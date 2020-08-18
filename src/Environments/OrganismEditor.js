@@ -2,9 +2,9 @@ const Environment = require('./Environment');
 const Organism = require('../Organism/Organism');
 const GridMap = require('../Grid/GridMap');
 const Renderer = require('../Rendering/Renderer');
-const CellTypes = require('../Organism/Cell/CellTypes');
+const CellStates = require('../Organism/Cell/CellStates');
 const EditorController = require("../Controllers/EditorController");
-const Cell = require("../Organism/Cell/Cell");
+const Cell = require("../Organism/Cell/GridCell");
 const Eye = require('../Organism/Perception/Eye');
 const Directions = require('../Organism/Directions');
 
@@ -27,28 +27,27 @@ class OrganismEditor extends Environment{
         }
     }
 
-    changeCell(c, r, type, owner) {
-        super.changeCell(c, r, type, owner);
+    changeCell(c, r, state, owner) {
+        super.changeCell(c, r, state, owner);
+        this.renderFull();
+    }
+
+    renderFull() {
         this.renderer.renderFullGrid(this.grid_map.grid);
     }
 
     // absolute c r, not local
-    addCellToOrg(c, r, type) {
+    addCellToOrg(c, r, state) {
         var center = this.grid_map.getCenter();
         var loc_c = c - center[0];
         var loc_r = r - center[1];
         var prev_cell = this.organism.getLocalCell(loc_c, loc_r)
         if (prev_cell != null) {
-            console.log(prev_cell.type)
-            if (type == CellTypes.eye && prev_cell.type != CellTypes.eye){
-                prev_cell.eye = new Eye(Directions.up);
-                
-            }
-            prev_cell.type = type;
-            this.changeCell(c, r, type, this.organism);
+            var new_cell = this.organism.replaceCell(state, prev_cell.loc_col, prev_cell.loc_row, false);
+            this.changeCell(c, r, state, new_cell);
         }
-        else if (this.organism.addCell(type, loc_c, loc_r)){
-            this.changeCell(c, r, type, this.organism);
+        else if (this.organism.canAddCellAt(loc_c, loc_r)){
+            this.changeCell(c, r, state, this.organism.addDefaultCell(state, loc_c, loc_r));
         }
     }
 
@@ -63,13 +62,13 @@ class OrganismEditor extends Environment{
         var prev_cell = this.organism.getLocalCell(loc_c, loc_r)
         if (prev_cell != null) {
             if (this.organism.removeCell(loc_c, loc_r)) {
-                this.changeCell(c, r, CellTypes.empty, null);
+                this.changeCell(c, r, CellStates.empty, null);
             }
         }
     }
 
     setOrganismToCopyOf(orig_org){
-        this.grid_map.fillGrid(CellTypes.empty);
+        this.grid_map.fillGrid(CellStates.empty);
         var center = this.grid_map.getCenter();
         this.organism = new Organism(center[0], center[1], this, orig_org);
         this.organism.updateGrid();
@@ -82,10 +81,10 @@ class OrganismEditor extends Environment{
     }
 
     clear() {
-        this.grid_map.fillGrid(CellTypes.empty);
+        this.grid_map.fillGrid(CellStates.empty);
         var center = this.grid_map.getCenter();
         this.organism = new Organism(center[0], center[1], this, null);
-        this.organism.addCell(CellTypes.mouth, 0, 0);
+        this.organism.addDefaultCell(CellStates.mouth, 0, 0);
         this.organism.updateGrid();
     }
 }
