@@ -1,10 +1,8 @@
 const Environment = require('./Environment');
-const Grid = require('../Grid/GridMap');
 const Renderer = require('../Rendering/Renderer');
 const GridMap = require('../Grid/GridMap');
 const Organism = require('../Organism/Organism');
 const CellStates = require('../Organism/Cell/CellStates');
-const Cell = require('../Organism/Cell/GridCell');
 const EnvironmentController = require('../Controllers/EnvironmentController');
 
 class WorldEnvironment extends Environment{
@@ -54,12 +52,12 @@ class WorldEnvironment extends Environment{
     OriginOfLife() {
         var center = this.grid_map.getCenter();
         var org = new Organism(center[0], center[1], this);
-        org.addDefaultCell(CellStates.eye, 0, 0);
-        org.addDefaultCell(CellStates.mouth, 1, 1);
-        org.addDefaultCell(CellStates.mover, 1, -1);
-        // org.addDefaultCell(CellStates.mouth, 0, 0);
-        // org.addDefaultCell(CellStates.producer, 1, 1);
-        // org.addDefaultCell(CellStates.producer, -1, -1);
+        // org.addDefaultCell(CellStates.eye, 0, 0);
+        // org.addDefaultCell(CellStates.mouth, 1, 1);
+        // org.addDefaultCell(CellStates.mover, 1, -1);
+        org.addDefaultCell(CellStates.mouth, 0, 0);
+        org.addDefaultCell(CellStates.producer, 1, 1);
+        org.addDefaultCell(CellStates.producer, -1, -1);
         this.addOrganism(org);
     }
 

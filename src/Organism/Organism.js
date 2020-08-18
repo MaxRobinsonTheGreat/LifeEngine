@@ -1,13 +1,9 @@
 // const CellTypes = require("./Cell/CellTypes");
 const CellStates = require("../Organism/Cell/CellStates");
-const Cell = require("./Cell/GridCell");
-const GridMap = require("../Grid/GridMap");
-const LocalCell = require("./Cell/LocalCell");
 const BodyCellFactory = require("./Cell/BodyCells/BodyCellFactory");
 const Neighbors = require("../Grid/Neighbors");
 const Hyperparams = require("../Hyperparameters");
 const Directions = require("./Directions");
-const Eye = require("./Perception/Eye");
 const Brain = require("./Perception/Brain");
 
 const directions = [[0,1],[0,-1],[1,0],[-1,0]]
@@ -391,13 +387,6 @@ class Organism {
         var real_c = c + local_cell.rotatedCol(rotation);
         var real_r = r + local_cell.rotatedRow(rotation);
         return this.env.grid_map.cellAt(real_c, real_r);
-    }
-
-    getRealCol(local_cell) {
-        return this.c + local_cell.rotatedCol(this.rotation);
-    }
-    getRealRow(local_cell) {
-        return this.r + local_cell.rotatedRow(this.rotation);
     }
 
 }

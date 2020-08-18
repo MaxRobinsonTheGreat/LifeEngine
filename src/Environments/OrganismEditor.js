@@ -4,8 +4,6 @@ const GridMap = require('../Grid/GridMap');
 const Renderer = require('../Rendering/Renderer');
 const CellStates = require('../Organism/Cell/CellStates');
 const EditorController = require("../Controllers/EditorController");
-const Cell = require("../Organism/Cell/GridCell");
-const Eye = require('../Organism/Perception/Eye');
 const Directions = require('../Organism/Directions');
 
 class OrganismEditor extends Environment{

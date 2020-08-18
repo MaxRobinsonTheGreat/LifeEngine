@@ -28,10 +28,6 @@ class EditorController extends CanvasController{
         return this.env.organism.getLocalCell(this.mouse_c-this.env.organism.c, this.mouse_r-this.env.organism.r);
     }
 
-    setEyeDirection(){
-
-    }
-
     editOrganism() {
         if (this.edit_cell_type == null || this.mode != Modes.Edit)
             return;
