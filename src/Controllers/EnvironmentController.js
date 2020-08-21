@@ -94,7 +94,6 @@ class EnvironmentController extends CanvasController{
                     }
                     if (this.cur_org != null){
                         this.control_panel.setEditorOrganism(this.cur_org);
-                        console.log(this.cur_org)
                     }
                     break;
 

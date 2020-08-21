@@ -98,7 +98,10 @@ button:hover{
     grid-template-columns: 1;
 }
 .editor-buttons {
-    display: block;
+    display: grid;
+    grid-template-rows: 3;
+    grid-template-columns: 1;
+    height: fit-content;
 }
 
 .col-row-input {
@@ -158,12 +161,16 @@ button:hover{
 .edit-mode-btn {
     width: 30px;
     height: 30px;
+    margin-top: 5px;
 }
 .edit-mode-btn:hover{
     background-color: #81d2c7;
 }
 .edit-mode-btn#drag-view {
     background-color: #81d2c7;
+}
+#clear-walls {
+    margin-top: 5px;
 }
 #organism-options {
     display: none;
@@ -181,6 +188,10 @@ button:hover{
 }
 #cell-selections {
     display: none;
+    grid-template-columns: 2;
+    height: fit-content;
+    padding: 0;
+    margin: 0;
 }
 #cell-legend {
     display: flex;
@@ -205,30 +216,6 @@ button:hover{
 .cell-legend-hover {
     border-color: black;
     border: 5px;
-}
-#mouth{
-    background-color: orange;
-}
-#producer{
-    background-color: white;
-}
-#mover{
-    background-color: #3493eb;
-}
-#killer{
-    background-color: red;
-}
-#armor{
-    background-color: purple;
-}
-#eye{
-    background-color: #d4bb3f;
-}
-#food{
-    background-color: green;
-}
-#wall{
-    background-color: gray;
 }
 #editor-mode-cont{
     padding-top: 20px;

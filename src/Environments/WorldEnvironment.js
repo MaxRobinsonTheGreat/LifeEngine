@@ -13,7 +13,6 @@ class WorldEnvironment extends Environment{
         var grid_rows = Math.floor(this.renderer.height / cell_size);
         var grid_cols = Math.floor(this.renderer.width / cell_size);
         this.grid_map = new GridMap(grid_cols, grid_rows, cell_size);
-        this.renderer.renderFullGrid(this.grid_map.grid);
         this.organisms = [];
         this.walls = [];
         this.total_mutability = 0;

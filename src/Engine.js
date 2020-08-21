@@ -1,6 +1,7 @@
 const WorldEnvironment = require('./Environments/WorldEnvironment');
 const ControlPanel = require('./Controllers/ControlPanel');
 const OrganismEditor = require('./Environments/OrganismEditor');
+const ColorScheme = require('./Rendering/ColorScheme');
 
 const render_speed = 60;
 
@@ -10,6 +11,8 @@ class Engine{
         this.env = new WorldEnvironment(5);
         this.organism_editor = new OrganismEditor();
         this.controlpanel = new ControlPanel(this);
+        this.colorscheme = new ColorScheme(this.env, this.organism_editor);
+        this.colorscheme.loadColorScheme();
         this.env.OriginOfLife();
         this.last_update = Date.now();
         this.delta_time = 0;

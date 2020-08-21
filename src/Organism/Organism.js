@@ -1,12 +1,9 @@
-// const CellTypes = require("./Cell/CellTypes");
 const CellStates = require("../Organism/Cell/CellStates");
 const BodyCellFactory = require("./Cell/BodyCells/BodyCellFactory");
 const Neighbors = require("../Grid/Neighbors");
 const Hyperparams = require("../Hyperparameters");
 const Directions = require("./Directions");
 const Brain = require("./Perception/Brain");
-
-const directions = [[0,1],[0,-1],[1,0],[-1,0]]
 
 class Organism {
     constructor(col, row, env, parent=null) {
@@ -25,6 +22,7 @@ class Organism {
         this.can_rotate = Hyperparams.moversCanRotate;
         this.move_count = 0;
         this.move_range = 4;
+        this.ignore_brain_for = 0;
         this.mutability = 5;
         this.damage = 0;
         this.birth_distance = 4;
@@ -50,6 +48,9 @@ class Organism {
     }
 
     addRandomizedCell(state, c, r) {
+        if (state==CellStates.eye && !this.has_eyes) {
+            this.brain.randomizeDecisions();
+        }
         var new_cell = BodyCellFactory.createRandom(this, state, c, r);
         this.cells.push(new_cell);
         return new_cell;
@@ -188,8 +189,8 @@ class Organism {
             // add cell
             // console.log("add cell")
 
-            var state = CellStates.getRandomLivingType();
             var branch = this.cells[Math.floor(Math.random() * this.cells.length)];
+            var state = CellStates.getRandomLivingType();//branch.state;
             var growth_direction = Neighbors.all[Math.floor(Math.random() * Neighbors.all.length)]
             var c = branch.loc_col+growth_direction[0];
             var r = branch.loc_row+growth_direction[1];
@@ -216,7 +217,7 @@ class Organism {
                 var cell = this.cells[Math.floor(Math.random() * this.cells.length)];
                 mutated = this.removeCell(cell.loc_col, cell.loc_row);
             }
-        }
+        } 
 
         if (this.is_mover && Math.random() * 100 <= 10) { 
             this.move_range += Math.floor(Math.random() * 4) - 2;
@@ -373,10 +374,21 @@ class Organism {
         
         if (this.is_mover) {
             this.move_count++;
-            var changed_dir = this.brain.decide();
+            var changed_dir = false;
+            if (this.ignore_brain_for == 0){
+                changed_dir = this.brain.decide();
+            }  
+            else{
+                this.ignore_brain_for --;
+            }
             var moved = this.attemptMove();
             if ((this.move_count > this.move_range && !changed_dir) || !moved){
-                this.attemptRotate();
+                var rotated = this.attemptRotate();
+                if (!rotated) {
+                    this.changeDirection(Directions.getRandomDirection());
+                    if (changed_dir)
+                        this.ignore_brain_for = this.move_range + 1;
+                }
             }
         }
 

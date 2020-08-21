@@ -23,7 +23,7 @@ const Hyperparams = {
 
         this.instaKill = false;
 
-        this.lookRange = 15;
+        this.lookRange = 20;
     },
 
     balanceMutationProbs : function(choice) {

@@ -15,8 +15,6 @@ class OrganismEditor extends Environment{
         this.controller = new EditorController(this, this.renderer.canvas);
         this.grid_map = new GridMap(15, 15, cell_size);
         this.clear();
-
-        this.renderer.renderFullGrid(this.grid_map.grid);
     }
 
     update() {
@@ -72,7 +70,7 @@ class OrganismEditor extends Environment{
         this.organism.updateGrid();
         this.controller.updateDetails();
     }
-
+    
     getCopyOfOrg() {
         var new_org = new Organism(0, 0, null, this.organism);
         return new_org;

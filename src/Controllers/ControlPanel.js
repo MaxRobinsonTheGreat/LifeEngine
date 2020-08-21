@@ -173,9 +173,9 @@ class ControlPanel {
     defineModeControls() {
         var self = this;
         $('.edit-mode-btn').click( function() {
-            var prev_mode = self.env_controller.mode;
             $('#cell-selections').css('display', 'none');
             $('#organism-options').css('display', 'none');
+            self.editor_controller.clearDetailsPanel();
             switch(this.id){
                 case "food-drop":
                     self.setMode(Modes.FoodDrop);
@@ -191,8 +191,7 @@ class ControlPanel {
                     break;
                 case "edit":
                     self.setMode(Modes.Edit);
-                    $('#cell-selections').css('display', 'block');
-                    $('#organism-options').css('display', 'block');
+                    self.editor_controller.setEditorPanel();
                     break;
                 case "drop-org":
                     self.setMode(Modes.Clone);
@@ -203,7 +202,6 @@ class ControlPanel {
             }
             $('.edit-mode-btn').css('background-color', '#9099c2');
             $('#'+this.id).css('background-color', '#81d2c7');
-
         });
 
         $('.reset-view').click( function(){
@@ -224,6 +222,7 @@ class ControlPanel {
         }.bind(this));
         $('#clear-editor').click( function() {
             this.engine.organism_editor.clear();
+            this.editor_controller.setEditorPanel();
         }.bind(this));
     }
 
@@ -241,6 +240,8 @@ class ControlPanel {
 
     setEditorOrganism(org) {
         this.engine.organism_editor.setOrganismToCopyOf(org);
+        this.editor_controller.clearDetailsPanel();
+        this.editor_controller.setDetailsPanel();
     }
 
     changeEngineSpeed(change_val) {
@@ -259,10 +260,6 @@ class ControlPanel {
         $('#avg-mut').text("Average Mutation Rate: " + Math.round(this.engine.env.averageMutability() * 100) / 100);
         $('#largest-org').text("Largest Organism: " + this.engine.env.largest_cell_count + " cells");
         $('#reset-count').text("Auto reset count: " + this.engine.env.reset_count);
-        if (this.editor_controller.env.organism.cells.length > 1)
-            $('#editor-cell-count').text(this.editor_controller.env.organism.cells.length+' cells');
-        else
-            $('#editor-cell-count').text('1 cell');
     }
 
 }

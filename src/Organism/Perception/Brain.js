@@ -8,6 +8,9 @@ const Decision = {
     chase: 2,
     getRandom: function(){
         return Math.floor(Math.random() * 3);
+    },
+    getRandomNonNeutral: function() {
+        return Math.floor(Math.random() * 2)+1;
     }
 }
 
@@ -27,7 +30,15 @@ class Brain {
         this.decisions[CellStates.killer.name] = Decision.retreat;
         this.decisions[CellStates.armor.name] = Decision.neutral;
         this.decisions[CellStates.eye.name] = Decision.neutral;
-        
+    }
+
+    randomizeDecisions() {
+        // randomize the non obvious decisions
+        this.decisions[CellStates.mouth.name] = Decision.getRandom();
+        this.decisions[CellStates.producer.name] = Decision.getRandom();
+        this.decisions[CellStates.mover.name] = Decision.getRandom();
+        this.decisions[CellStates.armor.name] = Decision.getRandom();
+        this.decisions[CellStates.eye.name] = Decision.getRandom();
     }
 
     observe(observation) {
