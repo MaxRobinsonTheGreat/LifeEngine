@@ -112,7 +112,7 @@ class Organism {
     inherit(parent) {
         this.move_range = parent.move_range;
         this.mutability = parent.mutability;
-        this.birth_distance = parent.birth_distance;
+        // this.birth_distance = parent.birth_distance;
         for (var c of parent.cells){
             //deep copy parent cells
             this.addInheritCell(c);
@@ -172,7 +172,7 @@ class Organism {
         var new_c = this.c + (direction_c*basemovement) + (direction_c*offset);
         var new_r = this.r + (direction_r*basemovement) + (direction_r*offset);
 
-        if (org.isClear(new_c, new_r) && org.isStraightPath(new_c, new_r, this.c, this.r, this)){
+        if (org.isClear(new_c, new_r, org.rotation, true) && org.isStraightPath(new_c, new_r, this.c, this.r, this)){
             org.c = new_c;
             org.r = new_r;
             this.env.addOrganism(org);
@@ -194,12 +194,10 @@ class Organism {
             var growth_direction = Neighbors.all[Math.floor(Math.random() * Neighbors.all.length)]
             var c = branch.loc_col+growth_direction[0];
             var r = branch.loc_row+growth_direction[1];
-            // mutated = this.addCell(state, c, r);
             if (this.canAddCellAt(c, r)){
                 mutated = true;
                 this.addRandomizedCell(state, c, r);
             }
-            this.birth_distance++;
         }
         else if (choice <= Hyperparams.addProb + Hyperparams.changeProb){
             // change cell
@@ -224,11 +222,6 @@ class Organism {
             if (this.move_range <= 0){
                 this.move_range = 1;
             };
-        }
-        if (Math.random() * 100 <= 10) { 
-            this.birth_distance += Math.floor(Math.random() * 5) - 2;
-            if (this.birth_distance < 1)
-                this.birth_distance = 1;
         }
         if (this.is_mover && this.has_eyes && Math.random() * 100 <= 10) { 
             this.brain.mutate();
@@ -319,13 +312,13 @@ class Organism {
         return cell != null && (cell.state == CellStates.empty || cell.owner == this || cell.owner == parent || cell.state == CellStates.food);
     }
 
-    isClear(col, row, rotation=this.rotation) {
+    isClear(col, row, rotation=this.rotation, ignore_armor=false) {
         for(var loccell of this.cells) {
             var cell = this.getRealCell(loccell, col, row, rotation);
             if(cell==null) {
                 return false;
             }
-            if (cell.owner==this || cell.state==CellStates.empty || (!Hyperparams.foodBlocksReproduction && cell.state==CellStates.food)){
+            if (cell.owner==this || cell.state==CellStates.empty || (!Hyperparams.foodBlocksReproduction && cell.state==CellStates.food) || (ignore_armor && loccell.state==CellStates.armor && cell.state==CellStates.food)){
                 continue;
             }
             return false;

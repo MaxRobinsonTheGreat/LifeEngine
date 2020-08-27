@@ -175,7 +175,7 @@ class ControlPanel {
         $('.edit-mode-btn').click( function() {
             $('#cell-selections').css('display', 'none');
             $('#organism-options').css('display', 'none');
-            self.editor_controller.clearDetailsPanel();
+            self.editor_controller.setDetailsPanel();
             switch(this.id){
                 case "food-drop":
                     self.setMode(Modes.FoodDrop);

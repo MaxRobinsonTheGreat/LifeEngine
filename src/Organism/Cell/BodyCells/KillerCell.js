@@ -23,7 +23,7 @@ class KillerCell extends BodyCell{
             return;
         var is_hit = n_cell.state == CellStates.killer; // has to be calculated before death
         n_cell.owner.harm();
-        if (is_hit) {
+        if (Hyperparams.instaKill && is_hit) {
             this.org.harm();
         }
     }
