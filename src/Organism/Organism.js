@@ -159,8 +159,19 @@ class Organism {
                     org.mutability = 1;
             }
         } 
-        if (Math.random() * 100 <= prob) { 
-            org.mutate();
+        if (Math.random() * 100 <= prob) {
+            if (org.is_mover && Math.random() * 100 <= 10) { 
+                if (org.has_eyes) {
+                    org.brain.mutate();
+                }
+                org.move_range += Math.floor(Math.random() * 4) - 2;
+                if (org.move_range <= 0){
+                    org.move_range = 1;
+                };
+                
+            }
+            else
+                org.mutate();
         }
         
 
@@ -215,16 +226,6 @@ class Organism {
                 var cell = this.cells[Math.floor(Math.random() * this.cells.length)];
                 mutated = this.removeCell(cell.loc_col, cell.loc_row);
             }
-        } 
-
-        if (this.is_mover && Math.random() * 100 <= 10) { 
-            this.move_range += Math.floor(Math.random() * 4) - 2;
-            if (this.move_range <= 0){
-                this.move_range = 1;
-            };
-        }
-        if (this.is_mover && this.has_eyes && Math.random() * 100 <= 10) { 
-            this.brain.mutate();
         }
         return mutated;
     }
