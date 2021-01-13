@@ -20,14 +20,25 @@ class EnvironmentController extends CanvasController{
           const el = document.querySelector('#env-canvas');
           el.onwheel = function zoom(event) {
             event.preventDefault();
+
             var sign = -1*Math.sign(event.deltaY);
+
+            var cur_top = parseInt($('#env-canvas').css('top'));
+            var cur_left = parseInt($('#env-canvas').css('left'));
+            var diff_x = ((-cur_left/this.scale+this.canvas.width/2) - this.mouse_x)*this.scale/2*sign;
+            var diff_y = ((-cur_top/this.scale+this.canvas.height/2) - this.mouse_y)*this.scale/2*sign;
+            $('#env-canvas').css('top', (cur_top+diff_y)+'px');
+            $('#env-canvas').css('left', (cur_left+diff_x)+'px');
             
             // Restrict scale
-            scale = Math.max(0.5, scale+(sign*zoom_speed));
+            scale = Math.max(0.5, this.scale+(sign*zoom_speed));
           
             // Apply scale transform
             el.style.transform = `scale(${scale})`;
             this.scale = scale;
+
+
+
           }.bind(this);
     }
 
@@ -45,6 +56,8 @@ class EnvironmentController extends CanvasController{
 
     mouseMove() {
         this.performModeAction();
+        var cur_top = parseInt($('#env-canvas').css('top'))/this.scale;
+        var cur_left = parseInt($('#env-canvas').css('left'))/this.scale;
     }
 
     mouseDown() {
