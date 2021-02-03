@@ -106,6 +106,9 @@ class ControlPanel {
         $('#look-range').change(function() {
             Hyperparams.lookRange = $('#look-range').val();
         });
+        $('#food-drop-rate').change(function() {
+            Hyperparams.foodDropProb = $('#food-drop-rate').val();
+        });
 
         $('#evolved-mutation').change( function() {
             if (this.checked) {

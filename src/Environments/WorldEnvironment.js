@@ -4,6 +4,8 @@ const GridMap = require('../Grid/GridMap');
 const Organism = require('../Organism/Organism');
 const CellStates = require('../Organism/Cell/CellStates');
 const EnvironmentController = require('../Controllers/EnvironmentController');
+const Hyperparams = require('../Hyperparameters.js');
+const Cell = require('../Organism/Cell/GridCell');
 
 class WorldEnvironment extends Environment{
     constructor(cell_size) {
@@ -28,6 +30,9 @@ class WorldEnvironment extends Environment{
             if (!org.living || !org.update()) {
                 to_remove.push(i);
             }
+        }
+        if (Hyperparams.foodDropProb > 0) {
+            this.generateFood();
         }
         this.removeOrganisms(to_remove);
     }
@@ -92,6 +97,21 @@ class WorldEnvironment extends Environment{
         for (var org of this.organisms)
             org.die();
         this.organisms = [];
+    }
+
+    generateFood() {
+        var num_food = Math.max(Math.floor(this.grid_map.cols*this.grid_map.rows*Hyperparams.foodDropProb/50000), 1)
+        var prob = Hyperparams.foodDropProb;
+        for (var i=0; i<num_food; i++) {
+            if (Math.random() <= prob){
+                var c=Math.floor(Math.random() * this.grid_map.cols);
+                var r=Math.floor(Math.random() * this.grid_map.rows);
+
+                if (this.grid_map.cellAt(c, r).state == CellStates.empty){
+                    this.changeCell(c, r, CellStates.food, null);
+                }
+            }
+        }
     }
 
     reset(clear_walls=true) {
