@@ -3,12 +3,15 @@ const Organism = require('../Organism/Organism');
 const Modes = require("./ControlModes");
 const CellStates = require("../Organism/Cell/CellStates");
 const Neighbors = require("../Grid/Neighbors");
+const FossilRecord = require("../Stats/FossilRecord");
 
 class EnvironmentController extends CanvasController{
     constructor(env, canvas) {
         super(env, canvas);
         this.mode = Modes.Drag;
         this.org_to_clone = null;
+        this.species_to_clone = null;
+        this.make_new_species = false;
         this.defineZoomControls();
         this.scale = 1;
     }
@@ -118,6 +121,14 @@ class EnvironmentController extends CanvasController{
                 case Modes.Clone:
                     if (this.org_to_clone != null){
                         var new_org = new Organism(this.mouse_c, this.mouse_r, this.env, this.org_to_clone);
+                        if (this.make_new_species){
+                            this.species_to_clone = FossilRecord.addSpecies(new_org, null)
+                            this.make_new_species = false;
+                        }
+                        else {
+                            new_org.species = this.species_to_clone;
+                            this.species_to_clone.addPop();
+                        }
                         if (new_org.isClear(this.mouse_c, this.mouse_r)){
                             this.env.addOrganism(new_org)
                         }

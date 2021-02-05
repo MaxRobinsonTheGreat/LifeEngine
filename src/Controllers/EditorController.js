@@ -26,7 +26,7 @@ class EditorController extends CanvasController{
     mouseUp(){}
 
     getCurLocalCell(){
-        return this.env.organism.getLocalCell(this.mouse_c-this.env.organism.c, this.mouse_r-this.env.organism.r);
+        return this.env.organism.anatomy.getLocalCell(this.mouse_c-this.env.organism.c, this.mouse_r-this.env.organism.r);
     }
 
     editOrganism() {
@@ -49,7 +49,7 @@ class EditorController extends CanvasController{
     }
 
     updateDetails() {
-        $('.cell-count').text("Cell count: "+this.env.organism.cells.length);
+        $('.cell-count').text("Cell count: "+this.env.organism.anatomy.cells.length);
     }
 
     defineCellTypeSelection() {
@@ -111,7 +111,7 @@ class EditorController extends CanvasController{
         this.clearDetailsPanel();
         var org = this.env.organism;
         
-        $('.cell-count').text("Cell count: "+org.cells.length);
+        $('.cell-count').text("Cell count: "+org.anatomy.cells.length);
         $('#move-range').text("Move Range: "+org.move_range);
         $('#mutation-rate').text("Mutation Rate: "+org.mutability);
         if (Hyperparams.useGlobalMutability) {
@@ -134,7 +134,7 @@ class EditorController extends CanvasController{
         this.clearDetailsPanel();
         var org = this.env.organism;
 
-        $('.cell-count').text("Cell count: "+org.cells.length);
+        $('.cell-count').text("Cell count: "+org.anatomy.cells.length);
         if (this.setMoveRangeVisibility()){
             $('#move-range-edit').val(org.move_range);
         }
@@ -149,7 +149,7 @@ class EditorController extends CanvasController{
 
     setBrainPanelVisibility() {
         var org = this.env.organism;
-        if (org.has_eyes && org.is_mover) {
+        if (org.anatomy.has_eyes && org.anatomy.is_mover) {
             $('.brain-details').css('display', 'block');
             return true;
         }
@@ -175,7 +175,7 @@ class EditorController extends CanvasController{
 
     setMoveRangeVisibility() {
         var org = this.env.organism;
-        if (org.is_mover) {
+        if (org.anatomy.is_mover) {
             $('#move-range-cont').css('display', 'block');
             $('#move-range').css('display', 'block');
             return true;

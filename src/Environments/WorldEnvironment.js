@@ -5,7 +5,7 @@ const Organism = require('../Organism/Organism');
 const CellStates = require('../Organism/Cell/CellStates');
 const EnvironmentController = require('../Controllers/EnvironmentController');
 const Hyperparams = require('../Hyperparameters.js');
-const Cell = require('../Organism/Cell/GridCell');
+const FossilRecord = require('../Stats/FossilRecord');
 
 class WorldEnvironment extends Environment{
     constructor(cell_size) {
@@ -21,9 +21,12 @@ class WorldEnvironment extends Environment{
         this.auto_reset = true;
         this.largest_cell_count = 0;
         this.reset_count = 0;
+        this.total_ticks = 0;
+        FossilRecord.setEnv(this);
     }
 
     update(delta_time) {
+        this.total_ticks ++;
         var to_remove = [];
         for (var i in this.organisms) {
             var org = this.organisms[i];
@@ -56,21 +59,19 @@ class WorldEnvironment extends Environment{
     OriginOfLife() {
         var center = this.grid_map.getCenter();
         var org = new Organism(center[0], center[1], this);
-        // org.addDefaultCell(CellStates.eye, 0, 0);
-        // org.addDefaultCell(CellStates.mouth, 1, 1);
-        // org.addDefaultCell(CellStates.mover, 1, -1);
-        org.addDefaultCell(CellStates.mouth, 0, 0);
-        org.addDefaultCell(CellStates.producer, 1, 1);
-        org.addDefaultCell(CellStates.producer, -1, -1);
+        org.anatomy.addDefaultCell(CellStates.mouth, 0, 0);
+        org.anatomy.addDefaultCell(CellStates.producer, 1, 1);
+        org.anatomy.addDefaultCell(CellStates.producer, -1, -1);
         this.addOrganism(org);
+        FossilRecord.addSpecies(org, null);
     }
 
     addOrganism(organism) {
         organism.updateGrid();
         this.total_mutability += organism.mutability;
         this.organisms.push(organism);
-        if (organism.cells.length > this.largest_cell_count) 
-            this.largest_cell_count = organism.cells.length;
+        if (organism.anatomy.cells.length > this.largest_cell_count) 
+            this.largest_cell_count = organism.anatomy.cells.length;
     }
 
     averageMutability() {
@@ -119,6 +120,7 @@ class WorldEnvironment extends Environment{
         this.grid_map.fillGrid(CellStates.empty);
         this.renderer.renderFullGrid(this.grid_map.grid);
         this.total_mutability = 0;
+        this.total_ticks = 0;
         this.OriginOfLife();
     }
 

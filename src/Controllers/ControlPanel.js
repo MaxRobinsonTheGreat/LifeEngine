@@ -199,6 +199,7 @@ class ControlPanel {
                 case "drop-org":
                     self.setMode(Modes.Clone);
                     self.env_controller.org_to_clone = self.engine.organism_editor.getCopyOfOrg();
+                    self.env_controller.make_new_species = true;
                     break;
                 case "drag-view":
                     self.setMode(Modes.Drag);

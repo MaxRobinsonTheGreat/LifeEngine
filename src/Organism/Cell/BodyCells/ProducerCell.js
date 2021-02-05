@@ -5,11 +5,11 @@ const Hyperparams = require("../../../Hyperparameters");
 class ProducerCell extends BodyCell{
     constructor(org, loc_col, loc_row){
         super(CellStates.producer, org, loc_col, loc_row);
-        this.org.is_producer = true;
+        this.org.anatomy.is_producer = true;
     }
 
     performFunction() {
-        if (this.org.is_mover && !Hyperparams.moversCanProduce)
+        if (this.org.anatomy.is_mover && !Hyperparams.moversCanProduce)
             return;
         var env = this.org.env;
         var prob = Hyperparams.foodProdProb;
