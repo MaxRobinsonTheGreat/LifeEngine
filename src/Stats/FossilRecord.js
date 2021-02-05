@@ -14,7 +14,7 @@ const FossilRecord = {
     },
 
     addSpecies: function(org, ancestor) {
-        console.log("Adding Species")
+        // console.log("Adding Species")
         var new_species = new Species(org.anatomy, ancestor, this.env.total_ticks)
         this.extant_species.push(new_species);
         org.species = new_species;
@@ -31,8 +31,8 @@ const FossilRecord = {
                     return false;
                 }
                 this.extinct_species.push(s);
-                console.log("Extant:", this.extant_species.length)
-                console.log("Extinct:", this.extinct_species.length)
+                // console.log("Extant:", this.extant_species.length)
+                // console.log("Extinct:", this.extinct_species.length)
                 return true;
             }
         }

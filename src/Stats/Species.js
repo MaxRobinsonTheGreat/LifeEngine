@@ -20,7 +20,7 @@ class Species {
         this.population--;
         if (this.population <= 0) {
             this.extinct = true;
-            console.log("Extinction");
+            // console.log("Extinction");
             const FossilRecord = require("./FossilRecord");
             FossilRecord.fossilize(this);
         }
