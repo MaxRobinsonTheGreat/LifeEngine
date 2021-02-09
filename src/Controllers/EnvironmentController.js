@@ -10,8 +10,7 @@ class EnvironmentController extends CanvasController{
         super(env, canvas);
         this.mode = Modes.Drag;
         this.org_to_clone = null;
-        this.species_to_clone = null;
-        this.make_new_species = false;
+        this.add_new_species = false;
         this.defineZoomControls();
         this.scale = 1;
     }
@@ -121,16 +120,19 @@ class EnvironmentController extends CanvasController{
                 case Modes.Clone:
                     if (this.org_to_clone != null){
                         var new_org = new Organism(this.mouse_c, this.mouse_r, this.env, this.org_to_clone);
-                        if (this.make_new_species){
-                            this.species_to_clone = FossilRecord.addSpecies(new_org, null)
-                            this.make_new_species = false;
+                        if (this.add_new_species){
+                            FossilRecord.addSpeciesObj(new_org.species);
+                            new_org.species.start_tick = this.env.total_ticks;
+                            this.add_new_species = false;
+                            new_org.species.population = 0;
                         }
-                        else {
-                            new_org.species = this.species_to_clone;
-                            this.species_to_clone.addPop();
+                        else if (this.org_to_clone.species.extinct){
+                            FossilRecord.resurrect(this.org_to_clone.species);
                         }
+
                         if (new_org.isClear(this.mouse_c, this.mouse_r)){
-                            this.env.addOrganism(new_org)
+                            this.env.addOrganism(new_org);
+                            new_org.species.addPop();
                         }
                     }
                     break;

@@ -7,6 +7,7 @@
 		<link rel="stylesheet" href="./css/style.css">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 
 	</head>
 	<body>
@@ -225,8 +226,13 @@
 						<p id='org-record'>Highest count: </p>
 						<p id='avg-mut'>Average Mutation Rate: </p>
 						<p id='largest-org'>Largest Organism: </p>
+						<button id='update-chart'>Update Chart</button>
+
 					</div>
-					<div class='right-half'></div>
+					<div class='right-half'>
+						<div id="chartContainer" style="height: 180px; width: 100%;">
+						</div>
+					</div>
 					
 				</div>
 				<div id='challenges' class='tab'>

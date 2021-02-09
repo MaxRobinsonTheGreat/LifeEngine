@@ -1,5 +1,6 @@
 const Hyperparams = require("../Hyperparameters");
 const Modes = require("./ControlModes");
+const StatsPanel = require("./StatsPanel");
 
 class ControlPanel {
     constructor(engine) {
@@ -17,16 +18,22 @@ class ControlPanel {
         this.editor_controller = this.engine.organism_editor.controller;
         this.env_controller.setControlPanel(this);
         this.editor_controller.setControlPanel(this);
+        this.stats_panel = new StatsPanel();
+        this.stats_panel.render();
     }
 
     defineMinMaxControls(){
         $('#minimize').click ( function() {
             $('.control-panel').css('display', 'none');
             $('.hot-controls').css('display', 'block');
-        });
+            this.stats_panel.stopAutoRender();
+        }.bind(this));
         $('#maximize').click ( function() {
             $('.control-panel').css('display', 'grid');
             $('.hot-controls').css('display', 'none');
+            if (this.id == 'stats') {
+                self.stats_panel.startAutoRender();
+            }
         });
     }
 
@@ -76,19 +83,24 @@ class ControlPanel {
     }
 
     defineTabNavigation() {
+        this.tab_id = 'about';
         var self = this;
         $('.tabnav-item').click(function() {
             $('.tab').css('display', 'none');
             var tab = '#'+this.id+'.tab';
             self.engine.organism_editor.is_active = (this.id == 'editor');
+            if (this.id == 'stats') {
+                self.stats_panel.startAutoRender();
+            }
+            self.id = this.id;
+            
             $(tab).css('display', 'grid');
         });
     }
 
     defineHyperparameterControls() {
         $('#food-prod-prob').change(function() {
-            var food_prob = 
-            Hyperparams.foodProdProb = $('#food-prod-prob').val();;
+            Hyperparams.foodProdProb = $('#food-prod-prob').val();
         }.bind(this));
         $('#lifespan-multiplier').change(function() {
             Hyperparams.lifespanMultiplier = $('#lifespan-multiplier').val();
@@ -199,7 +211,9 @@ class ControlPanel {
                 case "drop-org":
                     self.setMode(Modes.Clone);
                     self.env_controller.org_to_clone = self.engine.organism_editor.getCopyOfOrg();
-                    self.env_controller.make_new_species = true;
+                    self.env_controller.add_new_species = self.editor_controller.new_species;
+                    self.editor_controller.new_species = false;
+                    // console.log(self.env_controller.add_new_species)
                     break;
                 case "drag-view":
                     self.setMode(Modes.Drag);
@@ -215,6 +229,7 @@ class ControlPanel {
         var env = this.engine.env;
         $('#reset-env').click( function() {
             this.engine.env.reset();
+            this.stats_panel.clearData();
         }.bind(this));
         $('#auto-reset').change(function() {
             env.auto_reset = this.checked;
@@ -264,6 +279,7 @@ class ControlPanel {
         $('#avg-mut').text("Average Mutation Rate: " + Math.round(this.engine.env.averageMutability() * 100) / 100);
         $('#largest-org').text("Largest Organism: " + this.engine.env.largest_cell_count + " cells");
         $('#reset-count').text("Auto reset count: " + this.engine.env.reset_count);
+        this.stats_panel.updateData(this.engine.env.total_ticks, this.engine.env.organisms.length)
     }
 
 }

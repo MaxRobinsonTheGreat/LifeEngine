@@ -10,6 +10,7 @@ class EditorController extends CanvasController{
         this.mode = Modes.None;
         this.edit_cell_type = null;
         this.highlight_org = false;
+        this.new_species = false;
         this.defineCellTypeSelection();
         this.defineEditorDetails();
     }
@@ -41,8 +42,10 @@ class EditorController extends CanvasController{
             else
                 this.env.addCellToOrg(this.mouse_c, this.mouse_r, this.edit_cell_type);
         }
-        if (this.right_click)
+        else if (this.right_click)
             this.env.removeCellFromOrg(this.mouse_c, this.mouse_r);
+
+        this.new_species = true;
         this.setBrainPanelVisibility();
         this.setMoveRangeVisibility();
         this.updateDetails();

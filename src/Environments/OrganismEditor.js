@@ -4,6 +4,7 @@ const GridMap = require('../Grid/GridMap');
 const Renderer = require('../Rendering/Renderer');
 const CellStates = require('../Organism/Cell/CellStates');
 const EditorController = require("../Controllers/EditorController");
+const Species = require('../Stats/Species');
 
 class OrganismEditor extends Environment{
     constructor() {
@@ -44,6 +45,7 @@ class OrganismEditor extends Environment{
         else if (this.organism.anatomy.canAddCellAt(loc_c, loc_r)){
             this.changeCell(c, r, state, this.organism.anatomy.addDefaultCell(state, loc_c, loc_r));
         }
+        this.organism.species = new Species(this.organism.anatomy, null, 0);
     }
 
     removeCellFromOrg(c, r) {
@@ -58,16 +60,18 @@ class OrganismEditor extends Environment{
         if (prev_cell != null) {
             if (this.organism.anatomy.removeCell(loc_c, loc_r)) {
                 this.changeCell(c, r, CellStates.empty, null);
+                this.organism.species = new Species(this.organism.anatomy, null, 0);
             }
         }
     }
 
-    setOrganismToCopyOf(orig_org){
+    setOrganismToCopyOf(orig_org) {
         this.grid_map.fillGrid(CellStates.empty);
         var center = this.grid_map.getCenter();
         this.organism = new Organism(center[0], center[1], this, orig_org);
         this.organism.updateGrid();
         this.controller.updateDetails();
+        this.controller.new_species = false;
     }
     
     getCopyOfOrg() {
@@ -81,6 +85,7 @@ class OrganismEditor extends Environment{
         this.organism = new Organism(center[0], center[1], this, null);
         this.organism.anatomy.addDefaultCell(CellStates.mouth, 0, 0);
         this.organism.updateGrid();
+        this.organism.species = new Species(this.organism.anatomy, null, 0);
     }
 }
 

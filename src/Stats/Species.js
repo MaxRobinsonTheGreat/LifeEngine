@@ -7,7 +7,7 @@ class Species {
         this.start_tick = start_tick;
         this.end_tick = -1;
         this.color = '#asdfasdf';
-        this.name = "crabuloid";
+        this.name = '_' + Math.random().toString(36).substr(2, 9);;
         this.extinct = false;
     }
 
@@ -20,10 +20,13 @@ class Species {
         this.population--;
         if (this.population <= 0) {
             this.extinct = true;
-            // console.log("Extinction");
             const FossilRecord = require("./FossilRecord");
             FossilRecord.fossilize(this);
         }
+    }
+
+    lifespan() {
+        return this.end_tick - this.start_tick;
     }
 }
 
