@@ -1,7 +1,7 @@
 const FossilRecord = require("../FossilRecord");
 
 class ChartController {
-    constructor(title) {
+    constructor(title, note="") {
         this.data = [];
         this.chart = new CanvasJS.Chart("chartContainer", {
             zoomEnabled: true,
@@ -11,7 +11,7 @@ class ChartController {
             data: this.data
         });
         this.chart.render();
-        this.data
+        $('#chart-note').text(note);
     }
 
     setData() {

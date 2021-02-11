@@ -8,6 +8,7 @@ const FossilRecord = {
 
         // if an organism has fewer than this cumulative pop, discard them on extinction
         this.min_discard = 10;
+        this.total_relavent_organisms = 0; // organisms with greater than ^ cumulative pop
 
         this.record_size_limit = 500; // store this many data points
     },
@@ -79,12 +80,12 @@ const FossilRecord = {
         this.pop_counts.push(this.env.organisms.length);
         this.species_counts.push(this.extant_species.length);
         this.av_mut_rates.push(this.env.averageMutability());
+        this.av_cell_counts.push(this.calcCellCountAverages());
         let av_cell = 0;
-        if (this.env.organisms.length > 0) {
-            av_cell = this.env.total_cells / this.env.organisms.length;
+        if (this.total_relavent_organisms > 0) {
+            av_cell = this.env.total_cells / this.total_relavent_organisms;
         }
         this.av_cells.push(av_cell);
-        this.av_cell_counts.push(this.calcCellCountAverages())
 
         if (this.tick_record.length > this.record_size_limit) {
             this.tick_record.shift();
@@ -92,25 +93,33 @@ const FossilRecord = {
             this.species_counts.shift();
             this.av_mut_rates.shift();
             this.av_cells.shift();
+            this.av_cell_counts.shift();
         }
     },
 
     calcCellCountAverages() {
-        var total_org = this.env.organisms.length;
+        var total_org = 0;
         var cell_counts = {};
         for (let c of CellStates.living) {
             cell_counts[c.name] = 0;
         }
+        var first=true;
         for (let s of this.extant_species) {
+            if (s.cumulative_pop < this.min_discard && !first){
+                continue;
+            }
             for (let name in s.cell_counts) {
                 cell_counts[name] += s.cell_counts[name] * s.population;
             }
+            total_org += s.population;
+            first=false;
         }
         if (total_org == 0)
             return cell_counts;
         for (let c in cell_counts) {
             cell_counts[c] /= total_org;
         }
+        this.total_relavent_organisms = total_org;
         return cell_counts;
     },
 

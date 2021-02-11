@@ -4,7 +4,8 @@ const ChartController = require("./ChartController");
 
 class CellsChart extends ChartController {
     constructor() {
-        super("Organism Size / Composition");
+        super("Organism Size / Composition", 
+            "Note: to maintain efficiency, species with very small populations are discarded when collecting cell statistics.");
     }
 
     setData() {
@@ -33,6 +34,8 @@ class CellsChart extends ChartController {
         );
         }
         this.addAllDataPoints();
+
+
     }
 
     addDataPoint(i) {
