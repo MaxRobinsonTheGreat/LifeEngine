@@ -1,3 +1,5 @@
+const CellStates = require("../Organism/Cell/CellStates");
+
 class Species {
     constructor(anatomy, ancestor, start_tick) {
         this.anatomy = anatomy;
@@ -14,6 +16,18 @@ class Species {
         }
         this.name = '_' + Math.random().toString(36).substr(2, 9);
         this.extinct = false;
+        this.calcAnatomyDetails();
+    }
+
+    calcAnatomyDetails() {
+        var cell_counts = {};
+        for (let c of CellStates.living) {
+            cell_counts[c.name] = 0;
+        }
+        for (let cell of this.anatomy.cells) {
+            cell_counts[cell.state.name]+=1;
+        }
+        this.cell_counts=cell_counts;
     }
 
     addPop() {

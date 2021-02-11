@@ -176,6 +176,9 @@ class ControlPanel {
             $('#remove-prob').val(Hyperparams.removeProb);
             $('#movers-produce').prop('checked', Hyperparams.moversCanProduce);
             $('#food-blocks').prop('checked', Hyperparams.foodBlocksReproduction);
+            $('#food-drop-rate').val(Hyperparams.foodDropProb);
+            $('#look-range').val(Hyperparams.lookRange);
+
             if (!Hyperparams.useGlobalMutability) {
                 $('.global-mutation-in').css('display', 'none');
                 $('#avg-mut').css('display', 'block');

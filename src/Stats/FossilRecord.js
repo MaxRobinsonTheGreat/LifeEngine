@@ -1,3 +1,4 @@
+const CellStates = require("../Organism/Cell/CellStates");
 const Species = require("./Species");
 
 const FossilRecord = {
@@ -9,11 +10,11 @@ const FossilRecord = {
         this.min_discard = 10;
 
         this.record_size_limit = 500; // store this many data points
-        this.setData();
     },
 
     setEnv: function(env) {
         this.env = env;
+        this.setData();
     },
 
     addSpecies: function(org, ancestor) {
@@ -66,9 +67,10 @@ const FossilRecord = {
         // all parallel arrays
         this.tick_record = [0];
         this.pop_counts = [1];
-        this.av_pop_counts = [1]
         this.species_counts = [1];
         this.av_mut_rates = [5];
+        this.av_cells = [3];
+        this.av_cell_counts = [this.calcCellCountAverages()];
     },
 
     updateData() {
@@ -77,13 +79,39 @@ const FossilRecord = {
         this.pop_counts.push(this.env.organisms.length);
         this.species_counts.push(this.extant_species.length);
         this.av_mut_rates.push(this.env.averageMutability());
+        let av_cell = 0;
+        if (this.env.organisms.length > 0) {
+            av_cell = this.env.total_cells / this.env.organisms.length;
+        }
+        this.av_cells.push(av_cell);
+        this.av_cell_counts.push(this.calcCellCountAverages())
+
         if (this.tick_record.length > this.record_size_limit) {
             this.tick_record.shift();
             this.pop_counts.shift();
-            this.av_pop_counts.shift();
             this.species_counts.shift();
             this.av_mut_rates.shift();
+            this.av_cells.shift();
         }
+    },
+
+    calcCellCountAverages() {
+        var total_org = this.env.organisms.length;
+        var cell_counts = {};
+        for (let c of CellStates.living) {
+            cell_counts[c.name] = 0;
+        }
+        for (let s of this.extant_species) {
+            for (let name in s.cell_counts) {
+                cell_counts[name] += s.cell_counts[name] * s.population;
+            }
+        }
+        if (total_org == 0)
+            return cell_counts;
+        for (let c in cell_counts) {
+            cell_counts[c] /= total_org;
+        }
+        return cell_counts;
     },
 
     clear_record: function() {

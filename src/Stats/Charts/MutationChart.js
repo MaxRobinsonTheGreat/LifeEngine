@@ -18,23 +18,13 @@ class MutationChart extends ChartController {
                 dataPoints: []
             }
         );
-        for (var i in FossilRecord.tick_record) {
-            var t = FossilRecord.tick_record[i];
-            var p = FossilRecord.av_mut_rates[i];
-            this.data[0].dataPoints.push({x:t, y:p});
-        }
-        // console.log(this.data)
+        this.addAllDataPoints();
     }
 
-    addNewest() {
-        var i = FossilRecord.tick_record.length-1;
+    addDataPoint(i) {
         var t = FossilRecord.tick_record[i];
         var p = FossilRecord.av_mut_rates[i];
         this.data[0].dataPoints.push({x:t, y:p});
-    }
-
-    removeOldest() {
-        this.data[0].dataPoints.shift();
     }
 }
 

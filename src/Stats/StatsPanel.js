@@ -1,9 +1,11 @@
 const PopulationChart = require("./Charts/PopulationChart");
 const SpeciesChart = require("./Charts/SpeciesChart");
 const MutationChart = require("./Charts/MutationChart");
+const CellsChart = require("./Charts/CellsChart");
+const FossilRecord = require("./FossilRecord");
 
 
-const ChartSelections = [PopulationChart, SpeciesChart, MutationChart];
+const ChartSelections = [PopulationChart, SpeciesChart, CellsChart, MutationChart];
 
 class StatsPanel {
     constructor(env) {
@@ -47,12 +49,11 @@ class StatsPanel {
 
     updateDetails() {
         var org_count = this.env.organisms.length;
-        $('#org-count').text("Organism count:  " + org_count);
-        if (org_count > this.organism_record) 
-            this.organism_record = org_count;
-        $('#org-record').text("Highest count: " + this.env.organism_record);
+        $('#org-count').text("Total Population: " + org_count);
+        $('#species-count').text("Number of Species: " + FossilRecord.extant_species.length);
+        $('#largest-org').text("Largest Organism Ever: " + this.env.largest_cell_count + " cells");
         $('#avg-mut').text("Average Mutation Rate: " + Math.round(this.env.averageMutability() * 100) / 100);
-        $('#largest-org').text("Largest Organism: " + this.env.largest_cell_count + " cells");
+
 
     }
 

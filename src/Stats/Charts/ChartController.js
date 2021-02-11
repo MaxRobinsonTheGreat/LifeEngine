@@ -18,6 +18,12 @@ class ChartController {
         alert("Must override updateData!");
     }
 
+    addAllDataPoints(){
+        for (var i in FossilRecord.tick_record) {
+            this.addDataPoint(i)
+        }
+    }
+
     render() {
         this.chart.render();
     }
@@ -39,11 +45,18 @@ class ChartController {
     }
 
     addNewest() {
-        alert("Must override addNewest!");
+        var i = FossilRecord.tick_record.length-1;
+        this.addDataPoint(i);
+    }
+
+    addDataPoint(i) {
+        alert("Must override addDataPoint")
     }
 
     removeOldest() {
-        alert("Must override addNewest!");
+        for (var dps of this.data) {
+            dps.dataPoints.shift();
+        }
     }
 
     clear() {
