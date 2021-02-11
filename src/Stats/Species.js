@@ -6,8 +6,13 @@ class Species {
         this.cumulative_pop = 1;
         this.start_tick = start_tick;
         this.end_tick = -1;
-        this.color = '#asdfasdf';
-        this.name = '_' + Math.random().toString(36).substr(2, 9);;
+        this.color = Math.floor(Math.random()*16777215).toString(16);
+        if (ancestor != null) {
+            // needs to be reworked, maybe removed
+            var mutator = Math.floor(Math.random()*16777215)-8000000;
+            this.color = (mutator + parseInt(ancestor.color, 16)).toString(16);
+        }
+        this.name = '_' + Math.random().toString(36).substr(2, 9);
         this.extinct = false;
     }
 

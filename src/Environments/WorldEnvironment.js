@@ -22,11 +22,11 @@ class WorldEnvironment extends Environment{
         this.largest_cell_count = 0;
         this.reset_count = 0;
         this.total_ticks = 0;
+        this.data_update_rate = 100;
         FossilRecord.setEnv(this);
     }
 
     update(delta_time) {
-        this.total_ticks ++;
         var to_remove = [];
         for (var i in this.organisms) {
             var org = this.organisms[i];
@@ -38,6 +38,10 @@ class WorldEnvironment extends Environment{
             this.generateFood();
         }
         this.removeOrganisms(to_remove);
+        this.total_ticks ++;
+        if (this.total_ticks % this.data_update_rate == 0) {
+            FossilRecord.updateData();
+        }
     }
 
     render() {
@@ -77,6 +81,9 @@ class WorldEnvironment extends Environment{
     averageMutability() {
         if (this.organisms.length < 1)
             return 0;
+        if (Hyperparams.useGlobalMutability) {
+            return Hyperparams.globalMutability;
+        }
         return this.total_mutability / this.organisms.length;
     }
 
@@ -129,7 +136,6 @@ class WorldEnvironment extends Environment{
         this.renderer.cell_size = cell_size;
         this.renderer.fillShape(rows*cell_size, cols*cell_size);
         this.grid_map.resize(cols, rows, cell_size);
-        this.reset();
     }
 
     resizeFillWindow(cell_size) {
@@ -138,7 +144,6 @@ class WorldEnvironment extends Environment{
         var cols = Math.floor(this.renderer.width / cell_size);
         var rows = Math.floor(this.renderer.height / cell_size);
         this.grid_map.resize(cols, rows, cell_size);
-        this.reset();
     }
 }
 

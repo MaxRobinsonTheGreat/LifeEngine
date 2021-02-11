@@ -51,10 +51,6 @@
 				</div>
 				<br>
 				<button id='resize'>Resize and Reset</button>
-				<div class='icon-links'>
-					<a href="https://www.youtube.com/channel/UCwBhBDsqiQflTMLy2epbQVw"><i class="fa fa-youtube"></i></a>
-					<a href="https://twitter.com/max_romana"><i class="fa fa-twitter"></i></a>
-				</div>
 			</div>
 
 			<div id='tab-container' class='control-set'>
@@ -91,6 +87,10 @@
 						<p>Hover over each color to learn what it does. For a more in depth explanation of the simulation, view the 
 							<a href="https://github.com/MaxRobinsonTheGreat/EvolutionSimulator/blob/master/V2README.md">readme</a>.
 						</p>
+					</div>
+					<div class='icon-links'>
+						<a href="https://www.youtube.com/channel/UCwBhBDsqiQflTMLy2epbQVw"><i class="fa fa-youtube"></i></a>
+						<a href="https://twitter.com/max_romana"><i class="fa fa-twitter"></i></a>
 					</div>
 				</div>
 
@@ -226,12 +226,16 @@
 						<p id='org-record'>Highest count: </p>
 						<p id='avg-mut'>Average Mutation Rate: </p>
 						<p id='largest-org'>Largest Organism: </p>
-						<button id='update-chart'>Update Chart</button>
+						<label for="chart-option">Chart: </label>
+						<select name="chart-option" id="chart-option">
+							<option value="population">Population</option>
+							<option value="species">Species</option>
+							<option value="mut-rate">Mutation Rate</option>
+						</select>
 
 					</div>
 					<div class='right-half'>
-						<div id="chartContainer" style="height: 180px; width: 100%;">
-						</div>
+						<div id="chartContainer"></div>
 					</div>
 					
 				</div>

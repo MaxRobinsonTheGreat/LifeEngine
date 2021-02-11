@@ -5,7 +5,7 @@ const ColorScheme = require('./Rendering/ColorScheme');
 
 const render_speed = 60;
 
-class Engine{
+class Engine {
     constructor(){
         this.fps = 60;
         this.env = new WorldEnvironment(5);

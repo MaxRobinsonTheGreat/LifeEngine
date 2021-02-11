@@ -1,6 +1,6 @@
 const Hyperparams = require("../Hyperparameters");
 const Modes = require("./ControlModes");
-const StatsPanel = require("./StatsPanel");
+const StatsPanel = require("../Stats/StatsPanel");
 
 class ControlPanel {
     constructor(engine) {
@@ -18,11 +18,11 @@ class ControlPanel {
         this.editor_controller = this.engine.organism_editor.controller;
         this.env_controller.setControlPanel(this);
         this.editor_controller.setControlPanel(this);
-        this.stats_panel = new StatsPanel();
-        this.stats_panel.render();
+        this.stats_panel = new StatsPanel(this.engine.env);
     }
 
     defineMinMaxControls(){
+        var self = this;
         $('#minimize').click ( function() {
             $('.control-panel').css('display', 'none');
             $('.hot-controls').css('display', 'block');
@@ -31,7 +31,7 @@ class ControlPanel {
         $('#maximize').click ( function() {
             $('.control-panel').css('display', 'grid');
             $('.hot-controls').css('display', 'none');
-            if (this.id == 'stats') {
+            if (self.tab_id == 'stats') {
                 self.stats_panel.startAutoRender();
             }
         });
@@ -78,6 +78,8 @@ class ControlPanel {
                 var rows = $('#row-input').val();
                 this.engine.env.resizeGridColRow(cell_size, cols, rows);
             }
+            this.engine.env.reset();
+            this.stats_panel.reset();
             
         }.bind(this));
     }
@@ -88,13 +90,13 @@ class ControlPanel {
         $('.tabnav-item').click(function() {
             $('.tab').css('display', 'none');
             var tab = '#'+this.id+'.tab';
+            $(tab).css('display', 'grid');
             self.engine.organism_editor.is_active = (this.id == 'editor');
+            self.stats_panel.stopAutoRender();
             if (this.id == 'stats') {
                 self.stats_panel.startAutoRender();
             }
-            self.id = this.id;
-            
-            $(tab).css('display', 'grid');
+            self.tab_id = this.id;
         });
     }
 
@@ -134,7 +136,7 @@ class ControlPanel {
             Hyperparams.useGlobalMutability = !this.checked;
         });
         $('#global-mutation').change( function() {
-            Hyperparams.globalMutability = $('#global-mutation').val();
+            Hyperparams.globalMutability = parseInt($('#global-mutation').val());
         });
         $('.mut-prob').change( function() {
             switch(this.id){
@@ -191,7 +193,7 @@ class ControlPanel {
             $('#cell-selections').css('display', 'none');
             $('#organism-options').css('display', 'none');
             self.editor_controller.setDetailsPanel();
-            switch(this.id){
+            switch(this.id) {
                 case "food-drop":
                     self.setMode(Modes.FoodDrop);
                     break;
@@ -229,7 +231,7 @@ class ControlPanel {
         var env = this.engine.env;
         $('#reset-env').click( function() {
             this.engine.env.reset();
-            this.stats_panel.clearData();
+            this.stats_panel.reset();
         }.bind(this));
         $('#auto-reset').change(function() {
             env.auto_reset = this.checked;
@@ -271,15 +273,8 @@ class ControlPanel {
 
     update() {
         $('#fps-actual').text("Actual FPS: " + Math.floor(this.engine.actual_fps));
-        var org_count = this.engine.env.organisms.length;
-        $('#org-count').text("Organism count:  " + org_count);
-        if (org_count > this.organism_record) 
-            this.organism_record = org_count;
-        $('#org-record').text("Highest count: " + this.organism_record);
-        $('#avg-mut').text("Average Mutation Rate: " + Math.round(this.engine.env.averageMutability() * 100) / 100);
-        $('#largest-org').text("Largest Organism: " + this.engine.env.largest_cell_count + " cells");
         $('#reset-count').text("Auto reset count: " + this.engine.env.reset_count);
-        this.stats_panel.updateData(this.engine.env.total_ticks, this.engine.env.organisms.length)
+        this.stats_panel.updateDetails();
     }
 
 }

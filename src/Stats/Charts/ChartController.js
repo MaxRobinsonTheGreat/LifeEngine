@@ -1,0 +1,55 @@
+const FossilRecord = require("../FossilRecord");
+
+class ChartController {
+    constructor(title) {
+        this.data = [];
+        this.chart = new CanvasJS.Chart("chartContainer", {
+            zoomEnabled: true,
+            title:{
+                text: title
+            },
+            data: this.data
+        });
+        this.chart.render();
+        this.data
+    }
+
+    setData() {
+        alert("Must override updateData!");
+    }
+
+    render() {
+        this.chart.render();
+    }
+
+    updateData() {
+        var r_len = FossilRecord.tick_record.length;
+        var newest_t = -1;
+        var oldest_t = 0;
+        if (this.data[0].dataPoints.length>0) {
+            newest_t = this.data[0].dataPoints[this.data[0].dataPoints.length-1].x;
+            newest_t = this.data[0].dataPoints[0].x;
+        }
+        if (newest_t < FossilRecord.tick_record[r_len-1]) {
+            this.addNewest();
+        }
+        if (oldest_t < FossilRecord.tick_record[0]) {
+            this.removeOldest();
+        }
+    }
+
+    addNewest() {
+        alert("Must override addNewest!");
+    }
+
+    removeOldest() {
+        alert("Must override addNewest!");
+    }
+
+    clear() {
+        this.data.length = 0;
+        this.chart.render();
+    }
+}
+
+module.exports = ChartController;

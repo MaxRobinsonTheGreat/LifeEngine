@@ -6,7 +6,10 @@ const FossilRecord = {
         this.extinct_species = [];
 
         // if an organism has fewer than this cumulative pop, discard them on extinction
-        this.min_discard = 5;
+        this.min_discard = 10;
+
+        this.record_size_limit = 500; // store this many data points
+        this.setData();
     },
 
     setEnv: function(env) {
@@ -59,10 +62,34 @@ const FossilRecord = {
         }
     },
 
+    setData() {
+        // all parallel arrays
+        this.tick_record = [0];
+        this.pop_counts = [1];
+        this.av_pop_counts = [1]
+        this.species_counts = [1];
+        this.av_mut_rates = [5];
+    },
+
+    updateData() {
+        var tick = this.env.total_ticks;
+        this.tick_record.push(tick);
+        this.pop_counts.push(this.env.organisms.length);
+        this.species_counts.push(this.extant_species.length);
+        this.av_mut_rates.push(this.env.averageMutability());
+        if (this.tick_record.length > this.record_size_limit) {
+            this.tick_record.shift();
+            this.pop_counts.shift();
+            this.av_pop_counts.shift();
+            this.species_counts.shift();
+            this.av_mut_rates.shift();
+        }
+    },
+
     clear_record: function() {
         this.extant_species = [];
         this.extinct_species = [];
-        // console.log("Cleared", this.extant_species, this.extinct_species)
+        this.setData();
     },
 
 }
