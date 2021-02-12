@@ -23,10 +23,8 @@ class Engine {
     start(fps=60) {
         if (fps <= 0)
             fps = 1;
-        if (fps > 300)
-            fps = 300;
         this.fps = fps;
-        this.game_loop = setInterval(function(){this.environmentUpdate();}.bind(this), 1000/fps);
+        this.game_loop = setInterval(function(){this.updateDeltaTime();this.environmentUpdate();}.bind(this), 1000/fps);
         this.running = true;
         if (this.fps >= render_speed) {
             if (this.render_loop != null) {
@@ -46,14 +44,17 @@ class Engine {
 
     setRenderLoop() {
         if (this.render_loop == null) {
-            this.render_loop = setInterval(function(){this.necessaryUpdate();}.bind(this), 1000/render_speed);
+            this.render_loop = setInterval(function(){this.updateDeltaTime();this.necessaryUpdate();}.bind(this), 1000/render_speed);
         }
+    }
+
+    updateDeltaTime() {
+        this.delta_time = Date.now() - this.last_update;
+        this.last_update = Date.now();
     }
 
 
     environmentUpdate() {
-        this.delta_time = Date.now() - this.last_update;
-        this.last_update = Date.now();
         this.env.update(this.delta_time);
         this.actual_fps = 1/this.delta_time*1000;
         if(this.render_loop == null){
@@ -64,7 +65,7 @@ class Engine {
 
     necessaryUpdate() {
         this.env.render();
-        this.controlpanel.update();
+        this.controlpanel.update(this.delta_time);
         this.organism_editor.update();
     }
 

@@ -8,6 +8,12 @@ class ChartController {
             title:{
                 text: title
             },
+            axisX:{
+                minimum: 0,
+            },
+            axisY:{
+                minimum: 0,
+            },
             data: this.data
         });
         this.chart.render();
@@ -18,6 +24,13 @@ class ChartController {
         alert("Must override updateData!");
     }
 
+    setMinimum() {
+        var min = 0;
+        if (this.data[0].dataPoints != [])
+            min = this.data[0].dataPoints[0].x;
+        this.chart.options.axisX.minimum = min;
+    }
+
     addAllDataPoints(){
         for (var i in FossilRecord.tick_record) {
             this.addDataPoint(i)
@@ -25,6 +38,7 @@ class ChartController {
     }
 
     render() {
+        this.setMinimum();
         this.chart.render();
     }
 

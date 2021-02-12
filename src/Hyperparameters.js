@@ -2,6 +2,8 @@ const Neighbors = require("./Grid/Neighbors");
 
 const Hyperparams = {
     setDefaults: function() {
+        this.headless = false;
+
         this.lifespanMultiplier = 100;
         this.foodProdProb = 4;
         this.foodProdProbScalar = 4;

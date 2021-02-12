@@ -27,8 +27,9 @@
 					<button id="clear-walls" title="Clear All Walls"><i class="fa fa-window-close"></i></button>
 				</div>
 				<h2>Simulation Speed</h2>
-				<input id="slider" type="range" min="1" max="300" value="60">
+				<input id="slider" type="range" min="1" max="500" value="60">
 				<button class='pause-button'><i class="fa fa-pause"></i></button>
+				<button class="headless" title="Disable rendering (increase efficiency)"><i class="fa fa-eye-slash"></i></button>
 				<p id='fps'>Target FPS: 60</p>
 				<p id='fps-actual'></p>
 				<button id='reset-env'>Reset Environment</button>
@@ -230,7 +231,7 @@
 						<select name="chart-option" id="chart-option">
 							<option value="population">Population</option>
 							<option value="species">Species</option>
-							<option value="mut-rate">Organism Size</option>
+							<option value="mut-rate">Organism Structure</option>
 							<option value="mut-rate">Mutation Rate</option>
 						</select>
 						<p id='chart-note'></p>
@@ -266,7 +267,10 @@
 			<button class="edit-mode-btn" id="food-drop" title="Drop/Remove Food"><i class="fa fa-cutlery"></i></button>
 			<button class="edit-mode-btn" id="click-kill" title="Click to kill"><i class="fa fa-bolt"></i></button>
 			<button class='pause-button'><i class="fa fa-pause"></i></button>
-			
+			<button class="headless" title="Disable rendering (increase efficiency)"><i class="fa fa-eye-slash"></i></button>
+		</div>
+		<div id="headless-notification">
+			<i class="fa fa-eye-slash" ></i>
 		</div>
 		<div id='maximize-hot-control' class='hot-controls'>
 			<button id="maximize" title="Show Control Panel"><i class="fa fa-plus-square"></i></button>

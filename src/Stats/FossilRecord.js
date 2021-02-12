@@ -8,7 +8,6 @@ const FossilRecord = {
 
         // if an organism has fewer than this cumulative pop, discard them on extinction
         this.min_discard = 10;
-        this.total_relavent_organisms = 0; // organisms with greater than ^ cumulative pop
 
         this.record_size_limit = 500; // store this many data points
     },
@@ -67,10 +66,10 @@ const FossilRecord = {
     setData() {
         // all parallel arrays
         this.tick_record = [0];
-        this.pop_counts = [1];
-        this.species_counts = [1];
-        this.av_mut_rates = [5];
-        this.av_cells = [3];
+        this.pop_counts = [0];
+        this.species_counts = [0];
+        this.av_mut_rates = [0];
+        this.av_cells = [0];
         this.av_cell_counts = [this.calcCellCountAverages()];
     },
 
@@ -80,12 +79,7 @@ const FossilRecord = {
         this.pop_counts.push(this.env.organisms.length);
         this.species_counts.push(this.extant_species.length);
         this.av_mut_rates.push(this.env.averageMutability());
-        this.av_cell_counts.push(this.calcCellCountAverages());
-        let av_cell = 0;
-        if (this.total_relavent_organisms > 0) {
-            av_cell = this.env.total_cells / this.total_relavent_organisms;
-        }
-        this.av_cells.push(av_cell);
+        this.calcCellCountAverages();
 
         if (this.tick_record.length > this.record_size_limit) {
             this.tick_record.shift();
@@ -116,11 +110,14 @@ const FossilRecord = {
         }
         if (total_org == 0)
             return cell_counts;
+
+        var total_cells = 0;
         for (let c in cell_counts) {
+            total_cells += cell_counts[c];
             cell_counts[c] /= total_org;
         }
-        this.total_relavent_organisms = total_org;
-        return cell_counts;
+        this.av_cells.push(total_cells / total_org);
+        this.av_cell_counts.push(cell_counts);
     },
 
     clear_record: function() {

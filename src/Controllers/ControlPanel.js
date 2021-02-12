@@ -19,6 +19,9 @@ class ControlPanel {
         this.env_controller.setControlPanel(this);
         this.editor_controller.setControlPanel(this);
         this.stats_panel = new StatsPanel(this.engine.env);
+        this.headless_opacity = 1;
+        this.opacity_change_rate = -0.8;
+        this.paused=false;
     }
 
     defineMinMaxControls(){
@@ -43,19 +46,29 @@ class ControlPanel {
             this.fps = this.slider.value
             if (this.engine.running) {
                 this.changeEngineSpeed(this.fps);
-                
             }
             $('#fps').text("Target FPS: "+this.fps);
         }.bind(this);
         $('.pause-button').click(function() {
             $('.pause-button').find("i").toggleClass("fa fa-pause");
             $('.pause-button').find("i").toggleClass("fa fa-play");
+            this.paused = !this.paused;
             if (this.engine.running) {
                 this.engine.stop();
             }
             else if (!this.engine.running){
                 this.engine.start(this.fps);
             }
+        }.bind(this));
+        $('.headless').click(function() {
+            if (Hyperparams.headless){
+                $('#headless-notification').css('display', 'none');
+                this.engine.env.renderFull();
+            }
+            else {
+                $('#headless-notification').css('display', 'block');
+            }
+            Hyperparams.headless = !Hyperparams.headless;
         }.bind(this));
     }
 
@@ -274,10 +287,29 @@ class ControlPanel {
         this.fps = this.engine.fps;
     }
 
-    update() {
+    updateHeadlessIcon(delta_time) {
+        if (this.paused)
+            return;
+        var op = this.headless_opacity + (this.opacity_change_rate*delta_time/1000);
+        if (op <= 0.4){
+            op=0.4;
+            this.opacity_change_rate = -this.opacity_change_rate;
+        }
+        else if (op >= 1){
+            op=1;
+            this.opacity_change_rate = -this.opacity_change_rate;
+        }
+        this.headless_opacity = op;
+        $('#headless-notification').css('opacity',(op*100)+'%');
+    }
+
+    update(delta_time) {
         $('#fps-actual').text("Actual FPS: " + Math.floor(this.engine.actual_fps));
         $('#reset-count').text("Auto reset count: " + this.engine.env.reset_count);
         this.stats_panel.updateDetails();
+        if (Hyperparams.headless)
+            this.updateHeadlessIcon(delta_time);
+
     }
 
 }
