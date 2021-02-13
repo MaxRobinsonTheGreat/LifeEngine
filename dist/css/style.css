@@ -39,12 +39,12 @@ body{
     background-color: #3a4b68;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    opacity: 0.8;
+    /* opacity: 0.8; */
 }
 
-.control-panel:hover {
+/* .control-panel:hover {
     opacity: 1;
-}
+} */
 
 .control-set {
     margin: 5px;

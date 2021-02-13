@@ -61,6 +61,8 @@ class ControlPanel {
             }
         }.bind(this));
         $('.headless').click(function() {
+            $('.headless').find("i").toggleClass("fa fa-eye");
+            $('.headless').find("i").toggleClass("fa fa-eye-slash");
             if (Hyperparams.headless){
                 $('#headless-notification').css('display', 'none');
                 this.engine.env.renderFull();
