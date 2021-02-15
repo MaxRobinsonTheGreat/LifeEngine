@@ -1,7 +1,7 @@
 const FossilRecord = require("../FossilRecord");
 
 class ChartController {
-    constructor(title, note="") {
+    constructor(title, y_axis="", note="") {
         this.data = [];
         this.chart = new CanvasJS.Chart("chartContainer", {
             zoomEnabled: true,
@@ -9,9 +9,11 @@ class ChartController {
                 text: title
             },
             axisX:{
+                title: "Ticks",
                 minimum: 0,
             },
             axisY:{
+                title: y_axis,
                 minimum: 0,
             },
             data: this.data
