@@ -20,13 +20,33 @@ class ControlPanel {
     }
 
     defineMinMaxControls(){
-        $('#minimize').click ( function() {
+        this.control_panel_active = true;
+        this.no_hud = false;
+        $('#minimize').click ( () => {
             $('.control-panel').css('display', 'none');
             $('.hot-controls').css('display', 'block');
+            this.control_panel_active = false;
         });
-        $('#maximize').click ( function() {
+        $('#maximize').click ( () => {
             $('.control-panel').css('display', 'grid');
             $('.hot-controls').css('display', 'none');
+            this.control_panel_active = true;
+        });
+        const V_KEY = 118;
+        $('body').keypress( (e) => {
+            if (e.which === V_KEY) {
+                if (this.no_hud) {
+                    let control_panel_display = this.control_panel_active ? 'grid' : 'none';
+                    let hot_control_display = !this.control_panel_active ? 'block' : 'none';
+                    $('.control-panel').css('display', control_panel_display);
+                    $('.hot-controls').css('display', hot_control_display);
+                }
+                else {
+                    $('.control-panel').css('display', 'none');
+                    $('.hot-controls').css('display', 'none');
+                }
+                this.no_hud = !this.no_hud;
+            }
         });
     }
 
