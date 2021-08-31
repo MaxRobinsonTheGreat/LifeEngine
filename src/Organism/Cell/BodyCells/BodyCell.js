@@ -10,8 +10,8 @@ class BodyCell{
         this.loc_row = loc_row;
 
         var distance = Math.max(Math.abs(loc_row)*2 + 2, Math.abs(loc_col)*2 + 2);
-        if (this.org.birth_distance < distance) {
-            this.org.birth_distance = distance;
+        if (this.org.anatomy.birth_distance < distance) {
+            this.org.anatomy.birth_distance = distance;
         }
     }
 

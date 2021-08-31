@@ -5,7 +5,7 @@ const Organism = require('../Organism/Organism');
 const CellStates = require('../Organism/Cell/CellStates');
 const EnvironmentController = require('../Controllers/EnvironmentController');
 const Hyperparams = require('../Hyperparameters.js');
-const Cell = require('../Organism/Cell/GridCell');
+const FossilRecord = require('../Stats/FossilRecord');
 
 class WorldEnvironment extends Environment{
     constructor(cell_size) {
@@ -21,6 +21,9 @@ class WorldEnvironment extends Environment{
         this.auto_reset = true;
         this.largest_cell_count = 0;
         this.reset_count = 0;
+        this.total_ticks = 0;
+        this.data_update_rate = 100;
+        FossilRecord.setEnv(this);
     }
 
     update() {
@@ -35,11 +38,23 @@ class WorldEnvironment extends Environment{
             this.generateFood();
         }
         this.removeOrganisms(to_remove);
+        this.total_ticks ++;
+        if (this.total_ticks % this.data_update_rate == 0) {
+            FossilRecord.updateData();
+        }
     }
 
     render() {
+        if (Hyperparams.headless) {
+            this.renderer.cells_to_render.clear();
+            return;
+        }
         this.renderer.renderCells();
         this.renderer.renderHighlights();
+    }
+
+    renderFull() {
+        this.renderer.renderFullGrid(this.grid_map.grid);
     }
 
     removeOrganisms(org_indeces) {
@@ -56,26 +71,27 @@ class WorldEnvironment extends Environment{
     OriginOfLife() {
         var center = this.grid_map.getCenter();
         var org = new Organism(center[0], center[1], this);
-        // org.addDefaultCell(CellStates.eye, 0, 0);
-        // org.addDefaultCell(CellStates.mouth, 1, 1);
-        // org.addDefaultCell(CellStates.mover, 1, -1);
-        org.addDefaultCell(CellStates.mouth, 0, 0);
-        org.addDefaultCell(CellStates.producer, 1, 1);
-        org.addDefaultCell(CellStates.producer, -1, -1);
+        org.anatomy.addDefaultCell(CellStates.mouth, 0, 0);
+        org.anatomy.addDefaultCell(CellStates.producer, 1, 1);
+        org.anatomy.addDefaultCell(CellStates.producer, -1, -1);
         this.addOrganism(org);
+        FossilRecord.addSpecies(org, null);
     }
 
     addOrganism(organism) {
         organism.updateGrid();
         this.total_mutability += organism.mutability;
         this.organisms.push(organism);
-        if (organism.cells.length > this.largest_cell_count) 
-            this.largest_cell_count = organism.cells.length;
+        if (organism.anatomy.cells.length > this.largest_cell_count) 
+            this.largest_cell_count = organism.anatomy.cells.length;
     }
 
     averageMutability() {
         if (this.organisms.length < 1)
             return 0;
+        if (Hyperparams.useGlobalMutability) {
+            return Hyperparams.globalMutability;
+        }
         return this.total_mutability / this.organisms.length;
     }
 
@@ -114,11 +130,13 @@ class WorldEnvironment extends Environment{
         }
     }
 
-    reset(clear_walls=true) {
+    reset() {
         this.organisms = [];
         this.grid_map.fillGrid(CellStates.empty);
         this.renderer.renderFullGrid(this.grid_map.grid);
         this.total_mutability = 0;
+        this.total_ticks = 0;
+        FossilRecord.clear_record();
         this.OriginOfLife();
     }
 
@@ -126,7 +144,6 @@ class WorldEnvironment extends Environment{
         this.renderer.cell_size = cell_size;
         this.renderer.fillShape(rows*cell_size, cols*cell_size);
         this.grid_map.resize(cols, rows, cell_size);
-        this.reset();
     }
 
     resizeFillWindow(cell_size) {
@@ -135,7 +152,6 @@ class WorldEnvironment extends Environment{
         var cols = Math.ceil(this.renderer.width / cell_size);
         var rows = Math.ceil(this.renderer.height / cell_size);
         this.grid_map.resize(cols, rows, cell_size);
-        this.reset();
     }
 }
 

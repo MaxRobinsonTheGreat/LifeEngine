@@ -52,7 +52,7 @@ class Renderer {
     }
 
     renderOrganism(org) {
-        for(var org_cell of org.cells) {
+        for(var org_cell of org.anatomy.cells) {
             var cell = org.getRealCell(org_cell);
             this.renderCell(cell);
         }
@@ -75,7 +75,7 @@ class Renderer {
     }
 
     highlightOrganism(org) {
-        for(var org_cell of org.cells) {
+        for(var org_cell of org.anatomy.cells) {
             var cell = org.getRealCell(org_cell);
             this.cells_to_highlight.add(cell);
         }

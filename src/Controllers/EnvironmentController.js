@@ -3,12 +3,15 @@ const Organism = require('../Organism/Organism');
 const Modes = require("./ControlModes");
 const CellStates = require("../Organism/Cell/CellStates");
 const Neighbors = require("../Grid/Neighbors");
+const FossilRecord = require("../Stats/FossilRecord");
+const Hyperparams = require("../Hyperparameters");
 
 class EnvironmentController extends CanvasController{
     constructor(env, canvas) {
         super(env, canvas);
         this.mode = Modes.Drag;
         this.org_to_clone = null;
+        this.add_new_species = false;
         this.defineZoomControls();
         this.scale = 1;
     }
@@ -76,6 +79,8 @@ class EnvironmentController extends CanvasController{
     }
 
     performModeAction() {
+        if (Hyperparams.headless)
+            return;
         var mode = this.mode;
         var right_click = this.right_click;
         var left_click = this.left_click;
@@ -118,8 +123,19 @@ class EnvironmentController extends CanvasController{
                 case Modes.Clone:
                     if (this.org_to_clone != null){
                         var new_org = new Organism(this.mouse_c, this.mouse_r, this.env, this.org_to_clone);
+                        if (this.add_new_species){
+                            FossilRecord.addSpeciesObj(new_org.species);
+                            new_org.species.start_tick = this.env.total_ticks;
+                            this.add_new_species = false;
+                            new_org.species.population = 0;
+                        }
+                        else if (this.org_to_clone.species.extinct){
+                            FossilRecord.resurrect(this.org_to_clone.species);
+                        }
+
                         if (new_org.isClear(this.mouse_c, this.mouse_r)){
-                            this.env.addOrganism(new_org)
+                            this.env.addOrganism(new_org);
+                            new_org.species.addPop();
                         }
                     }
                     break;

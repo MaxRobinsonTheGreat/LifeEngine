@@ -9,7 +9,7 @@ body{
 * {
     margin: 0;
     padding: 0;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;   
 }
 
 #env {
@@ -39,12 +39,12 @@ body{
     background-color: #3a4b68;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    opacity: 0.8;
+    /* opacity: 0.8; */
 }
 
-.control-panel:hover {
+/* .control-panel:hover {
     opacity: 1;
-}
+} */
 
 .control-set {
     margin: 5px;
@@ -226,11 +226,27 @@ button:hover{
     margin: 5px;
 }
 
+#chartContainer {
+    height: 200px; 
+    width: 100%;
+}
+
+
 .hot-controls {
     position: fixed;
     bottom: 10px;
     padding-left: 10px;
     display: none;
+}
+
+#headless-notification {
+    display: none;
+    position: fixed;
+    color: white;
+    font-size: 200px;
+    left: 0;
+    top: 0;
+    padding-left: 10px;
 }
 
 #minimize {
