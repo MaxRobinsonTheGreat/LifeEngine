@@ -7,7 +7,7 @@ const Observation = require("../../Perception/Observation")
 class EyeCell extends BodyCell{
     constructor(org, loc_col, loc_row){
         super(CellStates.eye, org, loc_col, loc_row);
-        this.org.has_eyes = true;
+        this.org.anatomy.has_eyes = true;
     }
 
     initInherit(parent) {

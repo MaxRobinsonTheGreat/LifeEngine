@@ -7,6 +7,7 @@
 		<link rel="stylesheet" href="./css/style.css">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 
 	</head>
 	<body>
@@ -28,6 +29,7 @@
 				<h2>Simulation Speed</h2>
 				<input id="slider" type="range" min="1" max="300" value="60">
 				<button class='pause-button'><i class="fa fa-pause"></i></button>
+				<button class="headless" title="Toggle rendering"><i class="fa fa-eye-slash"></i></button>
 				<p id='fps'>Target FPS: 60</p>
 				<p id='fps-actual'></p>
 				<button id='reset-env'>Reset Environment</button>
@@ -50,10 +52,6 @@
 				</div>
 				<br>
 				<button id='resize'>Resize and Reset</button>
-				<div class='icon-links'>
-					<a href="https://www.youtube.com/channel/UCwBhBDsqiQflTMLy2epbQVw"><i class="fa fa-youtube"></i></a>
-					<a href="https://twitter.com/max_romana"><i class="fa fa-twitter"></i></a>
-				</div>
 			</div>
 
 			<div id='tab-container' class='control-set'>
@@ -90,6 +88,10 @@
 						<p>Hover over each color to learn what it does. For a more in depth explanation of the simulation, view the 
 							<a href="https://github.com/MaxRobinsonTheGreat/EvolutionSimulator/blob/master/V2README.md">readme</a>.
 						</p>
+					</div>
+					<div class='icon-links'>
+						<a href="https://www.youtube.com/channel/UCwBhBDsqiQflTMLy2epbQVw"><i class="fa fa-youtube"></i></a>
+						<a href="https://twitter.com/max_romana"><i class="fa fa-twitter"></i></a>
 					</div>
 				</div>
 
@@ -220,13 +222,24 @@
 				</div>
 				<div id='stats' class='tab'>
 					<div class='left-half'>
-						<h2>Stats</h2>
-						<p id='org-count'>Organism count: </p>
-						<p id='org-record'>Highest count: </p>
+						<h2>Statistics</h2>
+						<p id='org-count'>Total Population: </p>
+						<p id='species-count'>Number of Species: </p>
+						<p id='largest-org'>Largest Organism Ever: </p>
 						<p id='avg-mut'>Average Mutation Rate: </p>
-						<p id='largest-org'>Largest Organism: </p>
+						<label for="chart-option">Chart: </label>
+						<select name="chart-option" id="chart-option">
+							<option value="population">Population</option>
+							<option value="species">Species</option>
+							<option value="mut-rate">Organism Structure</option>
+							<option value="mut-rate">Mutation Rate</option>
+						</select>
+						<p id='chart-note'></p>
+
 					</div>
-					<div class='right-half'></div>
+					<div class='right-half'>
+						<div id="chartContainer"></div>
+					</div>
 					
 				</div>
 				<div id='challenges' class='tab'>
@@ -254,7 +267,10 @@
 			<button class="edit-mode-btn" id="food-drop" title="Drop/Remove Food"><i class="fa fa-cutlery"></i></button>
 			<button class="edit-mode-btn" id="click-kill" title="Click to kill"><i class="fa fa-bolt"></i></button>
 			<button class='pause-button'><i class="fa fa-pause"></i></button>
-			
+			<button class="headless" title="Toggle rendering"><i class="fa fa-eye-slash"></i></button>
+		</div>
+		<div id="headless-notification">
+			<i class="fa fa-eye-slash" ></i>
 		</div>
 		<div id='maximize-hot-control' class='hot-controls'>
 			<button id="maximize" title="Show Control Panel"><i class="fa fa-plus-square"></i></button>

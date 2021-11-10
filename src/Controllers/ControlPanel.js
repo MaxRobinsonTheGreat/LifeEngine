@@ -1,5 +1,6 @@
 const Hyperparams = require("../Hyperparameters");
 const Modes = require("./ControlModes");
+const StatsPanel = require("../Stats/StatsPanel");
 
 class ControlPanel {
     constructor(engine) {
@@ -17,16 +18,25 @@ class ControlPanel {
         this.editor_controller = this.engine.organism_editor.controller;
         this.env_controller.setControlPanel(this);
         this.editor_controller.setControlPanel(this);
+        this.stats_panel = new StatsPanel(this.engine.env);
+        this.headless_opacity = 1;
+        this.opacity_change_rate = -0.8;
+        this.paused=false;
     }
 
     defineMinMaxControls(){
+        var self = this;
         $('#minimize').click ( function() {
             $('.control-panel').css('display', 'none');
             $('.hot-controls').css('display', 'block');
-        });
+            this.stats_panel.stopAutoRender();
+        }.bind(this));
         $('#maximize').click ( function() {
             $('.control-panel').css('display', 'grid');
             $('.hot-controls').css('display', 'none');
+            if (self.tab_id == 'stats') {
+                self.stats_panel.startAutoRender();
+            }
         });
     }
 
@@ -36,19 +46,31 @@ class ControlPanel {
             this.fps = this.slider.value
             if (this.engine.running) {
                 this.changeEngineSpeed(this.fps);
-                
             }
             $('#fps').text("Target FPS: "+this.fps);
         }.bind(this);
         $('.pause-button').click(function() {
             $('.pause-button').find("i").toggleClass("fa fa-pause");
             $('.pause-button').find("i").toggleClass("fa fa-play");
+            this.paused = !this.paused;
             if (this.engine.running) {
                 this.engine.stop();
             }
             else if (!this.engine.running){
                 this.engine.start(this.fps);
             }
+        }.bind(this));
+        $('.headless').click(function() {
+            $('.headless').find("i").toggleClass("fa fa-eye");
+            $('.headless').find("i").toggleClass("fa fa-eye-slash");
+            if (Hyperparams.headless){
+                $('#headless-notification').css('display', 'none');
+                this.engine.env.renderFull();
+            }
+            else {
+                $('#headless-notification').css('display', 'block');
+            }
+            Hyperparams.headless = !Hyperparams.headless;
         }.bind(this));
     }
 
@@ -71,24 +93,31 @@ class ControlPanel {
                 var rows = $('#row-input').val();
                 this.engine.env.resizeGridColRow(cell_size, cols, rows);
             }
+            this.engine.env.reset();
+            this.stats_panel.reset();
             
         }.bind(this));
     }
 
     defineTabNavigation() {
+        this.tab_id = 'about';
         var self = this;
         $('.tabnav-item').click(function() {
             $('.tab').css('display', 'none');
             var tab = '#'+this.id+'.tab';
-            self.engine.organism_editor.is_active = (this.id == 'editor');
             $(tab).css('display', 'grid');
+            self.engine.organism_editor.is_active = (this.id == 'editor');
+            self.stats_panel.stopAutoRender();
+            if (this.id == 'stats') {
+                self.stats_panel.startAutoRender();
+            }
+            self.tab_id = this.id;
         });
     }
 
     defineHyperparameterControls() {
         $('#food-prod-prob').change(function() {
-            var food_prob = 
-            Hyperparams.foodProdProb = $('#food-prod-prob').val();;
+            Hyperparams.foodProdProb = $('#food-prod-prob').val();
         }.bind(this));
         $('#lifespan-multiplier').change(function() {
             Hyperparams.lifespanMultiplier = $('#lifespan-multiplier').val();
@@ -122,7 +151,7 @@ class ControlPanel {
             Hyperparams.useGlobalMutability = !this.checked;
         });
         $('#global-mutation').change( function() {
-            Hyperparams.globalMutability = $('#global-mutation').val();
+            Hyperparams.globalMutability = parseInt($('#global-mutation').val());
         });
         $('.mut-prob').change( function() {
             switch(this.id){
@@ -162,6 +191,9 @@ class ControlPanel {
             $('#remove-prob').val(Hyperparams.removeProb);
             $('#movers-produce').prop('checked', Hyperparams.moversCanProduce);
             $('#food-blocks').prop('checked', Hyperparams.foodBlocksReproduction);
+            $('#food-drop-rate').val(Hyperparams.foodDropProb);
+            $('#look-range').val(Hyperparams.lookRange);
+
             if (!Hyperparams.useGlobalMutability) {
                 $('.global-mutation-in').css('display', 'none');
                 $('#avg-mut').css('display', 'block');
@@ -179,7 +211,7 @@ class ControlPanel {
             $('#cell-selections').css('display', 'none');
             $('#organism-options').css('display', 'none');
             self.editor_controller.setDetailsPanel();
-            switch(this.id){
+            switch(this.id) {
                 case "food-drop":
                     self.setMode(Modes.FoodDrop);
                     break;
@@ -199,6 +231,9 @@ class ControlPanel {
                 case "drop-org":
                     self.setMode(Modes.Clone);
                     self.env_controller.org_to_clone = self.engine.organism_editor.getCopyOfOrg();
+                    self.env_controller.add_new_species = self.editor_controller.new_species;
+                    self.editor_controller.new_species = false;
+                    // console.log(self.env_controller.add_new_species)
                     break;
                 case "drag-view":
                     self.setMode(Modes.Drag);
@@ -214,6 +249,7 @@ class ControlPanel {
         var env = this.engine.env;
         $('#reset-env').click( function() {
             this.engine.env.reset();
+            this.stats_panel.reset();
         }.bind(this));
         $('#auto-reset').change(function() {
             env.auto_reset = this.checked;
@@ -253,16 +289,29 @@ class ControlPanel {
         this.fps = this.engine.fps;
     }
 
-    update() {
+    updateHeadlessIcon(delta_time) {
+        if (this.paused)
+            return;
+        var op = this.headless_opacity + (this.opacity_change_rate*delta_time/1000);
+        if (op <= 0.4){
+            op=0.4;
+            this.opacity_change_rate = -this.opacity_change_rate;
+        }
+        else if (op >= 1){
+            op=1;
+            this.opacity_change_rate = -this.opacity_change_rate;
+        }
+        this.headless_opacity = op;
+        $('#headless-notification').css('opacity',(op*100)+'%');
+    }
+
+    update(delta_time) {
         $('#fps-actual').text("Actual FPS: " + Math.floor(this.engine.actual_fps));
-        var org_count = this.engine.env.organisms.length;
-        $('#org-count').text("Organism count:  " + org_count);
-        if (org_count > this.organism_record) 
-            this.organism_record = org_count;
-        $('#org-record').text("Highest count: " + this.organism_record);
-        $('#avg-mut').text("Average Mutation Rate: " + Math.round(this.engine.env.averageMutability() * 100) / 100);
-        $('#largest-org').text("Largest Organism: " + this.engine.env.largest_cell_count + " cells");
         $('#reset-count').text("Auto reset count: " + this.engine.env.reset_count);
+        this.stats_panel.updateDetails();
+        if (Hyperparams.headless)
+            this.updateHeadlessIcon(delta_time);
+
     }
 
 }
