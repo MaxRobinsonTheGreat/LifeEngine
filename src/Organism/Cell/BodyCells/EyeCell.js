@@ -66,7 +66,8 @@ class EyeCell extends BodyCell{
             col+=addCol;
             row+=addRow;
             cell = env.grid_map.cellAt(col, row);
-            if (cell == null) {
+            // if the eye observes a camo cell, it stops looking (it cannot see any farther)
+            if (cell == null || cell.state == CellStates.camo) {
                 break;
             }
             if (cell.state != CellStates.empty){
