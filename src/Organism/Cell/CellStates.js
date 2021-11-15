@@ -73,6 +73,19 @@ class Eye extends CellState {
         ctx.setTransform(1, 0, 0, 1, 0, 0);
     }
 }
+class Camo extends CellState {
+    constructor() {
+        super('camo');
+    }
+    // render(ctx, cell, size) {
+    //     fillStyle = this.color;
+    //     var quarter = size / 4;
+    //     var x = cell.x + quarter;
+    //     var y = cell.y + quarter;
+    //     var s = size / 2;
+    //     ctx.fillRect(x, y, s, s);
+    // }
+}
 
 const CellStates = {
     empty: new Empty(),
@@ -84,9 +97,10 @@ const CellStates = {
     killer: new Killer(),
     armor: new Armor(),
     eye: new Eye(),
+    camo: new Camo(),
     defineLists() {
-        this.all = [this.empty, this.food, this.wall, this.mouth, this.producer, this.mover, this.killer, this.armor, this.eye]
-        this.living = [this.mouth, this.producer, this.mover, this.killer, this.armor, this.eye];
+        this.all = [this.empty, this.food, this.wall, this.mouth, this.producer, this.mover, this.killer, this.armor, this.eye, this.camo]
+        this.living = [this.mouth, this.producer, this.mover, this.killer, this.armor, this.eye, this.camo];
     },
     getRandomName: function() {
         return this.all[Math.floor(Math.random() * this.all.length)].name;

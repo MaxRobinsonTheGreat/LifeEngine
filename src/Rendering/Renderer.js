@@ -42,6 +42,10 @@ class Renderer {
 
     renderCells() {
         for (var cell of this.cells_to_render) {
+            // special renderer for camo cell
+            // if (cell.state == CellStates.camo) {
+
+            // }
             this.renderCell(cell);
         }
         this.cells_to_render.clear();
