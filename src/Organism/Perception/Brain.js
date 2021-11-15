@@ -55,12 +55,7 @@ class Brain {
             }
             if (obs.distance < closest) {
                 // console.log(obs.cell.state)
-                // if creature observes a camo cell, it sees the type of cell which is mimicked
-                if (obs.cell.state == CellStates.camo) {
-                    decision = this.decisions[obs.cell.mimic.name];
-                } else {
-                    decision = this.decisions[obs.cell.state.name];
-                }
+                decision = this.decisions[obs.cell.state.name];
                 // console.log(decision)
                 move_direction = obs.direction;
                 closest = obs.distance;

@@ -77,14 +77,6 @@ class Camo extends CellState {
     constructor() {
         super('camo');
     }
-    // render(ctx, cell, size) {
-    //     fillStyle = this.color;
-    //     var quarter = size / 4;
-    //     var x = cell.x + quarter;
-    //     var y = cell.y + quarter;
-    //     var s = size / 2;
-    //     ctx.fillRect(x, y, s, s);
-    // }
 }
 
 const CellStates = {
