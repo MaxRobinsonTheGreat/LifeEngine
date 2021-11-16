@@ -80,6 +80,8 @@ class EditorController extends CanvasController{
                 case "camo":
                     self.edit_cell_type = CellStates.camo;
                     break;
+                case "healer":
+                    self.edit_cell_type = CellStates.healer;
             }
             $(".cell-type" ).css( "border-color", "black" );
             var selected = '#'+this.id+'.cell-type';

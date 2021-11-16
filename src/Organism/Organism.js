@@ -24,6 +24,7 @@ class Organism {
         this.mutability = 5;
         this.damage = 0;
         this.brain = new Brain(this);
+        this.healRate = 5; // 1 / healRate chance of healing neighbors every turn.
         if (parent != null) {
             this.inherit(parent);
         }
@@ -255,6 +256,14 @@ class Organism {
             return false;
         }
         return true;
+    }
+
+    // heals creature
+    heal() {
+        this.damage--;
+        if (this.damage < 0) {
+            this.damage = 0;
+        }
     }
 
     harm() {
