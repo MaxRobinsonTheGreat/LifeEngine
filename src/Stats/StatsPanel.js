@@ -54,11 +54,9 @@ class StatsPanel {
         $('#species-count').text("Number of Species: " + FossilRecord.extant_species.length);
         //Calculates variety percent according to species/population ratio
         //(100% variety = Every organism is a different specy, 0% variety = Every organism is the same specy)
-        $('#variety-ratio').text("Variety Ratio: " + (FossilRecord.extant_species.length+1)/(org_count+1)*100 + "%");
+        $('#variety-ratio').text("Variety Ratio: " + ((FossilRecord.extant_species.length+1)/(org_count+1)*100).toFixed(2) + "%");
         $('#largest-org').text("Largest Organism Ever: " + this.env.largest_cell_count + " cells");
         $('#avg-mut').text("Average Mutation Rate: " + Math.round(this.env.averageMutability() * 100) / 100);
-
-
     }
 
     reset() {

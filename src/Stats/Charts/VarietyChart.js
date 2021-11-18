@@ -11,7 +11,7 @@ class VarietyChart extends ChartController {
         this.data.push({
                 type: "line",
                 markerType: "none",
-                color: 'red',
+                color: 'black',
                 showInLegend: true, 
                 name: "vary",
                 legendText: "Variety Ratio (%)",
