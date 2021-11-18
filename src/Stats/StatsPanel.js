@@ -1,11 +1,12 @@
 const PopulationChart = require("./Charts/PopulationChart");
 const SpeciesChart = require("./Charts/SpeciesChart");
+const VarietyChart = require("./Charts/VarietyChart");
 const MutationChart = require("./Charts/MutationChart");
 const CellsChart = require("./Charts/CellsChart");
 const FossilRecord = require("./FossilRecord");
 
 
-const ChartSelections = [PopulationChart, SpeciesChart, CellsChart, MutationChart];
+const ChartSelections = [PopulationChart, SpeciesChart, VarietyChart, CellsChart, MutationChart];
 
 class StatsPanel {
     constructor(env) {
@@ -51,6 +52,9 @@ class StatsPanel {
         var org_count = this.env.organisms.length;
         $('#org-count').text("Total Population: " + org_count);
         $('#species-count').text("Number of Species: " + FossilRecord.extant_species.length);
+        //Calculates variety percent according to species/population ratio
+        //(100% variety = Every organism is a different specy, 0% variety = Every organism is the same specy)
+        $('#variety-ratio').text("Variety Ratio: " + (FossilRecord.extant_species.length+1)/(org_count+1)*100 + "%");
         $('#largest-org').text("Largest Organism Ever: " + this.env.largest_cell_count + " cells");
         $('#avg-mut').text("Average Mutation Rate: " + Math.round(this.env.averageMutability() * 100) / 100);
 
