@@ -23,7 +23,7 @@ class VarietyChart extends ChartController {
 
     addDataPoint(i) {
         var t = FossilRecord.tick_record[i];
-        var p = (FossilRecord.species_counts[i]+1)/(FossilRecord.pop_counts[i]+1)*100;
+        var p = FossilRecord.species_counts[i]/(FossilRecord.pop_counts[i]!=0?FossilRecord.pop_counts[i]:FossilRecord.pop_counts[i]+1)*100;
         this.data[0].dataPoints.push({x:t, y:p});
     }
 }
