@@ -29,7 +29,7 @@ const Hyperparams = {
 
         this.foodDropProb = 0;
 
-        this.kinTolerance = 2;
+        this.kinTolerance = 5;
     },
 
     balanceMutationProbs : function(choice) {

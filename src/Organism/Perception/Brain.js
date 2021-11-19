@@ -51,7 +51,7 @@ class Brain {
     
     decide() {
         //Generation difference count: Eg(3): -3(father of grandfather) to +3(son of grandson)
-        var kinTolerance = Hyperparams.kinTolerance ? Hyperparams.kinTolerance : 2;
+        var kinTolerance = Hyperparams.kinTolerance ? Hyperparams.kinTolerance : 5;
         var decision = Decision.neutral;
         var closest = Hyperparams.lookRange + 1;
         var closestOrg = null;
