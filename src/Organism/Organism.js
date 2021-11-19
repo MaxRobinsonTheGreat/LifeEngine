@@ -8,6 +8,7 @@ const FossilRecord = require("../Stats/FossilRecord");
 
 class Organism {
     constructor(col, row, env, parent=null) {
+        this.id = parent ? parent.id + 1 : 0;
         this.c = col;
         this.r = row;
         this.env = env;

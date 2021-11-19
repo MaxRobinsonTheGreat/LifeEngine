@@ -173,6 +173,9 @@ class ControlPanel {
         $('#food-drop-rate').change(function() {
             Hyperparams.foodDropProb = $('#food-drop-rate').val();
         });
+        $('#kin-tolerance').change(function() {
+            Hyperparams.kinTolerance = $('#kin-tolerance').val();
+        });
 
         $('#evolved-mutation').change( function() {
             if (this.checked) {
@@ -227,6 +230,7 @@ class ControlPanel {
             $('#movers-produce').prop('checked', Hyperparams.moversCanProduce);
             $('#food-blocks').prop('checked', Hyperparams.foodBlocksReproduction);
             $('#food-drop-rate').val(Hyperparams.foodDropProb);
+            $('#kin-tolerance').val(Hyperparams.kinTolerance);
             $('#look-range').val(Hyperparams.lookRange);
 
             if (!Hyperparams.useGlobalMutability) {

@@ -18,7 +18,7 @@ class Brain {
     constructor(owner){
         this.owner = owner;
         this.observations = [];
-
+        
         // corresponds to CellTypes
         this.decisions = [];
         this.decisions[CellStates.empty.name] = Decision.neutral;
@@ -30,8 +30,10 @@ class Brain {
         this.decisions[CellStates.killer.name] = Decision.retreat;
         this.decisions[CellStates.armor.name] = Decision.neutral;
         this.decisions[CellStates.eye.name] = Decision.neutral;
+        this.decisions["relative"] = Decision.neutral;
+        this.decisions["stranger"] = Decision.neutral;
     }
-
+    
     randomizeDecisions() {
         // randomize the non obvious decisions
         this.decisions[CellStates.mouth.name] = Decision.getRandom();
@@ -39,15 +41,20 @@ class Brain {
         this.decisions[CellStates.mover.name] = Decision.getRandom();
         this.decisions[CellStates.armor.name] = Decision.getRandom();
         this.decisions[CellStates.eye.name] = Decision.getRandom();
+        this.decisions["relative"] = Decision.getRandom();
+        this.decisions["stranger"] = Decision.getRandom();
     }
-
+    
     observe(observation) {
         this.observations.push(observation);
     }
-
+    
     decide() {
+        //Generation difference count: Eg(3): -3(father of grandfather) to +3(son of grandson)
+        var kinTolerance = Hyperparams.kinTolerance ? Hyperparams.kinTolerance : 2;
         var decision = Decision.neutral;
         var closest = Hyperparams.lookRange + 1;
+        var closestOrg = null;
         var move_direction = 0;
         for (var obs of this.observations) {
             if (obs.cell == null || obs.cell.owner == this.owner) {
@@ -59,6 +66,18 @@ class Brain {
                 // console.log(decision)
                 move_direction = obs.direction;
                 closest = obs.distance;
+                closestOrg = obs.cell.owner;
+            }
+        }
+        if (closestOrg != null && (this.decisions["relative"] != Decision.neutral || this.decisions["stranger"] != Decision.neutral)) {
+            if (this.owner.id >= (closestOrg.id-kinTolerance) && this.owner.id <= (closestOrg.id+kinTolerance)) {
+                if (this.decisions["relative"] != Decision.neutral) {
+                    decision = this.decisions["relative"];
+                }
+            } else {
+                if (this.decisions["stranger"] != Decision.neutral) {
+                    decision = this.decisions["stranger"];
+                }
             }
         }
         this.observations = [];
@@ -72,9 +91,9 @@ class Brain {
         }
         return false;
     }
-
+    
     mutate() {
-        this.decisions[CellStates.getRandomName()] = Decision.getRandom();
+        this.decisions[CellStates.getRandomName("relative","stranger")] = Decision.getRandom();
         this.decisions[CellStates.empty.name] = Decision.neutral; // if the empty cell has a decision it gets weird
     }
 }

@@ -155,6 +155,8 @@
 									<option value="killer">killer</option>
 									<option value="armor">armor</option>
 									<option value="eye">eye</option>
+									<option value="relative">relative</option>
+									<option value="stranger">stranger</option>
 								</select>
 
 								<label for="reaction-edit">Reaction: </label>
@@ -194,6 +196,9 @@
 						<br>
 						<label for="food-drop-rate" title='Rate at which food is automatically generated and dropped in the world'>Auto food drop rate:</label>
 						<input type="number" id="food-drop-rate" value=0 max="1000">
+						<br>
+						<label for="kin-tolerance" title='Max distance for defining "relative" and "stranger" in the brain. (eg: 0=me,1=me,son,father,2=me,son,father,grandson,grandfather...)'>Kin tolerance:</label>
+						<input type="number" id="kin-tolerance" value=2 max="1000000">
 						
 					</div>
 					<div class='right-half'>

@@ -88,8 +88,9 @@ const CellStates = {
         this.all = [this.empty, this.food, this.wall, this.mouth, this.producer, this.mover, this.killer, this.armor, this.eye]
         this.living = [this.mouth, this.producer, this.mover, this.killer, this.armor, this.eye];
     },
-    getRandomName: function() {
-        return this.all[Math.floor(Math.random() * this.all.length)].name;
+    getRandomName: function(...extra) {
+        var randIdx = Math.floor(Math.random() * (this.all.length + extra.length));
+        return (randIdx<this.all.length)?this.all[randIdx].name:extra[randIdx-this.all.length];
     },
     getRandomLivingType: function() {
         return this.living[Math.floor(Math.random() * this.living.length)];
