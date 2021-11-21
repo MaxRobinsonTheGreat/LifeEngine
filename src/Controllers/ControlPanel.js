@@ -90,7 +90,7 @@ class ControlPanel {
             // toggle pause
             this.setPaused(this.engine.running);
         }.bind(this));
-        
+
         $('.headless').click(function() {
             $('.headless').find("i").toggleClass("fa fa-eye");
             $('.headless').find("i").toggleClass("fa fa-eye-slash");
@@ -327,14 +327,18 @@ class ControlPanel {
     setPaused(paused) {
 
         if (paused) {
+
             $('.pause-button').find("i").removeClass("fa-pause");
             $('.pause-button').find("i").addClass("fa-play");
-            this.engine.stop();
+            if (this.engine.running) 
+                this.engine.stop();
         }
         else if (!paused) {
+            
             $('.pause-button').find("i").addClass("fa-pause");
             $('.pause-button').find("i").removeClass("fa-play");
-            this.engine.start(this.fps);
+            if (!this.engine.running)
+                this.engine.start(this.fps);
         }
     }
 
