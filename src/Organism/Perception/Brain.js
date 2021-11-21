@@ -79,4 +79,6 @@ class Brain {
     }
 }
 
+Brain.Decision = Decision;
+
 module.exports = Brain;

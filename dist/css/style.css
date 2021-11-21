@@ -169,6 +169,9 @@ button:hover{
 .edit-mode-btn#drag-view {
     background-color: #81d2c7;
 }
+.randomize-button {
+    margin-top: 5px;
+}
 #clear-walls {
     margin-top: 5px;
 }

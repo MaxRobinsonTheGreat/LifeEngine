@@ -100,6 +100,7 @@
 						<div class='editor-buttons'>
 							<button class="edit-mode-btn" id="select" title="Select organism from world"><i class="fa fa-hand-pointer-o"></i></button>
 							<button class="edit-mode-btn" id="edit" title="Edit organism"><i class="fa fa-pencil"></i></button>
+							<button class="edit-mode-btn" id='randomize' title="Randomize"><i class="fa fa-random"></i></button>
 							<button class="edit-mode-btn" id="drop-org" title="Drop organism in world"><i class="fa fa-plus"></i></button>
 						</div>
 						<div id='editor-env'>
@@ -169,6 +170,24 @@
 							</div>
 						</div>
 
+						<div id='randomize-organism-details' style="display:none;">
+							<h3>Generate Random Organism</h3>
+
+							<label for='random-width' title='The maximum width of the generated organism'>Max Width:</label>
+							<input type='range' id='random-width' min="1" max="7" value="2" step="1">
+							<span id='random-width-display'>5</span>
+							<br />
+
+							<label for='cell-spawn-chance' title='The chance a cell will spawn in the innermost layer (becomes less likely near the edges)'>Cell Spawn Chance:</label>
+							<input type='range' id='cell-spawn-chance' min="0.01" max="1" value="0.75" step='0.001'>
+							<span id='spawn-chance-display'>75%</span>
+							<br />
+
+							<button class='randomize-button' id='generate-random' title="Generate a random organism in the editor window.">Generate</button>
+							<br />
+							<button class='randomize-button' id='create-random-world' title="Generate hundreds of random organisms in the world.">Create Random World</button>
+
+						</div>
 					</div>
 				</div>
 				<div id='hyperparameters' class='tab'>

@@ -122,21 +122,7 @@ class EnvironmentController extends CanvasController{
 
                 case Modes.Clone:
                     if (this.org_to_clone != null){
-                        var new_org = new Organism(this.mouse_c, this.mouse_r, this.env, this.org_to_clone);
-                        if (this.add_new_species){
-                            FossilRecord.addSpeciesObj(new_org.species);
-                            new_org.species.start_tick = this.env.total_ticks;
-                            this.add_new_species = false;
-                            new_org.species.population = 0;
-                        }
-                        else if (this.org_to_clone.species.extinct){
-                            FossilRecord.resurrect(this.org_to_clone.species);
-                        }
-
-                        if (new_org.isClear(this.mouse_c, this.mouse_r)){
-                            this.env.addOrganism(new_org);
-                            new_org.species.addPop();
-                        }
+                        this.dropOrganism(this.org_to_clone, this.mouse_c, this.mouse_r);
                     }
                     break;
                 case Modes.Drag:
@@ -148,6 +134,26 @@ class EnvironmentController extends CanvasController{
                     $('#env-canvas').css('left', new_left+'px');
                     break;
             }
+        }
+    }
+
+    dropOrganism(organism, col, row) {
+
+        // close the organism and drop it in the world
+        var new_org = new Organism(col, row, this.env, organism);
+        if (this.add_new_species){
+            FossilRecord.addSpeciesObj(new_org.species);
+            new_org.species.start_tick = this.env.total_ticks;
+            this.add_new_species = false;
+            new_org.species.population = 0;
+        }
+        else if (this.org_to_clone.species.extinct){
+            FossilRecord.resurrect(this.org_to_clone.species);
+        }
+
+        if (new_org.isClear(this.mouse_c, this.mouse_r)){
+            this.env.addOrganism(new_org);
+            new_org.species.addPop();
         }
     }
 

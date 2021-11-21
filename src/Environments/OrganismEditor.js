@@ -5,6 +5,7 @@ const Renderer = require('../Rendering/Renderer');
 const CellStates = require('../Organism/Cell/CellStates');
 const EditorController = require("../Controllers/EditorController");
 const Species = require('../Stats/Species');
+const RandomOrganismGenerator = require('../Organism/RandomOrganismGenerator')
 
 class OrganismEditor extends Environment{
     constructor() {
@@ -86,6 +87,38 @@ class OrganismEditor extends Environment{
         this.organism.anatomy.addDefaultCell(CellStates.mouth, 0, 0);
         this.organism.updateGrid();
         this.organism.species = new Species(this.organism.anatomy, null, 0);
+    }
+
+    createRandom() {
+
+        this.grid_map.fillGrid(CellStates.empty);
+
+        this.organism = RandomOrganismGenerator.generate(this);
+        this.organism.updateGrid();
+        this.organism.species = new Species(this.organism.anatomy, null, 0);
+    }
+
+    createRandomWorld(worldEnvironment) {
+
+        worldEnvironment.clear();
+
+        var numOrganismCols = Math.floor(worldEnvironment.grid_map.cols / this.grid_map.cols);
+        var numOrganismRows = Math.floor(worldEnvironment.grid_map.rows / this.grid_map.rows);
+        var center = this.grid_map.getCenter();
+
+        for (var x = 0; x < numOrganismCols; x++) {
+            for (var y = 0; y < numOrganismRows; y++) {
+
+                var newOrganism = RandomOrganismGenerator.generate(this);
+                //newOrganism.updateGrid();
+                newOrganism.species = new Species(newOrganism.anatomy, null, 0);
+
+                var col = x * this.grid_map.cols + center[0];
+                var row = y * this.grid_map.rows + center[1];
+                worldEnvironment.controller.add_new_species = true;
+                worldEnvironment.controller.dropOrganism(newOrganism, col, row);
+            }
+        }
     }
 }
 

@@ -1,6 +1,7 @@
 const Hyperparams = require("../Hyperparameters");
 const Modes = require("./ControlModes");
 const StatsPanel = require("../Stats/StatsPanel");
+const RandomOrganismGenerator = require("../Organism/RandomOrganismGenerator")
 
 class ControlPanel {
     constructor(engine) {
@@ -21,7 +22,7 @@ class ControlPanel {
         this.stats_panel = new StatsPanel(this.engine.env);
         this.headless_opacity = 1;
         this.opacity_change_rate = -0.8;
-        this.paused=false;
+        //this.paused=false;
     }
 
     defineMinMaxControls(){
@@ -84,17 +85,12 @@ class ControlPanel {
             }
             $('#fps').text("Target FPS: "+this.fps);
         }.bind(this);
+
         $('.pause-button').click(function() {
-            $('.pause-button').find("i").toggleClass("fa fa-pause");
-            $('.pause-button').find("i").toggleClass("fa fa-play");
-            this.paused = !this.paused;
-            if (this.engine.running) {
-                this.engine.stop();
-            }
-            else if (!this.engine.running){
-                this.engine.start(this.fps);
-            }
+            // toggle pause
+            this.setPaused(this.engine.running);
         }.bind(this));
+        
         $('.headless').click(function() {
             $('.headless').find("i").toggleClass("fa fa-eye");
             $('.headless').find("i").toggleClass("fa fa-eye-slash");
@@ -263,6 +259,9 @@ class ControlPanel {
                     self.setMode(Modes.Edit);
                     self.editor_controller.setEditorPanel();
                     break;
+                case "randomize":
+                    self.setMode(Modes.Randomize);
+                    self.editor_controller.setRandomizePanel();
                 case "drop-org":
                     self.setMode(Modes.Clone);
                     self.env_controller.org_to_clone = self.engine.organism_editor.getCopyOfOrg();
@@ -298,6 +297,24 @@ class ControlPanel {
             this.engine.organism_editor.clear();
             this.editor_controller.setEditorPanel();
         }.bind(this));
+        document.getElementById("random-width").addEventListener('input', function() {
+            var width = 2 * this.value + 1;
+            $('#random-width-display').text(width);
+            RandomOrganismGenerator.organismLayers = this.value;
+        });
+        document.getElementById("cell-spawn-chance").addEventListener("input", function() {
+            var value = parseFloat(this.value);
+            $('#spawn-chance-display').text((value * 100).toFixed(1) + "%");
+            RandomOrganismGenerator.cellSpawnChance = value;
+        });
+        $('#generate-random').click( function() {
+            this.engine.organism_editor.createRandom();
+        }.bind(this));
+
+        $('#create-random-world').click( function() {
+            this.setPaused(true);
+            this.engine.organism_editor.createRandomWorld(this.engine.env);
+        }.bind(this));
     }
 
     defineChallenges() {
@@ -305,6 +322,20 @@ class ControlPanel {
             $('#challenge-title').text($(this).text());
             $('#challenge-description').text($(this).val());
         });
+    }
+
+    setPaused(paused) {
+
+        if (paused) {
+            $('.pause-button').find("i").removeClass("fa-pause");
+            $('.pause-button').find("i").addClass("fa-play");
+            this.engine.stop();
+        }
+        else if (!paused) {
+            $('.pause-button').find("i").addClass("fa-pause");
+            $('.pause-button').find("i").removeClass("fa-play");
+            this.engine.start(this.fps);
+        }
     }
 
     setMode(mode) {
@@ -325,7 +356,7 @@ class ControlPanel {
     }
 
     updateHeadlessIcon(delta_time) {
-        if (this.paused)
+        if (this.engine.running)
             return;
         var op = this.headless_opacity + (this.opacity_change_rate*delta_time/1000);
         if (op <= 0.4){

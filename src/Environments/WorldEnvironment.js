@@ -131,13 +131,17 @@ class WorldEnvironment extends Environment{
     }
 
     reset() {
+        this.clear();
+        this.OriginOfLife();
+    }
+
+    clear() {
         this.organisms = [];
         this.grid_map.fillGrid(CellStates.empty);
         this.renderer.renderFullGrid(this.grid_map.grid);
         this.total_mutability = 0;
         this.total_ticks = 0;
         FossilRecord.clear_record();
-        this.OriginOfLife();
     }
 
     resizeGridColRow(cell_size, cols, rows) {
