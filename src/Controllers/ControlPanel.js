@@ -6,6 +6,7 @@ class ControlPanel {
     constructor(engine) {
         this.engine = engine;
         this.defineMinMaxControls();
+        this.defineHotkeys();
         this.defineEngineSpeedControls();
         this.defineGridSizeControls();
         this.defineTabNavigation();
@@ -41,25 +42,7 @@ class ControlPanel {
                 this.stats_panel.startAutoRender();
             }
         });
-        const V_KEY = 118;
-        $('body').keypress( (e) => {
-            if (e.which === V_KEY) {
-                if (this.no_hud) {
-                    let control_panel_display = this.control_panel_active ? 'grid' : 'none';
-                    let hot_control_display = !this.control_panel_active ? 'block' : 'none';
-                    if (this.control_panel_active && this.tab_id == 'stats') {
-                        this.stats_panel.startAutoRender();
-                    };
-                    $('.control-panel').css('display', control_panel_display);
-                    $('.hot-controls').css('display', hot_control_display);
-                }
-                else {
-                    $('.control-panel').css('display', 'none');
-                    $('.hot-controls').css('display', 'none');
-                }
-                this.no_hud = !this.no_hud;
-            }
-        });
+
         // var self = this;
         // $('#minimize').click ( function() {
         //     $('.control-panel').css('display', 'none');
@@ -73,6 +56,88 @@ class ControlPanel {
         //         self.stats_panel.startAutoRender();
         //     }
         // });
+    }
+
+    defineHotkeys() {
+
+        $('body').keydown( (evt) => {
+
+            //console.log(evt.which);
+
+            switch (evt.which) {
+
+                // hot bar controls
+                case 49: // 1 = Reset Camera
+                    $('.reset-view')[0].click();
+                    break;
+
+                case 50: // 2 = Drag View
+                    $('#drag-view').click();
+                    break;
+
+                case 51: // 3 = Drop Wall
+                    $('#wall-drop').click();
+                    break;
+
+                case 52: // 4 = Drop Food
+                    $('#food-drop').click();
+                    break;
+
+                case 53: // 5 = Kill
+                    $('#click-kill').click();
+                    break;
+
+                case 54: // 6 = Play/Pause
+                case 32: // Space = Play/Pause
+                    $('.pause-button')[0].click();
+                    break;
+
+                case 55: // 7 = Toggle Rendering
+                    $('.headless')[0].click();
+                    break;
+
+                // miscellaneous hotkeys
+                case 9: // tab = toggle control panel
+                    evt.preventDefault();
+                    if (this.control_panel_active)
+                        $('#minimize').click();
+                    else
+                        $('#maximize').click();
+                    break;
+
+                case 68: // d = drop organism
+                    $('#drop-org').click();
+                    break;
+
+                case 69: // e = edit organism
+                    $('#edit').click();
+                    break;
+
+                case 83: // s = select creature mode
+                    $('#select').click();
+                    break;
+
+                case 86: // v = Toggle HUD
+                    if (this.no_hud) {
+                        let control_panel_display = this.control_panel_active ? 'grid' : 'none';
+                        let hot_control_display = !this.control_panel_active ? 'block' : 'none';
+                        if (this.control_panel_active && this.tab_id == 'stats') {
+                            this.stats_panel.startAutoRender();
+                        };
+                        $('.control-panel').css('display', control_panel_display);
+                        $('.hot-controls').css('display', hot_control_display);
+                    }
+                    else {
+                        $('.control-panel').css('display', 'none');
+                        $('.hot-controls').css('display', 'none');
+                    }
+                    this.no_hud = !this.no_hud;
+                    break;
+
+                case 88: // x = clear all walls
+                    $('#clear-walls').click();
+            }
+        });
     }
 
     defineEngineSpeedControls(){
@@ -261,20 +326,15 @@ class ControlPanel {
                     break;
                 case "edit":
                     self.setMode(Modes.Edit);
-                    self.editor_controller.setEditorPanel();
                     break;
                 case "drop-org":
                     self.setMode(Modes.Clone);
-                    self.env_controller.org_to_clone = self.engine.organism_editor.getCopyOfOrg();
-                    self.env_controller.add_new_species = self.editor_controller.new_species;
-                    self.editor_controller.new_species = false;
-                    // console.log(self.env_controller.add_new_species)
                     break;
                 case "drag-view":
                     self.setMode(Modes.Drag);
             }
             $('.edit-mode-btn').css('background-color', '#9099c2');
-            $('#'+this.id).css('background-color', '#81d2c7');
+            $('.'+this.id).css('background-color', '#81d2c7');
         });
 
         $('.reset-view').click( function(){
@@ -310,6 +370,17 @@ class ControlPanel {
     setMode(mode) {
         this.env_controller.mode = mode;
         this.editor_controller.mode = mode;
+
+        if (mode == Modes.Edit) {
+            this.editor_controller.setEditorPanel();
+        }
+
+        if (mode == Modes.Clone) {
+            this.env_controller.org_to_clone = this.engine.organism_editor.getCopyOfOrg();
+            this.env_controller.add_new_species = this.editor_controller.new_species;
+            this.editor_controller.new_species = false;
+            // console.log(this.env_controller.add_new_species)
+        }
     }
 
     setEditorOrganism(org) {
