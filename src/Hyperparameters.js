@@ -29,24 +29,6 @@ const Hyperparams = {
 
         this.foodDropProb = 0;
     },
-
-    balanceMutationProbs : function(choice) {
-        if (choice == 1) {
-            var remaining = 100 - this.addProb;
-            this.changeProb = remaining/2;
-            this.removeProb = remaining/2;
-        }
-        else if (choice == 2) {
-            var remaining = 100 - this.changeProb;
-            this.addProb = remaining/2;
-            this.removeProb = remaining/2;
-        }
-        else {
-            var remaining = 100 - this.removeProb;
-            this.changeProb = remaining/2;
-            this.addProb = remaining/2;
-        }
-    }
 }
 
 Hyperparams.setDefaults();
