@@ -316,8 +316,7 @@ class ControlPanel {
     }
 
     changeEngineSpeed(change_val) {
-        this.engine.stop();
-        this.engine.start(change_val)
+        this.engine.restart(change_val)
         this.fps = this.engine.fps;
     }
 
