@@ -192,15 +192,12 @@ class ControlPanel {
             switch(this.id){
                 case "add-prob":
                     Hyperparams.addProb = this.value;
-                    Hyperparams.balanceMutationProbs(1);
                     break;
                 case "change-prob":
                     Hyperparams.changeProb = this.value;
-                    Hyperparams.balanceMutationProbs(2);
                     break;
                 case "remove-prob":
                     Hyperparams.removeProb = this.value;
-                    Hyperparams.balanceMutationProbs(3);
                     break;
             }
             $('#add-prob').val(Math.floor(Hyperparams.addProb));
