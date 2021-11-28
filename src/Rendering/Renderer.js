@@ -105,8 +105,4 @@ class Renderer {
     }
 }
 
-// $("body").mousemove(function(e) {
-//     console.log("hello");
-// });
-
 module.exports = Renderer;
