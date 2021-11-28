@@ -19,12 +19,12 @@
 		<div class='control-panel'>
 			<div id='speed-controller' class='control-set'>
 				<div class='vertical-buttons'>
-					<button class="reset-view" title="Reset View"><i class="fa fa-video-camera"></i></button>
-					<button class="edit-mode-btn" id="drag-view" title="Drag View"><i class="fa fa-arrows"></i></button>
-					<button class="edit-mode-btn" id="wall-drop" title="Drop/Remove Wall"><i class="fa fa-square"></i></button>
-					<button class="edit-mode-btn" id="food-drop" title="Drop/Remove Food"><i class="fa fa-cutlery"></i></button>
-					<button class="edit-mode-btn" id="click-kill" title="Click to kill"><i class="fa fa-bolt"></i></button>
-					<button id="clear-walls" title="Clear All Walls"><i class="fa fa-window-close"></i></button>
+					<button class="reset-view" title="Reset View. Hotkey: a"><i class="fa fa-video-camera"></i></button>
+					<button class="edit-mode-btn drag-view" id="drag-view" title="Drag View. Hotkey: s"><i class="fa fa-arrows"></i></button>
+					<button class="edit-mode-btn wall-drop" id="wall-drop" title="Drop/Remove Wall. Hotkey: d"><i class="fa fa-square"></i></button>
+					<button class="edit-mode-btn food-drop" id="food-drop" title="Drop/Remove Food. Hotkey: f"><i class="fa fa-cutlery"></i></button>
+					<button class="edit-mode-btn click-kill" id="click-kill" title="Click to kill. Hotkey: g"><i class="fa fa-bolt"></i></button>
+					<button id="clear-walls" title="Clear All Walls. Hotkey: b"><i class="fa fa-window-close"></i></button>
 				</div>
 				<h2>Simulation Speed</h2>
 				<input id="slider" type="range" min="1" max="300" value="60">
@@ -62,7 +62,7 @@
 					<p class='tabnav-item' id='hyperparameters'>Simulation Controls</p>
 					<p class='tabnav-item' id='stats'>Stats</p>
 					<p class='tabnav-item' id='challenges'>Challenges</p>
-					<button id="minimize" title="Minimze Control Panel"><i class="fa fa-minus-square"></i></button>
+					<button id="minimize" title="Minimze Control Panel."><i class="fa fa-minus-square"></i></button>
 				</div>
 
 				<div id='about' class='tab'>
@@ -98,9 +98,9 @@
 				<div id='editor' class='tab'>
 					<div class='left-half' id='editor-panel'>
 						<div class='editor-buttons'>
-							<button class="edit-mode-btn" id="select" title="Select organism from world"><i class="fa fa-hand-pointer-o"></i></button>
-							<button class="edit-mode-btn" id="edit" title="Edit organism"><i class="fa fa-pencil"></i></button>
-							<button class="edit-mode-btn" id="drop-org" title="Drop organism in world"><i class="fa fa-plus"></i></button>
+							<button class="edit-mode-btn select" id="select" title="Select organism from world. Hotkey: z"><i class="fa fa-hand-pointer-o"></i></button>
+							<button class="edit-mode-btn edit" id="edit" title="Edit organism. Hotkey: x"><i class="fa fa-pencil"></i></button>
+							<button class="edit-mode-btn drop-org" id="drop-org" title="Drop organism in world. Hotkey: c"><i class="fa fa-plus"></i></button>
 						</div>
 						<div id='editor-env'>
 							<canvas id='editor-canvas'></canvas>
@@ -265,19 +265,19 @@
 			</div>
 		</div>
 		<div class='hot-controls'>
-			<button class="reset-view" title="Reset View"><i class="fa fa-video-camera"></i></button>
-			<button class="edit-mode-btn" id="drag-view" title="Drag View"><i class="fa fa-arrows"></i></button>
-			<button class="edit-mode-btn" id="wall-drop" title="Drop/Remove Wall"><i class="fa fa-square"></i></button>
-			<button class="edit-mode-btn" id="food-drop" title="Drop/Remove Food"><i class="fa fa-cutlery"></i></button>
-			<button class="edit-mode-btn" id="click-kill" title="Click to kill"><i class="fa fa-bolt"></i></button>
-			<button class='pause-button'><i class="fa fa-pause"></i></button>
-			<button class="headless" title="Toggle rendering"><i class="fa fa-eye-slash"></i></button>
+			<button class="reset-view" title="Reset View. Hotkey: a"><i class="fa fa-video-camera"></i></button>
+			<button class="edit-mode-btn drag-view" id="drag-view" title="Drag View. Hotkey: s"><i class="fa fa-arrows"></i></button>
+			<button class="edit-mode-btn wall-drop" id="wall-drop" title="Drop/Remove Wall. Hotkey: d"><i class="fa fa-square"></i></button>
+			<button class="edit-mode-btn food-drop" id="food-drop" title="Drop/Remove Food. Hotkey: f"><i class="fa fa-cutlery"></i></button>
+			<button class="edit-mode-btn click-kill" id="click-kill" title="Click to kill. Hotkey: g"><i class="fa fa-bolt"></i></button>
+			<button class="headless" title="Toggle rendering. Hotkey: h"><i class="fa fa-eye-slash"></i></button>
+			<button class='pause-button' title="Play/Pause. Hotkey: j/space"><i class="fa fa-pause"></i></button>
 		</div>
 		<div id="headless-notification">
 			<i class="fa fa-eye-slash" ></i>
 		</div>
 		<div id='maximize-hot-control' class='hot-controls'>
-			<button id="maximize" title="Show Control Panel"><i class="fa fa-plus-square"></i></button>
+			<button id="maximize" title="Show Control Panel."><i class="fa fa-plus-square"></i></button>
 		</div>
 		
 	</body>

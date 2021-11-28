@@ -28,22 +28,14 @@ class EnvironmentController extends CanvasController{
             // Restrict scale
             scale = Math.max(0.5, this.scale+(sign*zoom_speed));
 
-            if (scale != 0.5) {
-                var cur_top = parseInt($('#env-canvas').css('top'));
-                var cur_left = parseInt($('#env-canvas').css('left'));
-                if (sign == 1) {
-                    // If we're zooming in, zoom towards wherever the mouse is
-                    var diff_x = ((this.canvas.width/2-cur_left/this.scale) - this.mouse_x)*this.scale/1.5;
-                    var diff_y = ((this.canvas.height/2-cur_top/this.scale) - this.mouse_y)*this.scale/1.5;
-                }
-                else {
-                    // If we're zooming out, zoom out towards the center
-                    var diff_x = -cur_left/scale;
-                    var diff_y = -cur_top/scale;
-                }
-                $('#env-canvas').css('top', (cur_top+diff_y)+'px');
-                $('#env-canvas').css('left', (cur_left+diff_x)+'px');
-            }
+            var cur_top = parseInt($('#env-canvas').css('top'));
+            var cur_left = parseInt($('#env-canvas').css('left'));
+
+            var diff_x = (this.canvas.width/2  - this.mouse_x) * (scale - this.scale);
+            var diff_y = (this.canvas.height/2 - this.mouse_y) * (scale - this.scale);
+
+            $('#env-canvas').css('top', (cur_top+diff_y)+'px');
+            $('#env-canvas').css('left', (cur_left+diff_x)+'px');
           
             // Apply scale transform
             el.style.transform = `scale(${scale})`;
@@ -148,6 +140,15 @@ class EnvironmentController extends CanvasController{
                     $('#env-canvas').css('left', new_left+'px');
                     break;
             }
+        }
+        else if (this.middle_click) {
+            //drag on middle click
+            var cur_top = parseInt($('#env-canvas').css('top'), 10);
+            var cur_left = parseInt($('#env-canvas').css('left'), 10);
+            var new_top = cur_top + ((this.mouse_y - this.start_y)*this.scale);
+            var new_left = cur_left + ((this.mouse_x - this.start_x)*this.scale);
+            $('#env-canvas').css('top', new_top+'px');
+            $('#env-canvas').css('left', new_left+'px');
         }
     }
 

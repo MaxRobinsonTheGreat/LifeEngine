@@ -6,6 +6,7 @@ class ControlPanel {
     constructor(engine) {
         this.engine = engine;
         this.defineMinMaxControls();
+        this.defineHotkeys();
         this.defineEngineSpeedControls();
         this.defineGridSizeControls();
         this.defineTabNavigation();
@@ -41,38 +42,71 @@ class ControlPanel {
                 this.stats_panel.startAutoRender();
             }
         });
-        const V_KEY = 118;
-        $('body').keypress( (e) => {
-            if (e.which === V_KEY) {
-                if (this.no_hud) {
-                    let control_panel_display = this.control_panel_active ? 'grid' : 'none';
-                    let hot_control_display = !this.control_panel_active ? 'block' : 'none';
-                    if (this.control_panel_active && this.tab_id == 'stats') {
-                        this.stats_panel.startAutoRender();
-                    };
-                    $('.control-panel').css('display', control_panel_display);
-                    $('.hot-controls').css('display', hot_control_display);
-                }
-                else {
-                    $('.control-panel').css('display', 'none');
-                    $('.hot-controls').css('display', 'none');
-                }
-                this.no_hud = !this.no_hud;
+    }
+
+    defineHotkeys() {
+        $('body').keydown( (e) => {
+            switch (e.key.toLowerCase()) {
+                // hot bar controls
+                case 'a':
+                    $('.reset-view')[0].click();
+                    break;
+                case 's':
+                    $('#drag-view').click();
+                    break;
+                case 'd':
+                    $('#wall-drop').click();
+                    break;
+                case 'f':
+                    $('#food-drop').click();
+                    break;
+                case 'g':
+                    $('#click-kill').click();
+                    break;
+                case 'h':
+                    $('.headless')[0].click();
+                    break;
+                case 'j':
+                case ' ':
+                    $('.pause-button')[0].click();
+                    break;
+                // miscellaneous hotkeys
+                case 'q': // minimize/maximize control panel
+                    e.preventDefault();
+                    if (this.control_panel_active)
+                        $('#minimize').click();
+                    else
+                        $('#maximize').click();
+                    break;
+                case 'z':
+                    $('#select').click();
+                    break;
+                case 'x':
+                    $('#edit').click();
+                    break;
+                case 'c':
+                    $('#drop-org').click();
+                    break;
+                case 'v': // toggle hud
+                    if (this.no_hud) {
+                        let control_panel_display = this.control_panel_active ? 'grid' : 'none';
+                        let hot_control_display = !this.control_panel_active ? 'block' : 'none';
+                        if (this.control_panel_active && this.tab_id == 'stats') {
+                            this.stats_panel.startAutoRender();
+                        };
+                        $('.control-panel').css('display', control_panel_display);
+                        $('.hot-controls').css('display', hot_control_display);
+                    }
+                    else {
+                        $('.control-panel').css('display', 'none');
+                        $('.hot-controls').css('display', 'none');
+                    }
+                    this.no_hud = !this.no_hud;
+                    break;
+                case 'b':
+                    $('#clear-walls').click();
             }
         });
-        // var self = this;
-        // $('#minimize').click ( function() {
-        //     $('.control-panel').css('display', 'none');
-        //     $('.hot-controls').css('display', 'block');
-            
-        // }.bind(this));
-        // $('#maximize').click ( function() {
-        //     $('.control-panel').css('display', 'grid');
-        //     $('.hot-controls').css('display', 'none');
-        //     if (self.tab_id == 'stats') {
-        //         self.stats_panel.startAutoRender();
-        //     }
-        // });
     }
 
     defineEngineSpeedControls(){
@@ -261,20 +295,15 @@ class ControlPanel {
                     break;
                 case "edit":
                     self.setMode(Modes.Edit);
-                    self.editor_controller.setEditorPanel();
                     break;
                 case "drop-org":
                     self.setMode(Modes.Clone);
-                    self.env_controller.org_to_clone = self.engine.organism_editor.getCopyOfOrg();
-                    self.env_controller.add_new_species = self.editor_controller.new_species;
-                    self.editor_controller.new_species = false;
-                    // console.log(self.env_controller.add_new_species)
                     break;
                 case "drag-view":
                     self.setMode(Modes.Drag);
             }
             $('.edit-mode-btn').css('background-color', '#9099c2');
-            $('#'+this.id).css('background-color', '#81d2c7');
+            $('.'+this.id).css('background-color', '#81d2c7');
         });
 
         $('.reset-view').click( function(){
@@ -310,6 +339,17 @@ class ControlPanel {
     setMode(mode) {
         this.env_controller.mode = mode;
         this.editor_controller.mode = mode;
+
+        if (mode == Modes.Edit) {
+            this.editor_controller.setEditorPanel();
+        }
+
+        if (mode == Modes.Clone) {
+            this.env_controller.org_to_clone = this.engine.organism_editor.getCopyOfOrg();
+            this.env_controller.add_new_species = this.editor_controller.new_species;
+            this.editor_controller.new_species = false;
+            // console.log(this.env_controller.add_new_species)
+        }
     }
 
     setEditorOrganism(org) {
