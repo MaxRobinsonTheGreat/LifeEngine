@@ -287,6 +287,9 @@ class ControlPanel {
                 case "wall-drop":
                     self.setMode(Modes.WallDrop);
                     break;
+				case "water-drop":
+					self.setMode(Modes.WaterDrop);
+					break;
                 case "click-kill":
                     self.setMode(Modes.ClickKill);
                     break;
@@ -321,6 +324,11 @@ class ControlPanel {
         $('#clear-walls').click( function() {
             if (confirm("Are you sure you want to clear all the walls?")) {
                 this.engine.env.clearWalls();
+            }
+        }.bind(this));
+		$('#clear-water').click( function() {
+            if (confirm("Are you sure you want to clear all the water?")) {
+                this.engine.env.clearWater();
             }
         }.bind(this));
         $('#clear-editor').click( function() {

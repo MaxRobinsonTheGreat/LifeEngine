@@ -59,6 +59,7 @@ class OrganismEditor extends Environment{
         var prev_cell = this.organism.anatomy.getLocalCell(loc_c, loc_r)
         if (prev_cell != null) {
             if (this.organism.anatomy.removeCell(loc_c, loc_r)) {
+				
                 this.changeCell(c, r, CellStates.empty, null);
                 this.organism.species = new Species(this.organism.anatomy, null, 0);
             }

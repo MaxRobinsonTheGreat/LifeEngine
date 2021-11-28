@@ -20,6 +20,7 @@ class Organism {
         this.can_rotate = Hyperparams.moversCanRotate;
         this.move_count = 0;
         this.move_range = 4;
+		this.is_aquatic = false;
         this.ignore_brain_for = 0;
         this.mutability = 5;
         this.damage = 0;
@@ -31,6 +32,7 @@ class Organism {
 
     inherit(parent) {
         this.move_range = parent.move_range;
+		this.is_aquatic = parent.is_aquatic;
         this.mutability = parent.mutability;
         this.species = parent.species;
         // this.birth_distance = parent.birth_distance;
@@ -82,7 +84,13 @@ class Organism {
         } 
         var mutated = false;
         if (Math.random() * 100 <= prob) {
-            if (org.anatomy.is_mover && Math.random() * 100 <= 10) { 
+			if (org.anatomy.has_fins && Math.random() * 100 <= 10) { 
+				if(Math.random() * 100 < 50){
+					org.is_aquatic = true
+				}else{
+					org.is_aquatic = false
+				}
+			}else if (org.anatomy.is_mover && Math.random() * 100 <= 10) { 
                 if (org.anatomy.has_eyes) {
                     org.brain.mutate();
                 }
@@ -234,7 +242,7 @@ class Organism {
     }
 
     isPassableCell(cell, parent){
-        return cell != null && (cell.state == CellStates.empty || cell.owner == this || cell.owner == parent || cell.state == CellStates.food);
+        return cell != null && ((cell.state == CellStates.empty && !this.is_aquatic) || cell.owner == this || cell.owner == parent || (this.anatomy.has_fins && cell.state == CellStates.water) || cell.state == CellStates.food);
     }
 
     isClear(col, row, rotation=this.rotation, ignore_armor=false) {
@@ -243,8 +251,11 @@ class Organism {
             if (cell==null) {
                 return false;
             }
+
+			//console.log(this)
+
             // console.log(cell.owner == this)
-            if (cell.owner==this || cell.state==CellStates.empty || (!Hyperparams.foodBlocksReproduction && cell.state==CellStates.food) || (ignore_armor && loccell.state==CellStates.armor && cell.state==CellStates.food)){
+            if (cell.owner==this || (this.anatomy.has_fins && cell.state == CellStates.water) || (cell.state == CellStates.empty && !this.is_aquatic) || (!Hyperparams.foodBlocksReproduction && cell.state==CellStates.food) || (ignore_armor && loccell.state==CellStates.armor && cell.state==CellStates.food)){
                 continue;
             }
             return false;

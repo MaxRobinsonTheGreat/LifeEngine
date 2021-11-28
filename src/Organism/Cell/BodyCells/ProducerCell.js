@@ -20,7 +20,7 @@ class ProducerCell extends BodyCell{
             var loc_c=loc[0];
             var loc_r=loc[1];
             var cell = env.grid_map.cellAt(real_c+loc_c, real_r+loc_r);
-            if (cell != null && cell.state == CellStates.empty){
+            if (cell != null && (cell.state == CellStates.empty || (cell.state == CellStates.water && this.org.anatomy.has_fins))){
                 env.changeCell(real_c+loc_c, real_r+loc_r, CellStates.food, null);
                 return;
             }

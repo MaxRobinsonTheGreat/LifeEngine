@@ -29,6 +29,7 @@ Organism Cells are only found in organisms, and cannot exist on their own in the
 - Killer - Red, harms organisms in directly adjacent cells (besides itself).
 - Armor - Purple, negates the effects of killer cells.
 - Eye - Light purple with a slit, allows the organism to see and move intelligently. See further description below.
+- Fin - Yellow, Allows creature to swim in water.
 
 ## Organisms
 Organisms are structures of cells that eat food, reproduce, and die.

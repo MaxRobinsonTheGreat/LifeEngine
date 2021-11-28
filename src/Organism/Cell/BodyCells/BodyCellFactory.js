@@ -1,6 +1,7 @@
 const MouthCell = require("./MouthCell");
 const ProducerCell = require("./ProducerCell");
 const MoverCell = require("./MoverCell");
+const FinCell = require("./FinCell");
 const KillerCell = require("./KillerCell");
 const ArmorCell = require("./ArmorCell");
 const EyeCell = require("./EyeCell");
@@ -13,6 +14,7 @@ const BodyCellFactory = {
         type_map[CellStates.mouth.name] = MouthCell;
         type_map[CellStates.producer.name] = ProducerCell;
         type_map[CellStates.mover.name] = MoverCell;
+		type_map[CellStates.fin.name] = FinCell;
         type_map[CellStates.killer.name] = KillerCell;
         type_map[CellStates.armor.name] = ArmorCell;
         type_map[CellStates.eye.name] = EyeCell;

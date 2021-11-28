@@ -12,11 +12,13 @@ class WorldEnvironment extends Environment{
         super();
         this.renderer = new Renderer('env-canvas', 'env', cell_size);
         this.controller = new EnvironmentController(this, this.renderer.canvas);
-        var grid_rows = Math.ceil(this.renderer.height / cell_size);
-        var grid_cols = Math.ceil(this.renderer.width / cell_size);
-        this.grid_map = new GridMap(grid_cols, grid_rows, cell_size);
+        this.grid_rows = Math.ceil(this.renderer.height / cell_size);
+        this.grid_cols = Math.ceil(this.renderer.width / cell_size);
+        this.grid_map = new GridMap(this.grid_cols, this.grid_rows, cell_size);
         this.organisms = [];
         this.walls = [];
+		this.water = [];
+		this.water_map = [];
         this.total_mutability = 0;
         this.auto_reset = true;
         this.largest_cell_count = 0;
@@ -69,6 +71,17 @@ class WorldEnvironment extends Environment{
     }
 
     OriginOfLife() {
+	
+		for (var c = 0; c < this.grid_cols; c++) {
+			if(this.water_map[c] == null){
+				this.water_map[c] = []
+			}
+			for (var r = 0; r < this.grid_rows; r++) {
+				this.water_map[c][r] = false
+
+			}
+		}
+
         var center = this.grid_map.getCenter();
         var org = new Organism(center[0], center[1], this);
         org.anatomy.addDefaultCell(CellStates.mouth, 0, 0);
@@ -96,16 +109,34 @@ class WorldEnvironment extends Environment{
     }
 
     changeCell(c, r, state, owner) {
+		if(state == CellStates.empty){
+			if(this.water_map[c][r] == true){
+				state = CellStates.water
+			}
+		}
         super.changeCell(c, r, state, owner);
         this.renderer.addToRender(this.grid_map.cellAt(c, r));
         if(state == CellStates.wall)
             this.walls.push(this.grid_map.cellAt(c, r));
+		if(state == CellStates.water){
+            this.water.push(this.grid_map.cellAt(c, r));	
+			this.water_map[c][r] = true		
+		}
     }
 
     clearWalls() {
         for(var wall of this.walls){
             if (this.grid_map.cellAt(wall.col, wall.row).state == CellStates.wall)
                 this.changeCell(wall.col, wall.row, CellStates.empty, null);
+        }
+    }
+
+	
+    clearWater() {
+        for(var water of this.water){
+			this.water_map[water.col][water.row] = false
+            if (this.grid_map.cellAt(water.col, water.row).state == CellStates.water)
+                this.changeCell(water.col, water.row, CellStates.empty, null);
         }
     }
 
@@ -123,7 +154,7 @@ class WorldEnvironment extends Environment{
                 var c=Math.floor(Math.random() * this.grid_map.cols);
                 var r=Math.floor(Math.random() * this.grid_map.rows);
 
-                if (this.grid_map.cellAt(c, r).state == CellStates.empty){
+                if (this.grid_map.cellAt(c, r).state == CellStates.empty || this.grid_map.cellAt(c, r).state == CellStates.water){
                     this.changeCell(c, r, CellStates.food, null);
                 }
             }

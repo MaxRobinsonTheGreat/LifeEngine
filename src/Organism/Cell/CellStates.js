@@ -26,6 +26,13 @@ class Wall extends CellState {
         super('wall');
     }
 }
+
+class Water extends CellState {
+    constructor() {
+        super('water');
+    }
+}
+
 class Mouth extends CellState {
     constructor() {
         super('mouth');
@@ -39,6 +46,12 @@ class Producer extends CellState {
 class Mover extends CellState {
     constructor() {
         super('mover');
+    }
+}
+
+class Fin extends CellState {
+    constructor() {
+        super('fin');
     }
 }
 class Killer extends CellState {
@@ -78,14 +91,16 @@ const CellStates = {
     empty: new Empty(),
     food: new Food(),
     wall: new Wall(),
+	water: new Water(),
     mouth: new Mouth(),
     producer: new Producer(),
     mover: new Mover(),
+	fin: new Fin(),
     killer: new Killer(),
     armor: new Armor(),
     eye: new Eye(),
     defineLists() {
-        this.all = [this.empty, this.food, this.wall, this.mouth, this.producer, this.mover, this.killer, this.armor, this.eye]
+        this.all = [this.empty, this.food, this.wall, this.water, this.mouth, this.producer, this.mover, this.fin, this.killer, this.armor, this.eye]
         this.living = [this.mouth, this.producer, this.mover, this.killer, this.armor, this.eye];
     },
     getRandomName: function() {

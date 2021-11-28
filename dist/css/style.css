@@ -172,6 +172,9 @@ button:hover{
 #clear-walls {
     margin-top: 5px;
 }
+#clear-water {
+    margin-top: 5px;
+}
 #organism-options {
     display: none;
 }

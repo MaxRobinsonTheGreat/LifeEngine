@@ -7,6 +7,7 @@ class Anatomy {
         this.cells = [];
         this.is_producer = false;
         this.is_mover = false;
+		this.has_fins = false;
         this.has_eyes = false;
         this.birth_distance = 4;
     }
@@ -77,6 +78,7 @@ class Anatomy {
     checkTypeChange() {
         this.is_producer = false;
         this.is_mover = false;
+		this.has_fins = false;
         this.has_eyes = false;
         for (var cell of this.cells) {
             if (cell.state == CellStates.producer)
@@ -85,6 +87,8 @@ class Anatomy {
                 this.is_mover = true;
             if (cell.state == CellStates.eye)
                 this.has_eyes = true;
+			if (cell.state == CellStates.fin)
+				this.has_fins = true;
         }
     }
 

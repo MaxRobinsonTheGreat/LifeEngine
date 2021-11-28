@@ -68,6 +68,9 @@ class EditorController extends CanvasController{
                 case "mover":
                     self.edit_cell_type = CellStates.mover;
                     break;
+				case "fin":
+					self.edit_cell_type = CellStates.fin;
+					break;
                 case "killer":
                     self.edit_cell_type = CellStates.killer;
                     break;
@@ -93,7 +96,11 @@ class EditorController extends CanvasController{
         $('#move-range-edit').change ( function() {
             this.env.organism.move_range = parseInt($('#move-range-edit').val());
         }.bind(this));
-		
+
+		$('#is-aquatic-edit').change(function() {
+            this.env.organism.is_aquatic = $('#is-aquatic-edit').is(":checked");
+        }.bind(this));
+
         $('#mutation-rate-edit').change ( function() {
             this.env.organism.mutability = parseInt($('#mutation-rate-edit').val());
         }.bind(this));
@@ -127,6 +134,8 @@ class EditorController extends CanvasController{
         
         $('.cell-count').text("Cell count: "+org.anatomy.cells.length);
         $('#move-range').text("Move Range: "+org.move_range);
+		$('#is-aquatic').text("Is Aquatic: "+org.is_aquatic);
+		
         $('#mutation-rate').text("Mutation Rate: "+org.mutability);
        
 		if (Hyperparams.useGlobalMutability) {
@@ -152,6 +161,10 @@ class EditorController extends CanvasController{
         $('.cell-count').text("Cell count: "+org.anatomy.cells.length);
         if (this.setMoveRangeVisibility()){
             $('#move-range-edit').val(org.move_range);
+        }
+
+        if (this.setAquaticVisibility()){
+            $('#is-aquatic-edit').val(org.is_aquatic);
         }
 
 		$('#mutation-rate-edit').val(org.mutability);
@@ -205,6 +218,18 @@ class EditorController extends CanvasController{
         }
         $('#move-range-cont').css('display', 'none');
         $('#move-range').css('display', 'none');
+        return false;
+    }
+
+	setAquaticVisibility() {
+        var org = this.env.organism;
+        if (org.anatomy.has_fins) {
+            $('#is-aquatic-cont').css('display', 'block');
+            $('#is-aquatic').css('display', 'block');
+            return true;
+        }
+        $('#is-aquatic-cont').css('display', 'none');
+        $('#is-aquatic').css('display', 'none');
         return false;
     }
 

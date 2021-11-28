@@ -24,9 +24,11 @@ class Brain {
         this.decisions[CellStates.empty.name] = Decision.neutral;
         this.decisions[CellStates.food.name] = Decision.chase;
         this.decisions[CellStates.wall.name] = Decision.neutral;
+		this.decisions[CellStates.water.name] = Decision.neutral;
         this.decisions[CellStates.mouth.name] = Decision.neutral;
         this.decisions[CellStates.producer.name] = Decision.neutral;
         this.decisions[CellStates.mover.name] = Decision.neutral;
+		this.decisions[CellStates.fin.name] = Decision.neutral;
         this.decisions[CellStates.killer.name] = Decision.retreat;
         this.decisions[CellStates.armor.name] = Decision.neutral;
         this.decisions[CellStates.eye.name] = Decision.neutral;
@@ -37,6 +39,7 @@ class Brain {
         this.decisions[CellStates.mouth.name] = Decision.getRandom();
         this.decisions[CellStates.producer.name] = Decision.getRandom();
         this.decisions[CellStates.mover.name] = Decision.getRandom();
+		this.decisions[CellStates.fin.name] = Decision.getRandom();
         this.decisions[CellStates.armor.name] = Decision.getRandom();
         this.decisions[CellStates.eye.name] = Decision.getRandom();
     }

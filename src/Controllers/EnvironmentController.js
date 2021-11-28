@@ -99,6 +99,28 @@ class EnvironmentController extends CanvasController{
                             this.dropCellType(cell.col, cell.row, CellStates.empty, false);
                         }
                         break;
+				case Modes.WaterDrop:
+					if (left_click){
+						this.env.water_map[cell.col][cell.row] = true
+						for (var loc of Neighbors.allSelf){
+							var c=cell.col + loc[0];
+							var r=cell.row + loc[1];
+							this.env.water_map[c][r] = true
+						}
+						
+						this.dropCellType(cell.col, cell.row, CellStates.water, true);
+
+					}
+					else if (right_click){
+						this.env.water_map[cell.col][cell.row] = false
+						for (var loc of Neighbors.allSelf){
+							var c=cell.col + loc[0];
+							var r=cell.row + loc[1];
+							this.env.water_map[c][r] = false
+						}
+						this.dropCellType(cell.col, cell.row, CellStates.empty, false);
+					}
+					break;
                 case Modes.ClickKill:
                     this.killNearOrganisms();
                     break;
