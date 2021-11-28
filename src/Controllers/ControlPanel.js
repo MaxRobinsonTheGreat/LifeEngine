@@ -42,82 +42,52 @@ class ControlPanel {
                 this.stats_panel.startAutoRender();
             }
         });
-
-        // var self = this;
-        // $('#minimize').click ( function() {
-        //     $('.control-panel').css('display', 'none');
-        //     $('.hot-controls').css('display', 'block');
-            
-        // }.bind(this));
-        // $('#maximize').click ( function() {
-        //     $('.control-panel').css('display', 'grid');
-        //     $('.hot-controls').css('display', 'none');
-        //     if (self.tab_id == 'stats') {
-        //         self.stats_panel.startAutoRender();
-        //     }
-        // });
     }
 
     defineHotkeys() {
-
-        $('body').keydown( (evt) => {
-
-            //console.log(evt.which);
-
-            switch (evt.which) {
-
+        $('body').keydown( (e) => {
+            switch (e.key.toLowerCase()) {
                 // hot bar controls
-                case 49: // 1 = Reset Camera
+                case 'a':
                     $('.reset-view')[0].click();
                     break;
-
-                case 50: // 2 = Drag View
+                case 's':
                     $('#drag-view').click();
                     break;
-
-                case 51: // 3 = Drop Wall
+                case 'd':
                     $('#wall-drop').click();
                     break;
-
-                case 52: // 4 = Drop Food
+                case 'f':
                     $('#food-drop').click();
                     break;
-
-                case 53: // 5 = Kill
+                case 'g':
                     $('#click-kill').click();
                     break;
-
-                case 54: // 6 = Play/Pause
-                case 32: // Space = Play/Pause
-                    $('.pause-button')[0].click();
-                    break;
-
-                case 55: // 7 = Toggle Rendering
+                case 'h':
                     $('.headless')[0].click();
                     break;
-
+                case 'j':
+                case ' ':
+                    $('.pause-button')[0].click();
+                    break;
                 // miscellaneous hotkeys
-                case 9: // tab = toggle control panel
-                    evt.preventDefault();
+                case 'q': // minimize/maximize control panel
+                    e.preventDefault();
                     if (this.control_panel_active)
                         $('#minimize').click();
                     else
                         $('#maximize').click();
                     break;
-
-                case 68: // d = drop organism
-                    $('#drop-org').click();
-                    break;
-
-                case 69: // e = edit organism
-                    $('#edit').click();
-                    break;
-
-                case 83: // s = select creature mode
+                case 'z':
                     $('#select').click();
                     break;
-
-                case 86: // v = Toggle HUD
+                case 'x':
+                    $('#edit').click();
+                    break;
+                case 'c':
+                    $('#drop-org').click();
+                    break;
+                case 'v': // toggle hud
                     if (this.no_hud) {
                         let control_panel_display = this.control_panel_active ? 'grid' : 'none';
                         let hot_control_display = !this.control_panel_active ? 'block' : 'none';
@@ -133,8 +103,7 @@ class ControlPanel {
                     }
                     this.no_hud = !this.no_hud;
                     break;
-
-                case 88: // x = clear all walls
+                case 'b':
                     $('#clear-walls').click();
             }
         });
