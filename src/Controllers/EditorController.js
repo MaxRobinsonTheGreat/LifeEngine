@@ -93,6 +93,10 @@ class EditorController extends CanvasController{
         $('#move-range-edit').change ( function() {
             this.env.organism.move_range = parseInt($('#move-range-edit').val());
         }.bind(this));
+		
+        $('#mutation-rate-edit').change ( function() {
+            this.env.organism.mutability = parseInt($('#mutation-rate-edit').val());
+        }.bind(this));
         $('#observation-type-edit').change ( function() {
             this.setBrainEditorValues($('#observation-type-edit').val());
             this.setBrainDetails();
@@ -117,11 +121,14 @@ class EditorController extends CanvasController{
         $('.cell-count').text("Cell count: "+org.anatomy.cells.length);
         $('#move-range').text("Move Range: "+org.move_range);
         $('#mutation-rate').text("Mutation Rate: "+org.mutability);
-        if (Hyperparams.useGlobalMutability) {
+       
+		if (Hyperparams.useGlobalMutability) {
             $('#mutation-rate').css('display', 'none');
+			$('#mutation-rate-cont').css('display', 'none');
         }
         else {
             $('#mutation-rate').css('display', 'block');
+			$('#mutation-rate-cont').css('display', 'block');
         }
 
         this.setMoveRangeVisibility();
@@ -141,6 +148,8 @@ class EditorController extends CanvasController{
         if (this.setMoveRangeVisibility()){
             $('#move-range-edit').val(org.move_range);
         }
+
+		$('#mutation-rate-edit').val(org.mutability);
         
         if (this.setBrainPanelVisibility()){
             this.setBrainEditorValues($('#observation-type-edit').val());
