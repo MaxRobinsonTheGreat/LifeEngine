@@ -114,6 +114,13 @@ class EditorController extends CanvasController{
         $('#edit-organism-details').css('display', 'none');
     }
 
+    refreshDetailsPanel() {
+        if (this.mode === Modes.Edit)
+            this.setEditorPanel();
+        else
+            this.setDetailsPanel();
+    }
+
     setDetailsPanel() {
         this.clearDetailsPanel();
         var org = this.env.organism;
@@ -124,11 +131,9 @@ class EditorController extends CanvasController{
        
 		if (Hyperparams.useGlobalMutability) {
             $('#mutation-rate').css('display', 'none');
-			$('#mutation-rate-cont').css('display', 'none');
         }
         else {
             $('#mutation-rate').css('display', 'block');
-			$('#mutation-rate-cont').css('display', 'block');
         }
 
         this.setMoveRangeVisibility();
@@ -150,6 +155,12 @@ class EditorController extends CanvasController{
         }
 
 		$('#mutation-rate-edit').val(org.mutability);
+        if (Hyperparams.useGlobalMutability) {
+			$('#mutation-rate-cont').css('display', 'none');
+        }
+        else {
+            $('#mutation-rate-cont').css('display', 'block');
+        }
         
         if (this.setBrainPanelVisibility()){
             this.setBrainEditorValues($('#observation-type-edit').val());

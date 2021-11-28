@@ -143,8 +143,11 @@ class ControlPanel {
             $(tab).css('display', 'grid');
             self.engine.organism_editor.is_active = (this.id == 'editor');
             self.stats_panel.stopAutoRender();
-            if (this.id == 'stats') {
+            if (this.id === 'stats') {
                 self.stats_panel.startAutoRender();
+            }
+            else if (this.id === 'editor') {
+                self.editor_controller.refreshDetailsPanel();
             }
             self.tab_id = this.id;
         });
