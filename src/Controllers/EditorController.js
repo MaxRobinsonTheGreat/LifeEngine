@@ -100,10 +100,6 @@ class EditorController extends CanvasController{
 		$('#is-aquatic-edit').change(function() {
             this.env.organism.is_aquatic = $('#is-aquatic-edit').is(":checked");
         }.bind(this));
-
-        $('#mutation-rate-edit').change ( function() {
-            this.env.organism.mutability = parseInt($('#mutation-rate-edit').val());
-        }.bind(this));
         $('#observation-type-edit').change ( function() {
             this.setBrainEditorValues($('#observation-type-edit').val());
             this.setBrainDetails();
@@ -137,8 +133,7 @@ class EditorController extends CanvasController{
 		$('#is-aquatic').text("Is Aquatic: "+org.is_aquatic);
 		
         $('#mutation-rate').text("Mutation Rate: "+org.mutability);
-       
-		if (Hyperparams.useGlobalMutability) {
+        if (Hyperparams.useGlobalMutability) {
             $('#mutation-rate').css('display', 'none');
         }
         else {
