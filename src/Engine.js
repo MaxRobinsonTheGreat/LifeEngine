@@ -3,7 +3,9 @@ const ControlPanel = require('./Controllers/ControlPanel');
 const OrganismEditor = require('./Environments/OrganismEditor');
 const ColorScheme = require('./Rendering/ColorScheme');
 
-const render_speed = 60;
+// If the simulation speed is below this value, a new interval will be created to handle ui rendering
+// at a reasonable speed. If it is above, the simulation interval will be used to update the ui.
+const min_render_speed = 60;
 
 class Engine {
     constructor(){
@@ -14,8 +16,13 @@ class Engine {
         this.colorscheme = new ColorScheme(this.env, this.organism_editor);
         this.colorscheme.loadColorScheme();
         this.env.OriginOfLife();
-        this.last_update = Date.now();
-        this.delta_time = 0;
+        
+        this.sim_last_update = Date.now();
+        this.sim_delta_time = 0;
+
+        this.ui_last_update = Date.now();
+        this.ui_delta_time = 0;
+
         this.actual_fps = 0;
         this.running = false;
     }
@@ -24,40 +31,57 @@ class Engine {
         if (fps <= 0)
             fps = 1;
         this.fps = fps;
-        this.game_loop = setInterval(function(){this.updateDeltaTime();this.environmentUpdate();}.bind(this), 1000/fps);
+        this.sim_loop = setInterval(()=>{
+            this.updateSimDeltaTime();
+            this.environmentUpdate();
+        }, 1000/fps);
         this.running = true;
-        if (this.fps >= render_speed) {
-            if (this.render_loop != null) {
-                clearInterval(this.render_loop);
-                this.render_loop = null;
+        if (this.fps >= min_render_speed) {
+            if (this.ui_loop != null) {
+                clearInterval(this.ui_loop);
+                this.ui_loop = null;
             }
         }
         else
-            this.setRenderLoop();
+            this.setUiLoop();
     }
     
     stop() {
-        clearInterval(this.game_loop);
+        clearInterval(this.sim_loop);
         this.running = false;
-        this.setRenderLoop();
+        this.setUiLoop();
     }
 
-    setRenderLoop() {
-        if (this.render_loop == null) {
-            this.render_loop = setInterval(function(){this.updateDeltaTime();this.necessaryUpdate();}.bind(this), 1000/render_speed);
+    restart(fps) {
+        clearInterval(this.sim_loop);
+        this.start(fps);
+    }
+
+    setUiLoop() {
+        if (!this.ui_loop) {
+            this.ui_loop = setInterval(()=> {
+                this.updateUIDeltaTime();
+                this.necessaryUpdate();
+            }, 1000/min_render_speed);
         }
     }
 
-    updateDeltaTime() {
-        this.delta_time = Date.now() - this.last_update;
-        this.last_update = Date.now();
+    updateSimDeltaTime() {
+        this.sim_delta_time = Date.now() - this.sim_last_update;
+        this.sim_last_update = Date.now();
+        if (!this.ui_loop) // if the ui loop isn't running, use the sim delta time
+            this.ui_delta_time = this.sim_delta_time;
     }
 
+    updateUIDeltaTime() {
+        this.ui_delta_time = Date.now() - this.ui_last_update;
+        this.ui_last_update = Date.now();
+    }
 
     environmentUpdate() {
-        this.env.update(this.delta_time);
-        this.actual_fps = 1/this.delta_time*1000;
-        if(this.render_loop == null){
+        this.actual_fps = (1000/this.sim_delta_time);
+        this.env.update(this.sim_delta_time);
+        if(this.ui_loop == null) {
             this.necessaryUpdate();
         }
             
@@ -65,7 +89,7 @@ class Engine {
 
     necessaryUpdate() {
         this.env.render();
-        this.controlpanel.update(this.delta_time);
+        this.controlpanel.update(this.ui_delta_time);
         this.organism_editor.update();
     }
 
