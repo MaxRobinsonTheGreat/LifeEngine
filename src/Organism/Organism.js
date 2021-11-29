@@ -151,7 +151,7 @@ class Organism {
     }
 
     calcRandomChance(prob) {
-        return (Math.random() * 100) <= prob;
+        return (Math.random() * 100) < prob;
     }
 
     attemptMove() {
