@@ -68,6 +68,7 @@ class ControlPanel {
                     break;
                 case 'j':
                 case ' ':
+                    e.preventDefault();
                     $('.pause-button')[0].click();
                     break;
                 // miscellaneous hotkeys
@@ -302,8 +303,8 @@ class ControlPanel {
                 case "drag-view":
                     self.setMode(Modes.Drag);
             }
-            $('.edit-mode-btn').css('background-color', '#9099c2');
-            $('.'+this.id).css('background-color', '#81d2c7');
+            $('.edit-mode-btn').removeClass('selected');
+            $('.'+this.id).addClass('selected');
         });
 
         $('.reset-view').click( function(){
