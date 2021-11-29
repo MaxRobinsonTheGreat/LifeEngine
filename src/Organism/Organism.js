@@ -90,8 +90,8 @@ class Organism {
 
         var mutated = false;
         if (Math.random() * 100 <= prob) {
-			if (org.anatomy.has_fins && Math.random() * 100 <= 10) { 
-				if(Math.random() * 100 < 50){
+			if (org.anatomy.has_fins && Math.random() * 100 <= 5) { 
+				if(Math.random() * 100 < 60){
 					org.is_aquatic = true
 				}else{
 					org.is_aquatic = false
