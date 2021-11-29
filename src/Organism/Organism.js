@@ -32,7 +32,7 @@ class Organism {
 
     inherit(parent) {
         this.move_range = parent.move_range;
-		this.is_aquatic = parent.is_aquatic && parent.has_fins;
+		this.is_aquatic = parent.is_aquatic && parent.anatomy.has_fins;
         this.mutability = parent.mutability;
         this.species = parent.species;
         // this.birth_distance = parent.birth_distance;
@@ -248,7 +248,7 @@ class Organism {
     }
 
     isPassableCell(cell, parent){
-        return cell != null && ((cell.state == CellStates.empty && !(this.is_aquatic && this.anatomy.has_fins)) || cell.owner == this || cell.owner == parent || (this.anatomy.has_fins && cell.state == CellStates.water) || cell.state == CellStates.food);
+        return cell != null && ((cell.state == CellStates.empty && !this.is_aquatic) || cell.owner == this || cell.owner == parent || (this.anatomy.has_fins && cell.state == CellStates.water) || cell.state == CellStates.food);
     }
 
     isClear(col, row, rotation=this.rotation, ignore_armor=false) {
@@ -261,7 +261,7 @@ class Organism {
 			//console.log(this)
 
             // console.log(cell.owner == this)
-            if (cell.owner==this || (this.anatomy.has_fins && cell.state == CellStates.water) || (cell.state == CellStates.empty && !(this.is_aquatic && this.anatomy.has_fins)) || (!Hyperparams.foodBlocksReproduction && cell.state==CellStates.food) || (ignore_armor && loccell.state==CellStates.armor && cell.state==CellStates.food)){
+            if (cell.owner==this || (this.anatomy.has_fins && cell.state == CellStates.water) || (cell.state == CellStates.empty && !this.is_aquatic) || (!Hyperparams.foodBlocksReproduction && cell.state==CellStates.food) || (ignore_armor && loccell.state==CellStates.armor && cell.state==CellStates.food)){
                 continue;
             }
             return false;

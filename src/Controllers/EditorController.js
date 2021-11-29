@@ -44,10 +44,11 @@ class EditorController extends CanvasController{
         }
         else if (this.right_click)
             this.env.removeCellFromOrg(this.mouse_c, this.mouse_r);
-
+		
         this.new_species = true;
         this.setBrainPanelVisibility();
         this.setMoveRangeVisibility();
+		this.setAquaticVisibility()
         this.updateDetails();
     }
 
@@ -218,11 +219,13 @@ class EditorController extends CanvasController{
 
 	setAquaticVisibility() {
         var org = this.env.organism;
+	
         if (org.anatomy.has_fins) {
             $('#is-aquatic-cont').css('display', 'block');
             $('#is-aquatic').css('display', 'block');
             return true;
         }
+		org.is_aquatic = false
         $('#is-aquatic-cont').css('display', 'none');
         $('#is-aquatic').css('display', 'none');
         return false;
