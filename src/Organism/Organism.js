@@ -123,40 +123,35 @@ class Organism {
     }
 
     mutate() {
-        var choice = Math.floor(Math.random() * 100);
-        var mutated = false;
-        if (choice <= Hyperparams.addProb) {
-            // add cell
-            // console.log("add cell")
-
-            var branch = this.anatomy.getRandomCell();
-            var state = CellStates.getRandomLivingType();//branch.state;
-            var growth_direction = Neighbors.all[Math.floor(Math.random() * Neighbors.all.length)]
-            var c = branch.loc_col+growth_direction[0];
-            var r = branch.loc_row+growth_direction[1];
+        let mutated = false;
+        if (this.calcRandomChance(Hyperparams.addProb)) {
+            let branch = this.anatomy.getRandomCell();
+            let state = CellStates.getRandomLivingType();//branch.state;
+            let growth_direction = Neighbors.all[Math.floor(Math.random() * Neighbors.all.length)]
+            let c = branch.loc_col+growth_direction[0];
+            let r = branch.loc_row+growth_direction[1];
             if (this.anatomy.canAddCellAt(c, r)){
                 mutated = true;
                 this.anatomy.addRandomizedCell(state, c, r);
             }
         }
-        else if (choice <= Hyperparams.addProb + Hyperparams.changeProb){
-            // change cell
-            var cell = this.anatomy.getRandomCell();
-            var state = CellStates.getRandomLivingType();
-            // console.log("change cell", state)
+        if (this.calcRandomChance(Hyperparams.changeProb)){
+            let cell = this.anatomy.getRandomCell();
+            let state = CellStates.getRandomLivingType();
             this.anatomy.replaceCell(state, cell.loc_col, cell.loc_row);
             mutated = true;
         }
-        else if (choice <= Hyperparams.addProb + Hyperparams.changeProb + Hyperparams.removeProb){
-            // remove cell
-            // console.log("remove cell")
-
+        if (this.calcRandomChance(Hyperparams.removeProb)){
             if(this.anatomy.cells.length > 1) {
-                var cell = this.anatomy.getRandomCell();
+                let cell = this.anatomy.getRandomCell();
                 mutated = this.anatomy.removeCell(cell.loc_col, cell.loc_row);
             }
         }
         return mutated;
+    }
+
+    calcRandomChance(prob) {
+        return (Math.random() * 100) < prob;
     }
 
     attemptMove() {

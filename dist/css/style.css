@@ -79,6 +79,9 @@ button {
 button:hover{
     background-color: #81d2c7;
 }
+button:active{
+    background-color: #595e77;
+}
 
 .icon-links {
     font-size: 35px;
@@ -163,10 +166,7 @@ button:hover{
     height: 30px;
     margin-top: 5px;
 }
-.edit-mode-btn:hover{
-    background-color: #81d2c7;
-}
-.edit-mode-btn#drag-view {
+.edit-mode-btn.selected {
     background-color: #81d2c7;
 }
 #clear-walls {
