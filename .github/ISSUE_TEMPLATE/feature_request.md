@@ -1,5 +1,5 @@
 ---
-name: Feature request
+name: Feature request (Please Use discussion tab instead)
 about: Request a new feature for the life engine
 title: ''
 labels: 
