@@ -64,7 +64,7 @@ class WorldEnvironment extends Environment{
         }
         if (this.organisms.length == 0 && this.auto_reset){
             this.reset_count++;
-            this.reset();
+            this.reset(false);
         }
     }
 
@@ -130,14 +130,19 @@ class WorldEnvironment extends Environment{
         }
     }
 
-    reset() {
+    reset(confirm_reset=true, reset_life=true) {
+        if (confirm_reset && !confirm('The current environment will be lost. Proceed?'))
+            return;
+
         this.organisms = [];
         this.grid_map.fillGrid(CellStates.empty);
         this.renderer.renderFullGrid(this.grid_map.grid);
         this.total_mutability = 0;
         this.total_ticks = 0;
         FossilRecord.clear_record();
-        this.OriginOfLife();
+        if (reset_life)
+            this.OriginOfLife();
+
     }
 
     resizeGridColRow(cell_size, cols, rows) {

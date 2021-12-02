@@ -23,6 +23,7 @@ class ControlPanel {
         this.headless_opacity = 1;
         this.opacity_change_rate = -0.8;
         this.paused=false;
+        this.setHyperparamDefaults();
     }
 
     defineMinMaxControls(){
@@ -249,30 +250,34 @@ class ControlPanel {
             Hyperparams.foodBlocksReproduction = this.checked;        
         });
         $('#reset-rules').click( function() {
-            Hyperparams.setDefaults();
-            $('#food-prod-prob').val(Hyperparams.foodProdProb);
-            $('#lifespan-multiplier').val(Hyperparams.lifespanMultiplier);
-            $('#mover-rot').prop('checked', Hyperparams.moversCanRotate);
-            $('#offspring-rot').prop('checked', Hyperparams.offspringRotate);
-            $('#insta-kill').prop('checked', Hyperparams.instaKill);
-            $('#evolved-mutation').prop('checked', !Hyperparams.useGlobalMutability);
-            $('#add-prob').val(Hyperparams.addProb);
-            $('#change-prob').val(Hyperparams.changeProb);
-            $('#remove-prob').val(Hyperparams.removeProb);
-            $('#movers-produce').prop('checked', Hyperparams.moversCanProduce);
-            $('#food-blocks').prop('checked', Hyperparams.foodBlocksReproduction);
-            $('#food-drop-rate').val(Hyperparams.foodDropProb);
-            $('#look-range').val(Hyperparams.lookRange);
-
-            if (!Hyperparams.useGlobalMutability) {
-                $('.global-mutation-in').css('display', 'none');
-                $('#avg-mut').css('display', 'block');
-            }
-            else {
-                $('.global-mutation-in').css('display', 'block');
-                $('#avg-mut').css('display', 'none');
-            }
+            this.setHyperparamDefaults;
         });
+    }
+
+    setHyperparamDefaults() {
+        Hyperparams.setDefaults();
+        $('#food-prod-prob').val(Hyperparams.foodProdProb);
+        $('#lifespan-multiplier').val(Hyperparams.lifespanMultiplier);
+        $('#mover-rot').prop('checked', Hyperparams.moversCanRotate);
+        $('#offspring-rot').prop('checked', Hyperparams.offspringRotate);
+        $('#insta-kill').prop('checked', Hyperparams.instaKill);
+        $('#evolved-mutation').prop('checked', !Hyperparams.useGlobalMutability);
+        $('#add-prob').val(Hyperparams.addProb);
+        $('#change-prob').val(Hyperparams.changeProb);
+        $('#remove-prob').val(Hyperparams.removeProb);
+        $('#movers-produce').prop('checked', Hyperparams.moversCanProduce);
+        $('#food-blocks').prop('checked', Hyperparams.foodBlocksReproduction);
+        $('#food-drop-rate').val(Hyperparams.foodDropProb);
+        $('#look-range').val(Hyperparams.lookRange);
+
+        if (!Hyperparams.useGlobalMutability) {
+            $('.global-mutation-in').css('display', 'none');
+            $('#avg-mut').css('display', 'block');
+        }
+        else {
+            $('.global-mutation-in').css('display', 'block');
+            $('#avg-mut').css('display', 'none');
+        }
     }
 
     defineModeControls() {
@@ -313,16 +318,20 @@ class ControlPanel {
 
         var env = this.engine.env;
         $('#reset-env').click( function() {
-            this.engine.env.reset();
+            env.reset();
             this.stats_panel.reset();
         }.bind(this));
+        $('#clear-env').click( () => {
+            env.reset(true, false);
+            this.stats_panel.reset();
+            env.auto_reset = false;
+            $('#auto-reset').prop('checked', false);;
+        });
         $('#auto-reset').change(function() {
             env.auto_reset = this.checked;
         });
         $('#clear-walls').click( function() {
-            if (confirm("Are you sure you want to clear all the walls?")) {
-                this.engine.env.clearWalls();
-            }
+            this.engine.env.clearWalls();
         }.bind(this));
         $('#clear-editor').click( function() {
             this.engine.organism_editor.clear();
@@ -367,9 +376,10 @@ class ControlPanel {
     updateHeadlessIcon(delta_time) {
         if (this.paused)
             return;
+        const min_opacity = 0.4;
         var op = this.headless_opacity + (this.opacity_change_rate*delta_time/1000);
-        if (op <= 0.4){
-            op=0.4;
+        if (op <= min_opacity){
+            op=min_opacity;
             this.opacity_change_rate = -this.opacity_change_rate;
         }
         else if (op >= 1){
