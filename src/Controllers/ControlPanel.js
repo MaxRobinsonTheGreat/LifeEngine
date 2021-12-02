@@ -336,7 +336,16 @@ class ControlPanel {
         $('#clear-editor').click( function() {
             this.engine.organism_editor.clear();
             this.editor_controller.setEditorPanel();
-        }.bind(this));
+        }.bind(this))
+
+        window.onbeforeunload = function (e) {
+            e = e || window.event;
+            let return_str = 'this will cause a confirmation on page close'
+            if (e) {
+                e.returnValue = return_str;
+            }
+            return return_str;
+        };
     }
 
     defineChallenges() {
