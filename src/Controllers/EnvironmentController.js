@@ -9,7 +9,7 @@ const Hyperparams = require("../Hyperparameters");
 class EnvironmentController extends CanvasController{
     constructor(env, canvas) {
         super(env, canvas);
-        this.mode = Modes.Drag;
+        this.mode = Modes.FoodDrop;
         this.org_to_clone = null;
         this.add_new_species = false;
         this.defineZoomControls();
