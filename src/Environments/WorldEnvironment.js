@@ -37,10 +37,14 @@ class WorldEnvironment extends Environment{
         if (Hyperparams.foodDropProb > 0) {
             this.generateFood();
         }
+        if (Hyperparams.foodDecayRate > 0) {
+            this.decayFood();
+        }
         this.removeOrganisms(to_remove);
         this.total_ticks ++;
         if (this.total_ticks % this.data_update_rate == 0) {
             FossilRecord.updateData();
+            // this.density(); // debugging
         }
     }
 
@@ -128,6 +132,46 @@ class WorldEnvironment extends Environment{
                 }
             }
         }
+    }
+
+    /** Probabilistically remove food from the map.
+     */
+    decayFood() {
+        // 1.5 is empirically chosen to try to balance such that when generate == decay, there is about a
+        // 50/50 distribution of food/empty
+        let prob =1.5 * Hyperparams.foodDecayRate / (this.grid_map.cols * this.grid_map.rows);
+        // console.log(prob)
+        let decay = (cell) => {
+            if (Math.random() <= prob) {
+                if (cell.state.name === 'food') {
+                    this.changeCell(cell.col, cell.row, CellStates.empty, null);
+                }
+            }
+        }
+        this.grid_map.map(decay);
+    }
+
+    /** Report on density of cells on the map for debugging purposes.
+     */
+    density() {
+        this._foodCount = 0;
+        this._emptyCount = 0;
+        this._otherCount = 0;
+        let analyze = (cell) => {
+            switch (cell.state.name) {
+                case 'empty':
+                    this._emptyCount++;
+                    break;
+                case 'food':
+                    this._foodCount++;
+                    break;
+                default:
+                    this._otherCount++;
+                    break;
+            }
+        }
+        this.grid_map.map(analyze);
+        console.log(this._foodCount/this._emptyCount, this._foodCount, this._emptyCount, this._otherCount)
     }
 
     reset() {

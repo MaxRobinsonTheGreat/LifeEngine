@@ -28,6 +28,7 @@ const Hyperparams = {
         this.lookRange = 20;
 
         this.foodDropProb = 0;
+        this.foodDecayRate = 0;
     },
 
     balanceMutationProbs : function(choice) {

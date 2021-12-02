@@ -173,6 +173,9 @@ class ControlPanel {
         $('#food-drop-rate').change(function() {
             Hyperparams.foodDropProb = $('#food-drop-rate').val();
         });
+        $('#food-decay-rate').change(function() {
+            Hyperparams.foodDecayRate = $('#food-decay-rate').val();
+        });
 
         $('#evolved-mutation').change( function() {
             if (this.checked) {
