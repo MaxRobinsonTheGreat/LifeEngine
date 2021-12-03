@@ -249,8 +249,8 @@ class ControlPanel {
         $('#food-blocks').change( function() {
             Hyperparams.foodBlocksReproduction = this.checked;        
         });
-        $('#reset-rules').click( function() {
-            this.setHyperparamDefaults;
+        $('#reset-rules').click(() => {
+            this.setHyperparamDefaults();
         });
     }
 
