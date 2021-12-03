@@ -31,11 +31,16 @@ class Engine {
         if (fps <= 0)
             fps = 1;
         this.fps = fps;
-        this.sim_loop = setInterval(()=>{
-            this.updateSimDeltaTime();
-            this.environmentUpdate();
-        }, 1000/fps);
+        this.frame_time = 1000/fps;
+        console.log(this.frame_time)
         this.running = true;
+        this.simUpdate();
+
+        // this.sim_loop = setInterval(()=>{
+        //     this.updateSimDeltaTime();
+        //     this.environmentUpdate();
+        // }, 1000/fps);
+
         if (this.fps >= min_render_speed) {
             if (this.ui_loop != null) {
                 clearInterval(this.ui_loop);
@@ -45,6 +50,24 @@ class Engine {
         else
             this.setUiLoop();
     }
+
+    simUpdate() {
+        let start = Date.now()
+        this.updateSimDeltaTime();
+        this.environmentUpdate();
+        let compute_time = Date.now() - start;
+        if(this.running){
+            let timeout = this.frame_time - compute_time;
+            timeout = Math.max(timeout, 0); // can't be less than 0
+            // if (timeout>0)
+            this.sim_timeout = setTimeout(() => {
+                this.simUpdate();
+            }, timeout);
+            // else 
+            //     this.simUpdate();
+        }
+
+    }
     
     stop() {
         clearInterval(this.sim_loop);
@@ -53,7 +76,8 @@ class Engine {
     }
 
     restart(fps) {
-        clearInterval(this.sim_loop);
+        // clearInterval(this.sim_loop);
+        clearTimeout(this.sim_timeout)
         this.start(fps);
     }
 
@@ -84,7 +108,6 @@ class Engine {
         if(this.ui_loop == null) {
             this.necessaryUpdate();
         }
-            
     }
 
     necessaryUpdate() {
