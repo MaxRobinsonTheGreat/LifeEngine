@@ -20,10 +20,10 @@
 - Improved mutation probability controls: [#43](https://github.com/MaxRobinsonTheGreat/LifeEngine/pull/43)
 - Ability to edit individual organism's mutability: [#46](https://github.com/MaxRobinsonTheGreat/LifeEngine/pull/46)
 - Added clear button and improved reset warnings: [#64](https://github.com/MaxRobinsonTheGreat/LifeEngine/pull/64)
+- Control Panel is minimized by default: [#64](https://github.com/MaxRobinsonTheGreat/LifeEngine/pull/64)
 
 ### Simulation Enhancements:
 - Default food prodcution probability increased from 4->5
-
 
 ### Bug Fixes:
 - Fixed actual FPS display: [#45](https://github.com/MaxRobinsonTheGreat/LifeEngine/pull/45)
