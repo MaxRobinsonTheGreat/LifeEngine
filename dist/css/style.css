@@ -37,7 +37,7 @@ body{
     bottom: 0;
     position: fixed;
     background-color: #3a4b68;
-    display: grid;
+    display: none;
     grid-template-columns: repeat(3, 1fr);
     /* opacity: 0.8; */
 }
@@ -236,7 +236,7 @@ button:active{
     position: fixed;
     bottom: 10px;
     padding-left: 10px;
-    display: none;
+    /* display: none; */
 }
 
 #headless-notification {

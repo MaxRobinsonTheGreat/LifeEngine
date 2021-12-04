@@ -20,9 +20,9 @@
 			<div id='speed-controller' class='control-set'>
 				<div class='vertical-buttons'>
 					<button class="reset-view" title="Reset View. Hotkey: A"><i class="fa fa-video-camera"></i></button>
-					<button class="edit-mode-btn drag-view selected" id="drag-view" title="Drag View. Hotkey: S"><i class="fa fa-arrows"></i></button>
+					<button class="edit-mode-btn drag-view" id="drag-view" title="Drag View. Hotkey: S"><i class="fa fa-arrows"></i></button>
 					<button class="edit-mode-btn wall-drop" id="wall-drop" title="Drop/Remove Wall. Hotkey: D"><i class="fa fa-square"></i></button>
-					<button class="edit-mode-btn food-drop" id="food-drop" title="Drop/Remove Food. Hotkey: F"><i class="fa fa-cutlery"></i></button>
+					<button class="edit-mode-btn food-drop selected" id="food-drop" title="Drop/Remove Food. Hotkey: F"><i class="fa fa-cutlery"></i></button>
 					<button class="edit-mode-btn click-kill" id="click-kill" title="Click to kill. Hotkey: G"><i class="fa fa-bolt"></i></button>
 					<button id="clear-walls" title="Clear All Walls. Hotkey: B"><i class="fa fa-window-close"></i></button>
 				</div>
@@ -32,12 +32,13 @@
 				<button class="headless" title="Toggle rendering. Hotkey: H"><i class="fa fa-eye-slash"></i></button>
 				<p id='fps'>Target FPS: 60</p>
 				<p id='fps-actual'></p>
-				<button id='reset-env'>Reset Environment</button>
-				<label for="auto-reset">Auto Reset</label>
+				<button id='reset-env' title='Restarts simulation with default organism.'>Reset</button>
+				<button id='clear-env' title="Removes all organisms and walls. Will disable 'reset on extinction'"">Clear</button>
+				<br>
+				<label for="auto-reset">Reset on total extinction</label>
 				<input type="checkbox" id="auto-reset" checked>
 				<br>
 				<p id='reset-count'>Auto reset count: </p>
-				<br>
 				<h3>Grid Size</h3>
 				<label for="cell-size">Cell Size:</label>
 				<input type="number" id="cell-size" min="1" max="100" value=5 step="1">
@@ -46,7 +47,6 @@
 				<div class='col-row-input'>
 					<label for="col-input">Columns:</label>
 					<input type="number" id="col-input" min="1" value=100 step="1">
-					<br>
 					<label for="row-input">Rows:</label>
 					<input type="number" id="row-input" min="1" value=100 step="1">
 				</div>
@@ -266,9 +266,9 @@
 		</div>
 		<div class='hot-controls'>
 			<button class="reset-view" title="Reset View. Hotkey: A"><i class="fa fa-video-camera"></i></button>
-			<button class="edit-mode-btn drag-view selected" id="drag-view" title="Drag View. Hotkey: S"><i class="fa fa-arrows"></i></button>
+			<button class="edit-mode-btn drag-view" id="drag-view" title="Drag View. Hotkey: S"><i class="fa fa-arrows"></i></button>
 			<button class="edit-mode-btn wall-drop" id="wall-drop" title="Drop/Remove Wall. Hotkey: D"><i class="fa fa-square"></i></button>
-			<button class="edit-mode-btn food-drop" id="food-drop" title="Drop/Remove Food. Hotkey: F"><i class="fa fa-cutlery"></i></button>
+			<button class="edit-mode-btn food-drop selected" id="food-drop" title="Drop/Remove Food. Hotkey: F"><i class="fa fa-cutlery"></i></button>
 			<button class="edit-mode-btn click-kill" id="click-kill" title="Click to kill. Hotkey: G"><i class="fa fa-bolt"></i></button>
 			<button class="headless" title="Toggle rendering. Hotkey: H"><i class="fa fa-eye-slash"></i></button>
 			<button class='pause-button' title="Play/Pause. Hotkey: Spacebar"><i class="fa fa-pause"></i></button>
