@@ -4,13 +4,14 @@
 Changes that are in the develop branch
 
 ### Bug Fixes:
-- Infinite FPS: [#42](https://github.com/MaxRobinsonTheGreat/LifeEngine/pull/45)
+- Fixed actual FPS display: [#42](https://github.com/MaxRobinsonTheGreat/LifeEngine/pull/45)
 - Spelling Fix: [#31](https://github.com/MaxRobinsonTheGreat/LifeEngine/pull/31)
 
 ### UI Enhancements:
 - Hotkeys/improved zoom controls: [#47](https://github.com/MaxRobinsonTheGreat/LifeEngine/pull/47)
 - Improved mutation probability controls: [#43](https://github.com/MaxRobinsonTheGreat/LifeEngine/pull/43)
 - Ability to edit individual organism's mutability: [#46](https://github.com/MaxRobinsonTheGreat/LifeEngine/pull/46)
+- Added clear button and improved reset warnings: [#46](https://github.com/MaxRobinsonTheGreat/LifeEngine/pull/64)
 
 ### Simulation Enhancements:
 - 
