@@ -19,25 +19,26 @@
 		<div class='control-panel'>
 			<div id='speed-controller' class='control-set'>
 				<div class='vertical-buttons'>
-					<button class="reset-view" title="Reset View"><i class="fa fa-video-camera"></i></button>
-					<button class="edit-mode-btn" id="drag-view" title="Drag View"><i class="fa fa-arrows"></i></button>
-					<button class="edit-mode-btn" id="wall-drop" title="Drop/Remove Wall"><i class="fa fa-square"></i></button>
-					<button class="edit-mode-btn" id="food-drop" title="Drop/Remove Food"><i class="fa fa-cutlery"></i></button>
-					<button class="edit-mode-btn" id="click-kill" title="Click to kill"><i class="fa fa-bolt"></i></button>
-					<button id="clear-walls" title="Clear All Walls"><i class="fa fa-window-close"></i></button>
+					<button class="reset-view" title="Reset View. Hotkey: A"><i class="fa fa-video-camera"></i></button>
+					<button class="edit-mode-btn drag-view" id="drag-view" title="Drag View. Hotkey: S"><i class="fa fa-arrows"></i></button>
+					<button class="edit-mode-btn wall-drop" id="wall-drop" title="Drop/Remove Wall. Hotkey: D"><i class="fa fa-square"></i></button>
+					<button class="edit-mode-btn food-drop selected" id="food-drop" title="Drop/Remove Food. Hotkey: F"><i class="fa fa-cutlery"></i></button>
+					<button class="edit-mode-btn click-kill" id="click-kill" title="Click to kill. Hotkey: G"><i class="fa fa-bolt"></i></button>
+					<button id="clear-walls" title="Clear All Walls. Hotkey: B"><i class="fa fa-window-close"></i></button>
 				</div>
 				<h2>Simulation Speed</h2>
 				<input id="slider" type="range" min="1" max="300" value="60">
-				<button class='pause-button'><i class="fa fa-pause"></i></button>
-				<button class="headless" title="Toggle rendering"><i class="fa fa-eye-slash"></i></button>
+				<button class='pause-button' title="Play/Pause. Hotkey: Spacebar"><i class="fa fa-pause"></i></button>
+				<button class="headless" title="Toggle rendering. Hotkey: H"><i class="fa fa-eye-slash"></i></button>
 				<p id='fps'>Target FPS: 60</p>
 				<p id='fps-actual'></p>
-				<button id='reset-env'>Reset Environment</button>
-				<label for="auto-reset">Auto Reset</label>
+				<button id='reset-env' title='Restarts simulation with default organism.'>Reset</button>
+				<button id='clear-env' title="Removes all organisms and walls. Will disable 'reset on extinction'"">Clear</button>
+				<br>
+				<label for="auto-reset">Reset on total extinction</label>
 				<input type="checkbox" id="auto-reset" checked>
 				<br>
 				<p id='reset-count'>Auto reset count: </p>
-				<br>
 				<h3>Grid Size</h3>
 				<label for="cell-size">Cell Size:</label>
 				<input type="number" id="cell-size" min="1" max="100" value=5 step="1">
@@ -46,7 +47,6 @@
 				<div class='col-row-input'>
 					<label for="col-input">Columns:</label>
 					<input type="number" id="col-input" min="1" value=100 step="1">
-					<br>
 					<label for="row-input">Rows:</label>
 					<input type="number" id="row-input" min="1" value=100 step="1">
 				</div>
@@ -62,7 +62,7 @@
 					<p class='tabnav-item' id='hyperparameters'>Simulation Controls</p>
 					<p class='tabnav-item' id='stats'>Stats</p>
 					<p class='tabnav-item' id='challenges'>Challenges</p>
-					<button id="minimize" title="Minimze Control Panel"><i class="fa fa-minus-square"></i></button>
+					<button id="minimize" title="Minimze Control Panel."><i class="fa fa-minus-square"></i></button>
 				</div>
 
 				<div id='about' class='tab'>
@@ -78,7 +78,7 @@
 							<div class='cell-legend-type' id='mouth' title="Mouth: Eats adjacent food."></div>
 							<div class='cell-legend-type' id='producer' title="Producer: Produces adjacent food."></div>
 							<div class='cell-legend-type' id='mover' title="Mover: Allows for movement and rotation."></div>
-							<div class='cell-legend-type' id='killer' title="Killer: Harms oranisms in adjacent cells."></div>
+							<div class='cell-legend-type' id='killer' title="Killer: Harms organisms in adjacent cells."></div>
 							<div class='cell-legend-type' id='armor' title="Armor: Negates affects of killer cell."></div>
 							<div class='cell-legend-type' id='eye' title="Eye: Observes cells and decides movement."></div>
 							<div class='cell-legend-type' id='food' title="Food: Not part of an organism. Once an organism has eaten enough food, it will reproduce."></div>
@@ -98,9 +98,9 @@
 				<div id='editor' class='tab'>
 					<div class='left-half' id='editor-panel'>
 						<div class='editor-buttons'>
-							<button class="edit-mode-btn" id="select" title="Select organism from world"><i class="fa fa-hand-pointer-o"></i></button>
-							<button class="edit-mode-btn" id="edit" title="Edit organism"><i class="fa fa-pencil"></i></button>
-							<button class="edit-mode-btn" id="drop-org" title="Drop organism in world"><i class="fa fa-plus"></i></button>
+							<button class="edit-mode-btn select" id="select" title="Select organism from world. Hotkey: Z"><i class="fa fa-hand-pointer-o"></i></button>
+							<button class="edit-mode-btn edit" id="edit" title="Edit organism. Hotkey: X"><i class="fa fa-pencil"></i></button>
+							<button class="edit-mode-btn drop-org" id="drop-org" title="Drop organism in world. Hotkey: C"><i class="fa fa-plus"></i></button>
 						</div>
 						<div id='editor-env'>
 							<canvas id='editor-canvas'></canvas>
@@ -112,7 +112,7 @@
 								<div class='cell-type' id='mover' title="Mover: Allows for movement and rotation."></div>
 							</div>
 							<div style='grid-column: 2;'>
-								<div class='cell-type' id='killer' title="Killer: Harms oranisms in adjacent cells."></div>
+								<div class='cell-type' id='killer' title="Killer: Harms organisms in adjacent cells."></div>
 								<div class='cell-type' id='armor' title="Armor: Negates affects of killer cell."></div>
 								<div class='cell-type' id='eye' title="Eye: Looks for cells to move away from or towards. Click again on a placed cell to rotate"></div>
 							</div>
@@ -142,6 +142,10 @@
 							<div id='move-range-cont'>
 								<label for="move-range-edit" title='The number of cells to move before randomly changing direction. Overriden by brain decisions.'>Move Range:</label>
 								<input type="number" id="move-range-edit" min="1" max="100" value=3 step="1">
+							</div>
+							<div id='mutation-rate-cont'>
+								<label for="mutation-rate-edit" title='Probability that offspring of this organism will mutate'>Mutation Rate:</label>
+								<input type="number" id="mutation-rate-edit" min="1" max="100" value=3 step="1">
 							</div>
 							<br>
 							<div class='brain-details'>
@@ -261,19 +265,19 @@
 			</div>
 		</div>
 		<div class='hot-controls'>
-			<button class="reset-view" title="Reset View"><i class="fa fa-video-camera"></i></button>
-			<button class="edit-mode-btn" id="drag-view" title="Drag View"><i class="fa fa-arrows"></i></button>
-			<button class="edit-mode-btn" id="wall-drop" title="Drop/Remove Wall"><i class="fa fa-square"></i></button>
-			<button class="edit-mode-btn" id="food-drop" title="Drop/Remove Food"><i class="fa fa-cutlery"></i></button>
-			<button class="edit-mode-btn" id="click-kill" title="Click to kill"><i class="fa fa-bolt"></i></button>
-			<button class='pause-button'><i class="fa fa-pause"></i></button>
-			<button class="headless" title="Toggle rendering"><i class="fa fa-eye-slash"></i></button>
+			<button class="reset-view" title="Reset View. Hotkey: A"><i class="fa fa-video-camera"></i></button>
+			<button class="edit-mode-btn drag-view" id="drag-view" title="Drag View. Hotkey: S"><i class="fa fa-arrows"></i></button>
+			<button class="edit-mode-btn wall-drop" id="wall-drop" title="Drop/Remove Wall. Hotkey: D"><i class="fa fa-square"></i></button>
+			<button class="edit-mode-btn food-drop selected" id="food-drop" title="Drop/Remove Food. Hotkey: F"><i class="fa fa-cutlery"></i></button>
+			<button class="edit-mode-btn click-kill" id="click-kill" title="Click to kill. Hotkey: G"><i class="fa fa-bolt"></i></button>
+			<button class="headless" title="Toggle rendering. Hotkey: H"><i class="fa fa-eye-slash"></i></button>
+			<button class='pause-button' title="Play/Pause. Hotkey: Spacebar"><i class="fa fa-pause"></i></button>
 		</div>
 		<div id="headless-notification">
 			<i class="fa fa-eye-slash" ></i>
 		</div>
 		<div id='maximize-hot-control' class='hot-controls'>
-			<button id="maximize" title="Show Control Panel"><i class="fa fa-plus-square"></i></button>
+			<button id="maximize" title="Show Control Panel."><i class="fa fa-plus-square"></i></button>
 		</div>
 		
 	</body>

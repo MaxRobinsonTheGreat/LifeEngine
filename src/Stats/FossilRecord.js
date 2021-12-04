@@ -41,7 +41,9 @@ const FossilRecord = {
                 if (species.cumulative_pop < this.min_pop) {
                     return false;
                 }
-                this.extinct_species.push(s);
+                // disabled for now, causes memory problems on long runs
+                // this.extinct_species.push(s);
+                
                 // console.log("Extant species:", this.extant_species.length)
                 // console.log("Extinct species:", this.extinct_species.length)
                 return true;

@@ -6,6 +6,7 @@ class ControlPanel {
     constructor(engine) {
         this.engine = engine;
         this.defineMinMaxControls();
+        this.defineHotkeys();
         this.defineEngineSpeedControls();
         this.defineGridSizeControls();
         this.defineTabNavigation();
@@ -22,6 +23,7 @@ class ControlPanel {
         this.headless_opacity = 1;
         this.opacity_change_rate = -0.8;
         this.paused=false;
+        this.setHyperparamDefaults();
     }
 
     defineMinMaxControls(){
@@ -41,38 +43,72 @@ class ControlPanel {
                 this.stats_panel.startAutoRender();
             }
         });
-        const V_KEY = 118;
-        $('body').keypress( (e) => {
-            if (e.which === V_KEY) {
-                if (this.no_hud) {
-                    let control_panel_display = this.control_panel_active ? 'grid' : 'none';
-                    let hot_control_display = !this.control_panel_active ? 'block' : 'none';
-                    if (this.control_panel_active && this.tab_id == 'stats') {
-                        this.stats_panel.startAutoRender();
-                    };
-                    $('.control-panel').css('display', control_panel_display);
-                    $('.hot-controls').css('display', hot_control_display);
-                }
-                else {
-                    $('.control-panel').css('display', 'none');
-                    $('.hot-controls').css('display', 'none');
-                }
-                this.no_hud = !this.no_hud;
+    }
+
+    defineHotkeys() {
+        $('body').keydown( (e) => {
+            switch (e.key.toLowerCase()) {
+                // hot bar controls
+                case 'a':
+                    $('.reset-view')[0].click();
+                    break;
+                case 's':
+                    $('#drag-view').click();
+                    break;
+                case 'd':
+                    $('#wall-drop').click();
+                    break;
+                case 'f':
+                    $('#food-drop').click();
+                    break;
+                case 'g':
+                    $('#click-kill').click();
+                    break;
+                case 'h':
+                    $('.headless')[0].click();
+                    break;
+                case 'j':
+                case ' ':
+                    e.preventDefault();
+                    $('.pause-button')[0].click();
+                    break;
+                // miscellaneous hotkeys
+                case 'q': // minimize/maximize control panel
+                    e.preventDefault();
+                    if (this.control_panel_active)
+                        $('#minimize').click();
+                    else
+                        $('#maximize').click();
+                    break;
+                case 'z':
+                    $('#select').click();
+                    break;
+                case 'x':
+                    $('#edit').click();
+                    break;
+                case 'c':
+                    $('#drop-org').click();
+                    break;
+                case 'v': // toggle hud
+                    if (this.no_hud) {
+                        let control_panel_display = this.control_panel_active ? 'grid' : 'none';
+                        let hot_control_display = !this.control_panel_active ? 'block' : 'none';
+                        if (this.control_panel_active && this.tab_id == 'stats') {
+                            this.stats_panel.startAutoRender();
+                        };
+                        $('.control-panel').css('display', control_panel_display);
+                        $('.hot-controls').css('display', hot_control_display);
+                    }
+                    else {
+                        $('.control-panel').css('display', 'none');
+                        $('.hot-controls').css('display', 'none');
+                    }
+                    this.no_hud = !this.no_hud;
+                    break;
+                case 'b':
+                    $('#clear-walls').click();
             }
         });
-        // var self = this;
-        // $('#minimize').click ( function() {
-        //     $('.control-panel').css('display', 'none');
-        //     $('.hot-controls').css('display', 'block');
-            
-        // }.bind(this));
-        // $('#maximize').click ( function() {
-        //     $('.control-panel').css('display', 'grid');
-        //     $('.hot-controls').css('display', 'none');
-        //     if (self.tab_id == 'stats') {
-        //         self.stats_panel.startAutoRender();
-        //     }
-        // });
     }
 
     defineEngineSpeedControls(){
@@ -143,8 +179,11 @@ class ControlPanel {
             $(tab).css('display', 'grid');
             self.engine.organism_editor.is_active = (this.id == 'editor');
             self.stats_panel.stopAutoRender();
-            if (this.id == 'stats') {
+            if (this.id === 'stats') {
                 self.stats_panel.startAutoRender();
+            }
+            else if (this.id === 'editor') {
+                self.editor_controller.refreshDetailsPanel();
             }
             self.tab_id = this.id;
         });
@@ -192,15 +231,12 @@ class ControlPanel {
             switch(this.id){
                 case "add-prob":
                     Hyperparams.addProb = this.value;
-                    Hyperparams.balanceMutationProbs(1);
                     break;
                 case "change-prob":
                     Hyperparams.changeProb = this.value;
-                    Hyperparams.balanceMutationProbs(2);
                     break;
                 case "remove-prob":
                     Hyperparams.removeProb = this.value;
-                    Hyperparams.balanceMutationProbs(3);
                     break;
             }
             $('#add-prob').val(Math.floor(Hyperparams.addProb));
@@ -213,31 +249,35 @@ class ControlPanel {
         $('#food-blocks').change( function() {
             Hyperparams.foodBlocksReproduction = this.checked;        
         });
-        $('#reset-rules').click( function() {
-            Hyperparams.setDefaults();
-            $('#food-prod-prob').val(Hyperparams.foodProdProb);
-            $('#lifespan-multiplier').val(Hyperparams.lifespanMultiplier);
-            $('#mover-rot').prop('checked', Hyperparams.moversCanRotate);
-            $('#offspring-rot').prop('checked', Hyperparams.offspringRotate);
-            $('#insta-kill').prop('checked', Hyperparams.instaKill);
-            $('#evolved-mutation').prop('checked', !Hyperparams.useGlobalMutability);
-            $('#add-prob').val(Hyperparams.addProb);
-            $('#change-prob').val(Hyperparams.changeProb);
-            $('#remove-prob').val(Hyperparams.removeProb);
-            $('#movers-produce').prop('checked', Hyperparams.moversCanProduce);
-            $('#food-blocks').prop('checked', Hyperparams.foodBlocksReproduction);
-            $('#food-drop-rate').val(Hyperparams.foodDropProb);
-            $('#look-range').val(Hyperparams.lookRange);
-
-            if (!Hyperparams.useGlobalMutability) {
-                $('.global-mutation-in').css('display', 'none');
-                $('#avg-mut').css('display', 'block');
-            }
-            else {
-                $('.global-mutation-in').css('display', 'block');
-                $('#avg-mut').css('display', 'none');
-            }
+        $('#reset-rules').click(() => {
+            this.setHyperparamDefaults();
         });
+    }
+
+    setHyperparamDefaults() {
+        Hyperparams.setDefaults();
+        $('#food-prod-prob').val(Hyperparams.foodProdProb);
+        $('#lifespan-multiplier').val(Hyperparams.lifespanMultiplier);
+        $('#mover-rot').prop('checked', Hyperparams.moversCanRotate);
+        $('#offspring-rot').prop('checked', Hyperparams.offspringRotate);
+        $('#insta-kill').prop('checked', Hyperparams.instaKill);
+        $('#evolved-mutation').prop('checked', !Hyperparams.useGlobalMutability);
+        $('#add-prob').val(Hyperparams.addProb);
+        $('#change-prob').val(Hyperparams.changeProb);
+        $('#remove-prob').val(Hyperparams.removeProb);
+        $('#movers-produce').prop('checked', Hyperparams.moversCanProduce);
+        $('#food-blocks').prop('checked', Hyperparams.foodBlocksReproduction);
+        $('#food-drop-rate').val(Hyperparams.foodDropProb);
+        $('#look-range').val(Hyperparams.lookRange);
+
+        if (!Hyperparams.useGlobalMutability) {
+            $('.global-mutation-in').css('display', 'none');
+            $('#avg-mut').css('display', 'block');
+        }
+        else {
+            $('.global-mutation-in').css('display', 'block');
+            $('#avg-mut').css('display', 'none');
+        }
     }
 
     defineModeControls() {
@@ -261,20 +301,15 @@ class ControlPanel {
                     break;
                 case "edit":
                     self.setMode(Modes.Edit);
-                    self.editor_controller.setEditorPanel();
                     break;
                 case "drop-org":
                     self.setMode(Modes.Clone);
-                    self.env_controller.org_to_clone = self.engine.organism_editor.getCopyOfOrg();
-                    self.env_controller.add_new_species = self.editor_controller.new_species;
-                    self.editor_controller.new_species = false;
-                    // console.log(self.env_controller.add_new_species)
                     break;
                 case "drag-view":
                     self.setMode(Modes.Drag);
             }
-            $('.edit-mode-btn').css('background-color', '#9099c2');
-            $('#'+this.id).css('background-color', '#81d2c7');
+            $('.edit-mode-btn').removeClass('selected');
+            $('.'+this.id).addClass('selected');
         });
 
         $('.reset-view').click( function(){
@@ -283,21 +318,34 @@ class ControlPanel {
 
         var env = this.engine.env;
         $('#reset-env').click( function() {
-            this.engine.env.reset();
+            env.reset();
             this.stats_panel.reset();
         }.bind(this));
+        $('#clear-env').click( () => {
+            env.reset(true, false);
+            this.stats_panel.reset();
+            env.auto_reset = false;
+            $('#auto-reset').prop('checked', false);;
+        });
         $('#auto-reset').change(function() {
             env.auto_reset = this.checked;
         });
         $('#clear-walls').click( function() {
-            if (confirm("Are you sure you want to clear all the walls?")) {
-                this.engine.env.clearWalls();
-            }
+            this.engine.env.clearWalls();
         }.bind(this));
         $('#clear-editor').click( function() {
             this.engine.organism_editor.clear();
             this.editor_controller.setEditorPanel();
-        }.bind(this));
+        }.bind(this))
+
+        window.onbeforeunload = function (e) {
+            e = e || window.event;
+            let return_str = 'this will cause a confirmation on page close'
+            if (e) {
+                e.returnValue = return_str;
+            }
+            return return_str;
+        };
     }
 
     defineChallenges() {
@@ -310,6 +358,17 @@ class ControlPanel {
     setMode(mode) {
         this.env_controller.mode = mode;
         this.editor_controller.mode = mode;
+
+        if (mode == Modes.Edit) {
+            this.editor_controller.setEditorPanel();
+        }
+
+        if (mode == Modes.Clone) {
+            this.env_controller.org_to_clone = this.engine.organism_editor.getCopyOfOrg();
+            this.env_controller.add_new_species = this.editor_controller.new_species;
+            this.editor_controller.new_species = false;
+            // console.log(this.env_controller.add_new_species)
+        }
     }
 
     setEditorOrganism(org) {
@@ -319,17 +378,17 @@ class ControlPanel {
     }
 
     changeEngineSpeed(change_val) {
-        this.engine.stop();
-        this.engine.start(change_val)
+        this.engine.restart(change_val)
         this.fps = this.engine.fps;
     }
 
     updateHeadlessIcon(delta_time) {
         if (this.paused)
             return;
+        const min_opacity = 0.4;
         var op = this.headless_opacity + (this.opacity_change_rate*delta_time/1000);
-        if (op <= 0.4){
-            op=0.4;
+        if (op <= min_opacity){
+            op=min_opacity;
             this.opacity_change_rate = -this.opacity_change_rate;
         }
         else if (op >= 1){

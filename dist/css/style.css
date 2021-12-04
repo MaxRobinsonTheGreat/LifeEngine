@@ -37,7 +37,7 @@ body{
     bottom: 0;
     position: fixed;
     background-color: #3a4b68;
-    display: grid;
+    display: none;
     grid-template-columns: repeat(3, 1fr);
     /* opacity: 0.8; */
 }
@@ -78,6 +78,9 @@ button {
 }
 button:hover{
     background-color: #81d2c7;
+}
+button:active{
+    background-color: #595e77;
 }
 
 .icon-links {
@@ -163,10 +166,7 @@ button:hover{
     height: 30px;
     margin-top: 5px;
 }
-.edit-mode-btn:hover{
-    background-color: #81d2c7;
-}
-.edit-mode-btn#drag-view {
+.edit-mode-btn.selected {
     background-color: #81d2c7;
 }
 #clear-walls {
@@ -236,7 +236,7 @@ button:hover{
     position: fixed;
     bottom: 10px;
     padding-left: 10px;
-    display: none;
+    /* display: none; */
 }
 
 #headless-notification {
