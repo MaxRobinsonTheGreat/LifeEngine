@@ -3,7 +3,31 @@ const ControlPanel = require('./Controllers/ControlPanel');
 const OrganismEditor = require('./Environments/OrganismEditor');
 const ColorScheme = require('./Rendering/ColorScheme');
 
-const render_speed = 60;
+const render_speed = 30;
+
+class Timer {
+    constructor(){
+        this.delta_time = 0;
+        this.started = performance.now();
+        this.last_time = this.started;
+        this.time = 0;
+        this.freqPerSecond = 0;
+        this.avgFreqPerSecond = 0;
+    }
+
+    update() {
+        this.time = performance.now();
+        this.delta_time = this.time - this.last_time;
+        this.last_time = this.time;
+
+        this.freqPerSecond = 1000/this.delta_time;
+        this.avgFreqPerSecond = (10*this.avgFreqPerSecond + this.freqPerSecond)/11;
+    }
+
+    tick() {
+        return performance.now() - this.time;
+    }
+}
 
 class Engine {
     constructor(){
@@ -14,8 +38,9 @@ class Engine {
         this.colorscheme = new ColorScheme(this.env, this.organism_editor);
         this.colorscheme.loadColorScheme();
         this.env.OriginOfLife();
-        this.last_update = Date.now();
-        this.delta_time = 0;
+        this.ui_timer = new Timer();
+        this.sim_timer = new Timer();
+        this.sim_time = 0;
         this.actual_fps = 0;
         this.running = false;
     }
@@ -24,7 +49,7 @@ class Engine {
         if (fps <= 0)
             fps = 1;
         this.fps = fps;
-        this.game_loop = setInterval(function(){this.updateDeltaTime();this.environmentUpdate();}.bind(this), 1000/fps);
+        this.game_loop = setInterval(function(){this.simulationUpdate();}.bind(this), 1000/fps);
         this.running = true;
         if (this.fps >= render_speed) {
             if (this.render_loop != null) {
@@ -44,29 +69,27 @@ class Engine {
 
     setRenderLoop() {
         if (this.render_loop == null) {
-            this.render_loop = setInterval(function(){this.updateDeltaTime();this.necessaryUpdate();}.bind(this), 1000/render_speed);
+            this.render_loop = setInterval(function(){this.interfaceUpdate();}.bind(this), 1000/render_speed);
         }
     }
 
-    updateDeltaTime() {
-        this.delta_time = Date.now() - this.last_update;
-        this.last_update = Date.now();
-    }
-
-
-    environmentUpdate() {
-        this.env.update(this.delta_time);
-        this.actual_fps = 1/this.delta_time*1000;
+    simulationUpdate() {
+        this.sim_timer.update();
+        this.env.update(this.sim_timer.delta_time);
+        this.actual_fps = this.sim_timer.avgFreqPerSecond;
+        this.sim_time = this.sim_timer.tick();
         if(this.render_loop == null){
-            this.necessaryUpdate();
+            this.interfaceUpdate();
         }
             
     }
 
-    necessaryUpdate() {
+    interfaceUpdate() {
+        this.ui_timer.update();
         this.env.render();
-        this.controlpanel.update(this.delta_time);
+        this.controlpanel.update(this.ui_timer.delta_time);
         this.organism_editor.update();
+        this.ui_timer.update();
     }
 
 }

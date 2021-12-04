@@ -21,7 +21,7 @@ class ControlPanel {
         this.stats_panel = new StatsPanel(this.engine.env);
         this.headless_opacity = 1;
         this.opacity_change_rate = -0.8;
-        this.paused=false;
+        this.paused=!this.engine.running;
     }
 
     defineMinMaxControls(){
@@ -87,12 +87,13 @@ class ControlPanel {
         $('.pause-button').click(function() {
             $('.pause-button').find("i").toggleClass("fa fa-pause");
             $('.pause-button').find("i").toggleClass("fa fa-play");
-            this.paused = !this.paused;
             if (this.engine.running) {
                 this.engine.stop();
+                this.paused = true;
             }
             else if (!this.engine.running){
                 this.engine.start(this.fps);
+                this.paused = false;
             }
         }.bind(this));
         $('.headless').click(function() {
