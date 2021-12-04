@@ -14,16 +14,16 @@ class Stats {
         this.max = Number.MIN_SAFE_INTEGER;
     }
 
-    take(val) {
+    add_value(value) {
         //takes a running average by weighting the current average as 75% of the 
         //new value and the new value as 25%.  Adds a smoothing effect and works
         //as a first order filter
-        this.average = (this.average * 3 + val)/4;
-        if(this.min > val){
-            this.min = val;
+        this.average = (this.average * 3 + value)/4;
+        if(this.min > value){
+            this.min = value;
         }
-        if(this.max < val){
-            this.max = val;
+        if(this.max < value){
+            this.max = value;
         }
 
     }
@@ -40,20 +40,25 @@ class Timer {
         this.tick_stats = new Stats();
     }
 
-    update() {
+    update_state() {
         this.count++;
         this.time = performance.now();
+
+        if(this.time == this.last_time) {
+            this.time = this.last_time + 0.5;
+        }
         this.delta_time = this.time - this.last_time;
         this.last_time = this.time;
-
         this.fps = 1000/this.delta_time;
-        this.fps_stats.take(fps);
+        this.fps_stats.add_value(fps);
     }
     /* Returns a delta time from the last update() call and calculates stats on that
      * can be used for calculating execution time of the given exec */
-    tick() {
+    time_since_last_update() {
         let val = performance.now() - this.time;
-        this.tick_stats.take(val);
+        if(val > 0) {
+            this.tick_stats.add_value(val);
+        }
         return val;
     }
 }
@@ -114,17 +119,20 @@ class Engine {
     }
 
     environmentUpdate() {
-        this.sim_timer.update();
+        this.sim_timer.update_state();
         this.actual_fps = this.sim_timer.fps;
 
+        //SIM EXEC
         this.env.update(this.sim_timer.delta_time);
-        let sim_time = this.sim_timer.tick();
-        if(this.sim_timer.count % 60 == 0) {
+
+        //SIM EXEC TIME STATS
+        let sim_exec_time = this.sim_timer.time_since_last_update();
+        if(this.sim_timer.count % 600 == 0) {
             //can use the following to get an idea of how long the sim takes            
-            console.log('sim time: ' + sim_time + 'ms');
-            console.log('avg: ' + this.sim_timer.tick_stats.average + 'ms');
-            console.log('min: ' + this.sim_timer.tick_stats.min + 'ms');
-            console.log('max: ' + this.sim_timer.tick_stats.max + 'ms');
+            console.log('SIM TIME: ' + sim_exec_time + 'ms');
+            console.log(' - avg: ' + this.sim_timer.tick_stats.average + 'ms');
+            console.log(' - min: ' + this.sim_timer.tick_stats.min + 'ms');
+            console.log(' - max: ' + this.sim_timer.tick_stats.max + 'ms');
         }
         if(this.ui_loop == null) {
             this.necessaryUpdate();
@@ -133,17 +141,21 @@ class Engine {
     }
 
     necessaryUpdate() {
-        this.ui_timer.update();
+        this.ui_timer.update_state();
+
+        // RENDER EXEC
         this.env.render();
         this.controlpanel.update(this.ui_timer.delta_time);
         this.organism_editor.update();
-        let ui_time = this.ui_timer.tick();
-        if(this.ui_timer.count % 60 == 0) {
+
+        // UI EXEC TIME STATS
+        let ui_exec_time = this.ui_timer.time_since_last_update();
+        if(this.ui_timer.count % 600 == 0) {
             //can use the following to get an idea of how long the ui takes 
-            console.log('ui time: ' + ui_time + 'ms');
-            console.log('avg: ' + this.ui_timer.tick_stats.average + 'ms');
-            console.log('min: ' + this.ui_timer.tick_stats.min + 'ms');
-            console.log('max: ' + this.ui_timer.tick_stats.max + 'ms');
+            console.log('UI TIME: ' + ui_exec_time + 'ms');
+            console.log(' - avg: ' + this.ui_timer.tick_stats.average + 'ms');
+            console.log(' - min: ' + this.ui_timer.tick_stats.min + 'ms');
+            console.log(' - max: ' + this.ui_timer.tick_stats.max + 'ms');
         }
     }
 
