@@ -7,6 +7,57 @@ const ColorScheme = require('./Rendering/ColorScheme');
 // at a reasonable speed. If it is above, the simulation interval will be used to update the ui.
 const min_render_speed = 60;
 
+class Stats {
+    constructor(){
+        this.average = 0;
+        this.min = Number.MAX_SAFE_INTEGER;
+        this.max = Number.MIN_SAFE_INTEGER;
+    }
+
+    take(val) {
+        //takes a running average by weighting the current average as 75% of the 
+        //new value and the new value as 25%.  Adds a smoothing effect and works
+        //as a first order filter
+        this.average = (this.average * 3 + val)/4;
+        if(this.min > val){
+            this.min = val;
+        }
+        if(this.max < val){
+            this.max = val;
+        }
+
+    }
+}
+class Timer {
+    constructor(){
+        this.delta_time = 0;
+        this.started = performance.now();
+        this.last_time = this.started;
+        this.time = 0;
+        this.fps = 0;
+        this.fps_stats = new Stats();
+        this.count = 0;
+        this.tick_stats = new Stats();
+    }
+
+    update() {
+        this.count++;
+        this.time = performance.now();
+        this.delta_time = this.time - this.last_time;
+        this.last_time = this.time;
+
+        this.fps = 1000/this.delta_time;
+        this.fps_stats.take(fps);
+    }
+    /* Returns a delta time from the last update() call and calculates stats on that
+     * can be used for calculating execution time of the given exec */
+    tick() {
+        let val = performance.now() - this.time;
+        this.tick_stats.take(val);
+        return val;
+    }
+}
+
 class Engine {
     constructor(){
         this.fps = 60;
@@ -17,11 +68,9 @@ class Engine {
         this.colorscheme.loadColorScheme();
         this.env.OriginOfLife();
         
-        this.sim_last_update = Date.now();
-        this.sim_delta_time = 0;
+        this.sim_timer = new Timer();
 
-        this.ui_last_update = Date.now();
-        this.ui_delta_time = 0;
+        this.ui_timer = new Timer();
 
         this.actual_fps = 0;
         this.running = false;
@@ -32,7 +81,6 @@ class Engine {
             fps = 1;
         this.fps = fps;
         this.sim_loop = setInterval(()=>{
-            this.updateSimDeltaTime();
             this.environmentUpdate();
         }, 1000/fps);
         this.running = true;
@@ -60,27 +108,24 @@ class Engine {
     setUiLoop() {
         if (!this.ui_loop) {
             this.ui_loop = setInterval(()=> {
-                this.updateUIDeltaTime();
                 this.necessaryUpdate();
             }, 1000/min_render_speed);
         }
     }
 
-    updateSimDeltaTime() {
-        this.sim_delta_time = Date.now() - this.sim_last_update;
-        this.sim_last_update = Date.now();
-        if (!this.ui_loop) // if the ui loop isn't running, use the sim delta time
-            this.ui_delta_time = this.sim_delta_time;
-    }
-
-    updateUIDeltaTime() {
-        this.ui_delta_time = Date.now() - this.ui_last_update;
-        this.ui_last_update = Date.now();
-    }
-
     environmentUpdate() {
-        this.actual_fps = (1000/this.sim_delta_time);
-        this.env.update(this.sim_delta_time);
+        this.sim_timer.update();
+        this.actual_fps = this.sim_timer.fps;
+
+        this.env.update(this.sim_timer.delta_time);
+        let sim_time = this.sim_timer.tick();
+        if(this.sim_timer.count % 60 == 0) {
+            //can use the following to get an idea of how long the sim takes            
+            console.log('sim time: ' + sim_time + 'ms');
+            console.log('avg: ' + this.sim_timer.tick_stats.average + 'ms');
+            console.log('min: ' + this.sim_timer.tick_stats.min + 'ms');
+            console.log('max: ' + this.sim_timer.tick_stats.max + 'ms');
+        }
         if(this.ui_loop == null) {
             this.necessaryUpdate();
         }
@@ -88,9 +133,18 @@ class Engine {
     }
 
     necessaryUpdate() {
+        this.ui_timer.update();
         this.env.render();
-        this.controlpanel.update(this.ui_delta_time);
+        this.controlpanel.update(this.ui_timer.delta_time);
         this.organism_editor.update();
+        let ui_time = this.ui_timer.tick();
+        if(this.ui_timer.count % 60 == 0) {
+            //can use the following to get an idea of how long the ui takes 
+            console.log('ui time: ' + ui_time + 'ms');
+            console.log('avg: ' + this.ui_timer.tick_stats.average + 'ms');
+            console.log('min: ' + this.ui_timer.tick_stats.min + 'ms');
+            console.log('max: ' + this.ui_timer.tick_stats.max + 'ms');
+        }
     }
 
 }
