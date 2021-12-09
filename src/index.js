@@ -8,9 +8,81 @@ $('document').ready(function(){
         alert("Though the simulation still works on mobile, most features are disabled. Try it on desktop for the full experience!");
         $('.control-panel').css('display', 'none');
     }
+    
+    var time_to_run = 500;
+    //Make sure engine init runs before starting up the interrupt checker as it skews the average interrupt time.
     var engine = new Engine();
-    engine.start(60);
+    var int_checker = new InterruptChecker(time_to_run);    
+    setTimeout(()=>{startEngine(engine);},time_to_run+100);
 });
+
+function startEngine(engine) {
+    engine.start(60);
+}
+class InterruptChecker{
+    constructor(time_to_run = 750) {
+        this.min_timer_resolution = this.findMinTimerResolution();
+
+        this.max_fps = 0;
+        this.min_interrupt_time = Number.MAX_SAFE_INTEGER;
+        this.avg_interrupt_time = 0;
+
+        this.checks_ran = 0;
+        this.time_to_run = time_to_run;
+        this.running = true;
+        this.findMinInterruptStart(performance.now());
+
+    }
+
+    findMinTimerResolution() {
+        let start = performance.now();
+        let end = performance.now();
+        while(start == end){
+            end = performance.now();
+        }
+        return end - start;
+    }
+
+    findMinInterruptStart(start_time){
+        let called = performance.now();
+        let id = setTimeout(()=>{this.minInterruptCheck(start_time,id,called);},0);
+    }
+    
+    minInterruptCheck(test_start ,id, last_test_start){
+        let test_end = performance.now();
+        let current_delta_time = test_end - last_test_start;
+    
+        /* Limit it to minimum timer resolution to ensure that our FPS calculations don't 
+         * go haywire. */
+        if(current_delta_time <= this.min_timer_resolution) {
+            this.max_fps = 1000/this.min_timer_resolution;
+            this.min_interrupt_time = this.min_timer_resolution;
+        }
+        else if(current_delta_time<this.min_interrupt_time){
+            this.max_fps = 1000/current_delta_time;
+            this.min_interrupt_time = current_delta_time; }
+               
+        this.checks_ran++;
+        this.avg_interrupt_time = (test_end - test_start)/this.checks_ran;
+        if (test_end - test_start > this.time_to_run) {
+            console.log('CALCULATED TIMING STATS ' + this.checks_ran);
+            console.log('      max fps: ' + this.max_fps);
+            console.log('min interrupt: ' + this.min_interrupt_time);
+            console.log('avg interrupt: ' + this.avg_interrupt_time);
+            console.log('min timer res: ' + this.min_timer_resolution);
+            this.running = false;
+            clearTimeout(id);
+        }
+        else { 
+            clearTimeout(id);
+            this.findMinInterruptStart(test_start); 
+        }
+    }
+
+    running(){
+        return this.running;
+    }
+}
 
 function mobileCheck() {
     let check = false;

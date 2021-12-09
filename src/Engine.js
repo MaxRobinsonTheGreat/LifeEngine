@@ -41,7 +41,6 @@ class Timer {
         this.delta_time = 0;
         this.started = performance.now();
         this.last_time = this.started;
-        this.min_res = 0.1;
         this.time = 0;
         this.fps = 0;
         this.fps_stats = new Stats(new_sample_weight);
@@ -90,23 +89,6 @@ class Engine {
 
         this.actual_fps = 0;
         this.running = false;
-
-        //Interrupt time check
-        this.min_resolution = this.findMinResolution();
-        this.max_fps = 1000/this.min_resolution;
-        this.min_interrupt_time = Number.MAX_SAFE_INTEGER;
-        this.avg_interrupt_time = 1.0;
-
-        this.minInterruptCheckStart();
-    }
-
-    findMinResolution(){
-        let start = performance.now();
-        let end = performance.now();
-        while(start == end){
-            end = performance.now();
-        }
-        return end - start;
     }
 
     start(fps=60) {
@@ -194,41 +176,6 @@ class Engine {
             console.log(' - max: ' + this.ui_timer.tick_stats.max + 'ms');
         }
     }
-
-    minInterruptCheckStart(checks_ran = 0){
-        let test_start = performance.now();
-        let id = setTimeout(()=>{this.minInterruptCheck(checks_ran,id,test_start);},0);
-    }
-    minInterruptCheck(checks_ran,id, test_start){
-        let test_end = performance.now();
-        let current_delta_time = test_end - test_start;
-
-        /* Limit it to minimum timer resolution to ensure that our FPS calculations don't 
-         * go haywire. */
-        if(current_delta_time <= this.min_resolution) {
-            this.max_fps = 1000/this.min_resolution;
-            this.min_interrupt_time = this.min_resolution;
-        }
-        else if(current_delta_time<this.min_interrupt_time){
-            this.max_fps = 1000/current_delta_time;
-            this.min_interrupt_time = current_delta_time; }
-               
-        this.avg_interrupt_time = this.avg_interrupt_time * (checks_ran / (checks_ran + 1.0)) + current_delta_time * (1.0/(checks_ran + 1.0));
-        checks_ran = checks_ran + 1.0;
-        if (checks_ran > min_interrupt_checks_to_run) {
-            console.log('CALCULATED TIMING STATS ' + checks_ran);
-            console.log('      max fps: ' + this.max_fps);
-            console.log('min interrupt: ' + this.min_interrupt_time);
-            console.log('avg interrupt: ' + this.avg_interrupt_time);
-            console.log('min timer res: ' + this.min_resolution);
-            console.log
-        }
-        else { 
-            clearTimeout(id);
-            this.minInterruptCheckStart(checks_ran); 
-        }
-    }
-
 }
 
 module.exports = Engine;
