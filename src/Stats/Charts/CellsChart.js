@@ -11,7 +11,7 @@ class CellsChart extends ChartController {
 
     setData() {
         this.clear();
-        //this.mouth, this.producer, this.mover, this.killer, this.armor, this.eye
+        //this.mouth, this.producer, this.mover, this.killer, this.armor, this.eye, this.bait
         this.data.push({
                 type: "line",
                 markerType: "none",

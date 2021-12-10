@@ -55,7 +55,10 @@ class Brain {
             }
             if (obs.distance < closest) {
                 // console.log(obs.cell.state)
-                decision = this.decisions[obs.cell.state.name];
+                if(obs.cell.state.name == CellStates.bait.name)
+                    decision = this.decisions[CellStates.food.name];
+                else
+                    decision = this.decisions[obs.cell.state.name];
                 // console.log(decision)
                 move_direction = obs.direction;
                 closest = obs.distance;
