@@ -71,7 +71,7 @@ class EnvironmentController extends CanvasController{
     }
 
     performModeAction() {
-        if (Hyperparams.headless)
+        if (Hyperparams.headless && this.mode != Modes.Drag)
             return;
         var mode = this.mode;
         var right_click = this.right_click;
