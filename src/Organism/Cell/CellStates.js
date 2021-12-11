@@ -73,6 +73,11 @@ class Eye extends CellState {
         ctx.setTransform(1, 0, 0, 1, 0, 0);
     }
 }
+class Fat extends CellState {
+    constructor() {
+        super('fat');
+    }
+}
 
 const CellStates = {
     empty: new Empty(),
@@ -84,9 +89,10 @@ const CellStates = {
     killer: new Killer(),
     armor: new Armor(),
     eye: new Eye(),
+    fat: new Fat(),
     defineLists() {
-        this.all = [this.empty, this.food, this.wall, this.mouth, this.producer, this.mover, this.killer, this.armor, this.eye]
-        this.living = [this.mouth, this.producer, this.mover, this.killer, this.armor, this.eye];
+        this.all = [this.empty, this.food, this.wall, this.mouth, this.producer, this.mover, this.killer, this.armor, this.eye, this.fat];
+        this.living = [this.mouth, this.producer, this.mover, this.killer, this.armor, this.eye, this.fat];
     },
     getRandomName: function() {
         return this.all[Math.floor(Math.random() * this.all.length)].name;

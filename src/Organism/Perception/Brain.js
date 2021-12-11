@@ -30,6 +30,7 @@ class Brain {
         this.decisions[CellStates.killer.name] = Decision.retreat;
         this.decisions[CellStates.armor.name] = Decision.neutral;
         this.decisions[CellStates.eye.name] = Decision.neutral;
+        this.decisions[CellStates.fat.name] = Decision.neutral;
     }
 
     randomizeDecisions() {
@@ -39,6 +40,7 @@ class Brain {
         this.decisions[CellStates.mover.name] = Decision.getRandom();
         this.decisions[CellStates.armor.name] = Decision.getRandom();
         this.decisions[CellStates.eye.name] = Decision.getRandom();
+        this.decisions[CellStates.fat.name] = Decision.getRandom();
     }
 
     observe(observation) {
