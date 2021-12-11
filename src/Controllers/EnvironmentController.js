@@ -56,14 +56,16 @@ class EnvironmentController extends CanvasController{
     Iterate over grid from 0,0 to env.num_cols,env.num_rows and create random walls using perlin noise to create a more organic shape.
     */
     randomizeWalls(thickness=1) {
-        var noise_threshold = 0.5;
+        this.env.clearWalls();
+        var noise_threshold = -0.27399911269163185;
         var avg_noise = 0;
+        Perlin.seed();
 
         for (var r = 0; r < this.env.num_rows; r++) {
             for (var c = 0; c < this.env.num_cols; c++) {
-                var noise = Perlin.get(c, r);
+                var noise = Perlin.get(c/this.env.num_cols, r/this.env.num_rows);
                 avg_noise += noise/(this.env.num_rows*this.env.num_cols);
-                if (noise > noise_threshold && noise < noise_threshold + thickness/10) {
+                if (noise > noise_threshold && noise < noise_threshold + thickness/100) {
                     this.dropCellType(c, r, CellStates.wall, true);
                 }
             }
