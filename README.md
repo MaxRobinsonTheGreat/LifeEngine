@@ -29,13 +29,13 @@ Organism Cells are only found in organisms, and cannot exist on their own in the
 - Killer - Red, harms organisms in directly adjacent cells (besides itself).
 - Armor - Purple, negates the effects of killer cells.
 - Eye - Light purple with a slit, allows the organism to see and move intelligently. See further description below.
-- Bait - Blue with a red plus, allows the organism to deceive other organisms. Eyes will see bait as food. Harms organisms in directly adjacent cells (besides itself).
+- Fat - Light yellow, eats food in directly adjacent cells but uses food to increase lifetime instead of reproduction.
 
 ## Organisms
 Organisms are structures of cells that eat food, reproduce, and die.
 When an organism dies, every cell in the grid that was occupied by a cell in its body will be changed to food.
 Their lifespan is calculated by multiplying the number of cells they have by the hyperparameter `Lifespan Multiplier`. They will survive for that many ticks unless killed by another organism.
-When touched by a killer cell or bait cell, an organism will take damage. Once it has taken as much damage as it has cells in its body, it will die. If the hyperparameter `One touch kill` is on, an organism will immediatly die when touched by a killer cell or bait cell.
+When touched by a killer cell, an organism will take damage. Once it has taken as much damage as it has cells in its body, it will die. If the hyperparameter `One touch kill` is on, an organism will immediatly die when touched by a killer cell.
 
 ## Reproduction
 Once an organism has eaten as much food as it has cells in its body, it will attempt to reproduce. 
@@ -56,7 +56,7 @@ Organisms with mover cells (light blue) are permitted to move freely about the g
 Organims can also rotate around a central pivot cell. This cell can never be removed by mutation, though it can change type. Movers rotate randomly when they change direction, and their rotation is not necessarily the same as their movement direction, ie, they aren't always facing the direction they are moving. Offspring of all organisms (including static ones) rotate randomly during reproduction. This rotation can be toggled in the simulation controls.
 
 ## Eyes and Brains
-Any organism can evolve eyes, but when an organism has both eyes and mover cells it is given a brain. The eye, unlike other cells, has a direction, which is denoted by the direction of the slit in the cell. It "looks" forward in this direction and "sees" the first non-empty cell within a certain range. It checks the type of the cell and informs the brain, which then decideds how to move. The brain can either ignore (keep moving in whatever direction), chase (move towards the observed cell), or retreat (move in the opposite direction of the observed cell). The brain maps different observed cell types to different actions. For instance, the brain will chase when it sees food or bait and retreat when it sees a killer cell. These behaviors can mutate over time. 
+Any organism can evolve eyes, but when an organism has both eyes and mover cells it is given a brain. The eye, unlike other cells, has a direction, which is denoted by the direction of the slit in the cell. It "looks" forward in this direction and "sees" the first non-empty cell within a certain range. It checks the type of the cell and informs the brain, which then decideds how to move. The brain can either ignore (keep moving in whatever direction), chase (move towards the observed cell), or retreat (move in the opposite direction of the observed cell). The brain maps different observed cell types to different actions. For instance, the brain will chase when it sees food and retreat when it sees a killer cell. These behaviors can mutate over time. 
 
 
 ## Building

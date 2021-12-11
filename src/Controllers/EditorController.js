@@ -77,8 +77,8 @@ class EditorController extends CanvasController{
                 case "eye":
                     self.edit_cell_type = CellStates.eye;
                     break;
-                case "bait":
-                    self.edit_cell_type = CellStates.bait;
+                case "fat":
+                    self.edit_cell_type = CellStates.fat;
                     break;
             }
             $(".cell-type" ).css( "border-color", "black" );

@@ -30,6 +30,7 @@ class Brain {
         this.decisions[CellStates.killer.name] = Decision.retreat;
         this.decisions[CellStates.armor.name] = Decision.neutral;
         this.decisions[CellStates.eye.name] = Decision.neutral;
+        this.decisions[CellStates.fat.name] = Decision.neutral;
     }
 
     randomizeDecisions() {
@@ -39,6 +40,7 @@ class Brain {
         this.decisions[CellStates.mover.name] = Decision.getRandom();
         this.decisions[CellStates.armor.name] = Decision.getRandom();
         this.decisions[CellStates.eye.name] = Decision.getRandom();
+        this.decisions[CellStates.fat.name] = Decision.getRandom();
     }
 
     observe(observation) {
@@ -55,10 +57,7 @@ class Brain {
             }
             if (obs.distance < closest) {
                 // console.log(obs.cell.state)
-                if(obs.cell.state.name == CellStates.bait.name)
-                    decision = this.decisions[CellStates.food.name];
-                else
-                    decision = this.decisions[obs.cell.state.name];
+                decision = this.decisions[obs.cell.state.name];
                 // console.log(decision)
                 move_direction = obs.direction;
                 closest = obs.distance;
