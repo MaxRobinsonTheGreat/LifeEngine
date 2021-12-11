@@ -22,7 +22,7 @@ class FatCell extends BodyCell{
             return;
         if (n_cell.state == CellStates.food){
             env.changeCell(n_cell.col, n_cell.row, CellStates.empty, null);
-            this.org.lifetime--;
+            this.org.lifetime-=Hyperparams.lifespanMultiplier/this.org.foodNeeded();
         }
     }
 }
