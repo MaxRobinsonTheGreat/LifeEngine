@@ -57,16 +57,20 @@ class EnvironmentController extends CanvasController{
     */
     randomizeWalls(thickness=1) {
         this.env.clearWalls();
-        var noise_threshold = -0.27399911269163185;
+        var noise_threshold = -0.017;
         var avg_noise = 0;
         Perlin.seed();
 
         for (var r = 0; r < this.env.num_rows; r++) {
             for (var c = 0; c < this.env.num_cols; c++) {
-                var noise = Perlin.get(c/this.env.num_cols, r/this.env.num_rows);
+                var noise = Perlin.get(c/this.env.num_cols*(20/this.env.renderer.cell_size), r/this.env.num_rows*(20/this.env.renderer.cell_size));
                 avg_noise += noise/(this.env.num_rows*this.env.num_cols);
-                if (noise > noise_threshold && noise < noise_threshold + thickness/100) {
-                    this.dropCellType(c, r, CellStates.wall, true);
+                if (noise > noise_threshold && noise < noise_threshold + thickness/(4*this.env.renderer.cell_size)) {
+                    var cell = this.env.grid_map.cellAt(c, r);
+                    if (cell != null) {
+                        if(cell.owner != null) cell.owner.die();
+                        this.env.changeCell(c, r, CellStates.wall, null);
+                    }
                 }
             }
         }
