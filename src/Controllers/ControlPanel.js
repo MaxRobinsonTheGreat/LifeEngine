@@ -327,6 +327,9 @@ class ControlPanel {
             env.auto_reset = false;
             $('#auto-reset').prop('checked', false);;
         });
+        $('#random-walls').click( function() {
+            this.env_controller.randomizeWalls();
+        }.bind(this));
         $('#auto-reset').change(function() {
             env.auto_reset = this.checked;
         });

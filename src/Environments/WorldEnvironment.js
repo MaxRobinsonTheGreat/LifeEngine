@@ -12,9 +12,9 @@ class WorldEnvironment extends Environment{
         super();
         this.renderer = new Renderer('env-canvas', 'env', cell_size);
         this.controller = new EnvironmentController(this, this.renderer.canvas);
-        var grid_rows = Math.ceil(this.renderer.height / cell_size);
-        var grid_cols = Math.ceil(this.renderer.width / cell_size);
-        this.grid_map = new GridMap(grid_cols, grid_rows, cell_size);
+        this.num_rows = Math.ceil(this.renderer.height / cell_size);
+        this.num_cols = Math.ceil(this.renderer.width / cell_size);
+        this.grid_map = new GridMap(num_cols, num_rows, cell_size);
         this.organisms = [];
         this.walls = [];
         this.total_mutability = 0;
