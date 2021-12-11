@@ -154,9 +154,9 @@ class WorldEnvironment extends Environment{
     resizeFillWindow(cell_size) {
         this.renderer.cell_size = cell_size;
         this.renderer.fillWindow('env');
-        var cols = Math.ceil(this.renderer.width / cell_size);
-        var rows = Math.ceil(this.renderer.height / cell_size);
-        this.grid_map.resize(cols, rows, cell_size);
+        this.num_cols = Math.ceil(this.renderer.width / cell_size);
+        this.num_rows = Math.ceil(this.renderer.height / cell_size);
+        this.grid_map.resize(this.num_cols, this.num_rows, cell_size);
     }
 }
 
