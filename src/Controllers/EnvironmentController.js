@@ -5,6 +5,7 @@ const CellStates = require("../Organism/Cell/CellStates");
 const Neighbors = require("../Grid/Neighbors");
 const FossilRecord = require("../Stats/FossilRecord");
 const Hyperparams = require("../Hyperparameters");
+const Perlin = require("../Utils/Perlin");
 
 class EnvironmentController extends CanvasController{
     constructor(env, canvas) {
@@ -55,20 +56,20 @@ class EnvironmentController extends CanvasController{
     Iterate over grid from 0,0 to env.num_cols,env.num_rows and create random walls using perlin noise to create a more organic shape.
     */
     randomizeWalls(thickness=1) {
-        var noise_scale = 0.05;
-        var noise_offset = 0.5;
         var noise_threshold = 0.5;
-        var noise_multiplier = 0.5;
-        var noise_offset_x = this.env.num_cols/2;
-        var noise_offset_y = this.env.num_rows/2;
+        var avg_noise = 0;
+
         for (var r = 0; r < this.env.num_rows; r++) {
             for (var c = 0; c < this.env.num_cols; c++) {
-                var noise = noise_multiplier * noise_offset + noise_scale * noise_offset * Math.sin(noise_scale * (c + noise_offset_x) + noise_scale * (r + noise_offset_y));
+                var noise = Perlin.get(c, r);
+                avg_noise += noise/(this.env.num_rows*this.env.num_cols);
                 if (noise > noise_threshold && noise < noise_threshold + thickness/10) {
                     this.dropCellType(c, r, CellStates.wall, true);
                 }
             }
         }
+
+        console.log("Average noise: " + avg_noise);
     }
 
     updateMouseLocation(offsetX, offsetY){
