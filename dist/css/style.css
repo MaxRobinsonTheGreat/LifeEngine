@@ -188,7 +188,7 @@ button:active{
 }
 #cell-selections {
     display: none;
-    grid-template-columns: 2;
+    grid-template-columns: 3;
     height: fit-content;
     padding: 0;
     margin: 0;

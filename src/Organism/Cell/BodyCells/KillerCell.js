@@ -3,8 +3,8 @@ const BodyCell = require("./BodyCell");
 const Hyperparams = require("../../../Hyperparameters");
 
 class KillerCell extends BodyCell{
-    constructor(org, loc_col, loc_row){
-        super(CellStates.killer, org, loc_col, loc_row);
+    constructor(org, loc_col, loc_row, state = CellStates.killer) {
+        super(state, org, loc_col, loc_row);
     }
 
     performFunction() {
