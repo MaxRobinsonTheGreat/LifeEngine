@@ -68,7 +68,7 @@ class EnvironmentController extends CanvasController{
                 var yval = r/this.env.num_rows*(resolution/this.env.renderer.cell_size*(this.env.num_rows/this.env.num_cols));
                 var noise = Perlin.get(xval, yval);
                 avg_noise += noise/(this.env.num_rows*this.env.num_cols);
-                if (noise > noise_threshold && noise < noise_threshold + thickness/resolution*(5/this.env.renderer.cell_size)) {
+                if (noise > noise_threshold && noise < noise_threshold + thickness/resolution) {
                     var cell = this.env.grid_map.cellAt(c, r);
                     if (cell != null) {
                         if(cell.owner != null) cell.owner.die();
