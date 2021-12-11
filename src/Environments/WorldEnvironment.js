@@ -104,7 +104,8 @@ class WorldEnvironment extends Environment{
 
     clearWalls() {
         for(var wall of this.walls){
-            if (this.grid_map.cellAt(wall.col, wall.row).state == CellStates.wall)
+            var wcell = this.grid_map.cellAt(wall.col, wall.row);
+            if (wcell && wcell.state == CellStates.wall)
                 this.changeCell(wall.col, wall.row, CellStates.empty, null);
         }
     }
