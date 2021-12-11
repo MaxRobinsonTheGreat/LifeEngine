@@ -75,6 +75,7 @@ button {
     display: inline-block;
     font-size: 16px;
     min-width: 30px;
+    margin: 2px;
 }
 button:hover{
     background-color: #81d2c7;
