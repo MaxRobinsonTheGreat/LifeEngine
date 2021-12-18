@@ -57,19 +57,19 @@ class EnvironmentController extends CanvasController{
     */
     randomizeWalls(thickness=1) {
         this.env.clearWalls();
-        var noise_threshold = -0.017;
-        var avg_noise = 0;
-        var resolution = 20;
+        const noise_threshold = -0.017;
+        let avg_noise = 0;
+        let resolution = 20;
         Perlin.seed();
 
-        for (var r = 0; r < this.env.num_rows; r++) {
-            for (var c = 0; c < this.env.num_cols; c++) {
-                var xval = c/this.env.num_cols*(resolution/this.env.renderer.cell_size*(this.env.num_cols/this.env.num_rows));
-                var yval = r/this.env.num_rows*(resolution/this.env.renderer.cell_size*(this.env.num_rows/this.env.num_cols));
-                var noise = Perlin.get(xval, yval);
+        for (let r = 0; r < this.env.num_rows; r++) {
+            for (let c = 0; c < this.env.num_cols; c++) {
+                let xval = c/this.env.num_cols*(resolution/this.env.renderer.cell_size*(this.env.num_cols/this.env.num_rows));
+                let yval = r/this.env.num_rows*(resolution/this.env.renderer.cell_size*(this.env.num_rows/this.env.num_cols));
+                let noise = Perlin.get(xval, yval);
                 avg_noise += noise/(this.env.num_rows*this.env.num_cols);
                 if (noise > noise_threshold && noise < noise_threshold + thickness/resolution) {
-                    var cell = this.env.grid_map.cellAt(c, r);
+                    let cell = this.env.grid_map.cellAt(c, r);
                     if (cell != null) {
                         if(cell.owner != null) cell.owner.die();
                         this.env.changeCell(c, r, CellStates.wall, null);
@@ -80,7 +80,6 @@ class EnvironmentController extends CanvasController{
     }
 
     updateMouseLocation(offsetX, offsetY){
-        
         super.updateMouseLocation(offsetX, offsetY);
     }
 
