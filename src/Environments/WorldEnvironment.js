@@ -12,9 +12,9 @@ class WorldEnvironment extends Environment{
         super();
         this.renderer = new Renderer('env-canvas', 'env', cell_size);
         this.controller = new EnvironmentController(this, this.renderer.canvas);
-        var grid_rows = Math.ceil(this.renderer.height / cell_size);
-        var grid_cols = Math.ceil(this.renderer.width / cell_size);
-        this.grid_map = new GridMap(grid_cols, grid_rows, cell_size);
+        this.num_rows = Math.ceil(this.renderer.height / cell_size);
+        this.num_cols = Math.ceil(this.renderer.width / cell_size);
+        this.grid_map = new GridMap(this.num_cols, this.num_rows, cell_size);
         this.organisms = [];
         this.walls = [];
         this.total_mutability = 0;
@@ -104,7 +104,8 @@ class WorldEnvironment extends Environment{
 
     clearWalls() {
         for(var wall of this.walls){
-            if (this.grid_map.cellAt(wall.col, wall.row).state == CellStates.wall)
+            let wcell = this.grid_map.cellAt(wall.col, wall.row);
+            if (wcell && wcell.state == CellStates.wall)
                 this.changeCell(wall.col, wall.row, CellStates.empty, null);
         }
     }
@@ -154,9 +155,9 @@ class WorldEnvironment extends Environment{
     resizeFillWindow(cell_size) {
         this.renderer.cell_size = cell_size;
         this.renderer.fillWindow('env');
-        var cols = Math.ceil(this.renderer.width / cell_size);
-        var rows = Math.ceil(this.renderer.height / cell_size);
-        this.grid_map.resize(cols, rows, cell_size);
+        this.num_cols = Math.ceil(this.renderer.width / cell_size);
+        this.num_rows = Math.ceil(this.renderer.height / cell_size);
+        this.grid_map.resize(this.num_cols, this.num_rows, cell_size);
     }
 }
 
