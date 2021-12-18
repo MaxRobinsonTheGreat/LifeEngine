@@ -243,8 +243,7 @@ class Organism {
             if (cell==null) {
                 return false;
             }
-            // console.log(cell.owner == this)
-            if (cell.owner==this || cell.state==CellStates.empty || (!Hyperparams.foodBlocksReproduction && cell.state==CellStates.food) || (ignore_armor && loccell.state==CellStates.armor && cell.state==CellStates.food)){
+            if (cell.owner==this || cell.state==CellStates.empty || (!Hyperparams.foodBlocksReproduction && cell.state==CellStates.food)){
                 continue;
             }
             return false;
