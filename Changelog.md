@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.0.2 (current development)
+
+### UI Enhancements:
+
+### Simulation Enhancements:
+
+### Bug Fixes:
+- Armor is no longer ignored when checking for clear reproduction space
+- 
+
+
+Thanks to contributors: 
+
 ## 1.0.1 (12/4/2021)
 
 ### UI Enhancements:
