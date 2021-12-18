@@ -33,7 +33,7 @@
 				<p id='fps'>Target FPS: 60</p>
 				<p id='fps-actual'></p>
 				<button id='reset-env' title='Restarts simulation with default organism.'>Reset</button>
-				<button id='clear-env' title="Removes all organisms and walls. Will disable 'reset on extinction'"">Clear</button>
+				<button id='clear-env' title="Removes all organisms. Will disable 'reset on extinction'"">Clear</button>
 			</div>
 
 			<div id='tab-container' class='control-set'>
@@ -171,9 +171,9 @@
 						<h3>Reset Options</h3>
 						<label for="reset-options">Starting state:</label>
 						<select name="reset-options" id="reset-options">
-							<option value="default-org">Simple producer</option>
+							<option value="simple-prod">Simple producer</option>
 							<option value="rand-orgs">Random organisms</option>
-							<option value="empty">No organisms</option>
+							<option value="no-orgs">No organisms</option>
 						</select> <br>
 						<label for="auto-reset">Reset on total extinction</label>
 						<input type="checkbox" id="auto-reset" checked>
@@ -185,7 +185,7 @@
 						<button id="clear-walls" title="Clear All Walls. Hotkey: B">Clear all walls</button>
 						<br>
 						<label for="clear-walls-reset" title='When on, walls will be cleared when the environment resets'>Clear walls on reset</label>
-						<input type="checkbox" id="clear-walls-reset" checked>
+						<input type="checkbox" id="clear-walls-reset">
 					</div>
 				</div>
 				<div id='hyperparameters' class='tab'>

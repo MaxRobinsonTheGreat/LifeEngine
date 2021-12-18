@@ -9,9 +9,9 @@ class ControlPanel {
         this.defineMinMaxControls();
         this.defineHotkeys();
         this.defineEngineSpeedControls();
-        this.defineGridSizeControls();
         this.defineTabNavigation();
         this.defineHyperparameterControls();
+        this.defineWorldControls();
         this.defineModeControls();
         this.defineChallenges();
         this.fps = engine.fps;
@@ -149,7 +149,28 @@ class ControlPanel {
         }.bind(this));
     }
 
-    defineGridSizeControls() {
+    defineTabNavigation() {
+        this.tab_id = 'about';
+        var self = this;
+        $('.tabnav-item').click(function() {
+            $('.tab').css('display', 'none');
+            var tab = '#'+this.id+'.tab';
+            $(tab).css('display', 'grid');
+            $('.tabnav-item').removeClass('open-tab')
+            $('#'+this.id+'.tabnav-item').addClass('open-tab');
+            self.engine.organism_editor.is_active = (this.id == 'editor');
+            self.stats_panel.stopAutoRender();
+            if (this.id === 'stats') {
+                self.stats_panel.startAutoRender();
+            }
+            else if (this.id === 'editor') {
+                self.editor_controller.refreshDetailsPanel();
+            }
+            self.tab_id = this.id;
+        });
+    }
+
+    defineWorldControls() {
         $('#fill-window').change(function() {
             if (this.checked)
                 $('.col-row-input').css('display' ,'none');
@@ -172,27 +193,14 @@ class ControlPanel {
             this.stats_panel.reset();
             
         }.bind(this));
-    }
 
-    defineTabNavigation() {
-        this.tab_id = 'about';
-        var self = this;
-        $('.tabnav-item').click(function() {
-            $('.tab').css('display', 'none');
-            var tab = '#'+this.id+'.tab';
-            $(tab).css('display', 'grid');
-            $('.tabnav-item').removeClass('open-tab')
-            $('#'+this.id+'.tabnav-item').addClass('open-tab');
-            self.engine.organism_editor.is_active = (this.id == 'editor');
-            self.stats_panel.stopAutoRender();
-            if (this.id === 'stats') {
-                self.stats_panel.startAutoRender();
-            }
-            else if (this.id === 'editor') {
-                self.editor_controller.refreshDetailsPanel();
-            }
-            self.tab_id = this.id;
+        $('#auto-reset').change(function() {
+            env.auto_reset = this.checked;
         });
+
+        $('#clear-walls-reset').change(function() {
+            WorldConfig.clear_walls_on_reset = this.checked;
+        })
     }
 
     defineHyperparameterControls() {
@@ -336,9 +344,6 @@ class ControlPanel {
         $('#random-walls').click( function() {
             this.env_controller.randomizeWalls();
         }.bind(this));
-        $('#auto-reset').change(function() {
-            env.auto_reset = this.checked;
-        });
         $('#clear-walls').click( function() {
             this.engine.env.clearWalls();
         }.bind(this));
