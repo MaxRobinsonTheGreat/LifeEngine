@@ -1,6 +1,7 @@
 const Hyperparams = require("../Hyperparameters");
 const Modes = require("./ControlModes");
 const StatsPanel = require("../Stats/StatsPanel");
+const WorldConfig = require("../WorldConfig");
 
 class ControlPanel {
     constructor(engine) {
@@ -8,9 +9,9 @@ class ControlPanel {
         this.defineMinMaxControls();
         this.defineHotkeys();
         this.defineEngineSpeedControls();
-        this.defineGridSizeControls();
         this.defineTabNavigation();
         this.defineHyperparameterControls();
+        this.defineWorldControls();
         this.defineModeControls();
         this.defineChallenges();
         this.fps = engine.fps;
@@ -114,11 +115,14 @@ class ControlPanel {
     defineEngineSpeedControls(){
         this.slider = document.getElementById("slider");
         this.slider.oninput = function() {
-            this.fps = this.slider.value
+            const max_fps = 300;
+            this.fps = this.slider.value;
+            if (this.fps>=max_fps) this.fps = 1000;
             if (this.engine.running) {
                 this.changeEngineSpeed(this.fps);
             }
-            $('#fps').text("Target FPS: "+this.fps);
+            let text = this.fps >= max_fps ? 'MAX' : this.fps;
+            $('#fps').text("Target FPS: "+text);
         }.bind(this);
         $('.pause-button').click(function() {
             $('.pause-button').find("i").toggleClass("fa fa-pause");
@@ -134,18 +138,39 @@ class ControlPanel {
         $('.headless').click(function() {
             $('.headless').find("i").toggleClass("fa fa-eye");
             $('.headless').find("i").toggleClass("fa fa-eye-slash");
-            if (Hyperparams.headless){
+            if (WorldConfig.headless){
                 $('#headless-notification').css('display', 'none');
                 this.engine.env.renderFull();
             }
             else {
                 $('#headless-notification').css('display', 'block');
             }
-            Hyperparams.headless = !Hyperparams.headless;
+            WorldConfig.headless = !WorldConfig.headless;
         }.bind(this));
     }
 
-    defineGridSizeControls() {
+    defineTabNavigation() {
+        this.tab_id = 'about';
+        var self = this;
+        $('.tabnav-item').click(function() {
+            $('.tab').css('display', 'none');
+            var tab = '#'+this.id+'.tab';
+            $(tab).css('display', 'grid');
+            $('.tabnav-item').removeClass('open-tab')
+            $('#'+this.id+'.tabnav-item').addClass('open-tab');
+            self.engine.organism_editor.is_active = (this.id == 'editor');
+            self.stats_panel.stopAutoRender();
+            if (this.id === 'stats') {
+                self.stats_panel.startAutoRender();
+            }
+            else if (this.id === 'editor') {
+                self.editor_controller.refreshDetailsPanel();
+            }
+            self.tab_id = this.id;
+        });
+    }
+
+    defineWorldControls() {
         $('#fill-window').change(function() {
             if (this.checked)
                 $('.col-row-input').css('display' ,'none');
@@ -168,25 +193,20 @@ class ControlPanel {
             this.stats_panel.reset();
             
         }.bind(this));
-    }
 
-    defineTabNavigation() {
-        this.tab_id = 'about';
-        var self = this;
-        $('.tabnav-item').click(function() {
-            $('.tab').css('display', 'none');
-            var tab = '#'+this.id+'.tab';
-            $(tab).css('display', 'grid');
-            self.engine.organism_editor.is_active = (this.id == 'editor');
-            self.stats_panel.stopAutoRender();
-            if (this.id === 'stats') {
-                self.stats_panel.startAutoRender();
-            }
-            else if (this.id === 'editor') {
-                self.editor_controller.refreshDetailsPanel();
-            }
-            self.tab_id = this.id;
+        $('#auto-reset').change(function() {
+            WorldConfig.auto_reset = this.checked;
         });
+        $('#auto-pause').change(function() {
+            WorldConfig.auto_pause = this.checked;
+        });
+        $('#clear-walls-reset').change(function() {
+            WorldConfig.clear_walls_on_reset = this.checked;
+        })
+
+        $('#start-state').change ( function() {
+            WorldConfig.start_state = $("#start-state").val();
+        }.bind(this));
     }
 
     defineHyperparameterControls() {
@@ -197,11 +217,8 @@ class ControlPanel {
             Hyperparams.lifespanMultiplier = $('#lifespan-multiplier').val();
         }.bind(this));
 
-        $('#mover-rot').change(function() {
-            Hyperparams.moversCanRotate = this.checked;
-        });
-        $('#offspring-rot').change(function() {
-            Hyperparams.offspringRotate = this.checked;
+        $('#rot-enabled').change(function() {
+            Hyperparams.rotationEnabled = this.checked;
         });
         $('#insta-kill').change(function() {
             Hyperparams.instaKill = this.checked;
@@ -258,8 +275,7 @@ class ControlPanel {
         Hyperparams.setDefaults();
         $('#food-prod-prob').val(Hyperparams.foodProdProb);
         $('#lifespan-multiplier').val(Hyperparams.lifespanMultiplier);
-        $('#mover-rot').prop('checked', Hyperparams.moversCanRotate);
-        $('#offspring-rot').prop('checked', Hyperparams.offspringRotate);
+        $('#rot-enabled').prop('checked', Hyperparams.rotationEnabled);
         $('#insta-kill').prop('checked', Hyperparams.instaKill);
         $('#evolved-mutation').prop('checked', !Hyperparams.useGlobalMutability);
         $('#add-prob').val(Hyperparams.addProb);
@@ -324,15 +340,10 @@ class ControlPanel {
         $('#clear-env').click( () => {
             env.reset(true, false);
             this.stats_panel.reset();
-            env.auto_reset = false;
-            $('#auto-reset').prop('checked', false);;
         });
         $('#random-walls').click( function() {
             this.env_controller.randomizeWalls();
         }.bind(this));
-        $('#auto-reset').change(function() {
-            env.auto_reset = this.checked;
-        });
         $('#clear-walls').click( function() {
             this.engine.env.clearWalls();
         }.bind(this));
@@ -406,7 +417,7 @@ class ControlPanel {
         $('#fps-actual').text("Actual FPS: " + Math.floor(this.engine.actual_fps));
         $('#reset-count').text("Auto reset count: " + this.engine.env.reset_count);
         this.stats_panel.updateDetails();
-        if (Hyperparams.headless)
+        if (WorldConfig.headless)
             this.updateHeadlessIcon(delta_time);
 
     }

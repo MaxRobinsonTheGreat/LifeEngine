@@ -3,14 +3,20 @@
 ## 1.0.2 (current development)
 
 ### UI Enhancements:
-- Button to generate random walls with perlin noise generator
+- New tab for world controls
+    - Relocated grid controls, auto reset to this tab
+    - Button to generate random walls with perlin noise
+    - Options for starting state, including simple producer and empty state
+    - Option to not clear walls when resetting
+    - Option to pause on total extinction
+- Combined `Movers can rotate` and `Offspring rotate` simulation controls into `Rotation enabled`
 - Can now drag view while rendering is off
 
 ### Simulation Enhancements:
+-
 
 ### Bug Fixes:
 - Armor is no longer ignored when checking for clear reproduction space
-- 
 
 
 Thanks to contributors: 

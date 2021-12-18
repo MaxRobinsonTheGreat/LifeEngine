@@ -57,11 +57,15 @@ body{
 
 img {
     image-rendering: -moz-crisp-edges;
-  image-rendering: -webkit-crisp-edges;
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
-    width: 60%;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    object-fit: cover;
+    width: 85%;
+    max-width: 500px;
+    max-height: 40%;
     border-radius: 10px;
+    overflow: hidden;
 }
 
 button {
@@ -132,6 +136,10 @@ button:active{
 }
 .tabnav p:hover {
     background-color: #81d2c7;
+    color: black;
+}
+.open-tab {
+    background-color: #66a39b;
     color: black;
 }
 
@@ -256,4 +264,16 @@ button:active{
 }
 #maximize-hot-control {
     right: 10px;
+}
+
+.grid-size-in {
+    width: 75px;
+}
+
+#video {
+    height: 100%;
+    max-height: 190px;
+    margin: auto;
+    margin-bottom: 0;
+    padding-bottom: 0;
 }

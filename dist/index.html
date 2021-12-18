@@ -24,58 +24,35 @@
 					<button class="edit-mode-btn wall-drop" id="wall-drop" title="Drop/Remove Wall. Hotkey: D"><i class="fa fa-square"></i></button>
 					<button class="edit-mode-btn food-drop selected" id="food-drop" title="Drop/Remove Food. Hotkey: F"><i class="fa fa-cutlery"></i></button>
 					<button class="edit-mode-btn click-kill" id="click-kill" title="Click to kill. Hotkey: G"><i class="fa fa-bolt"></i></button>
-					<button id="clear-walls" title="Clear All Walls. Hotkey: B"><i class="fa fa-window-close"></i></button>
 				</div>
-				<h2>Simulation Speed</h2>
+				<img src="./img/title.png" alt="Life Engine">
+				<h3>Simulation Speed</h3>
 				<input id="slider" type="range" min="1" max="300" value="60">
 				<button class='pause-button' title="Play/Pause. Hotkey: Spacebar"><i class="fa fa-pause"></i></button>
 				<button class="headless" title="Toggle rendering. Hotkey: H"><i class="fa fa-eye-slash"></i></button>
 				<p id='fps'>Target FPS: 60</p>
 				<p id='fps-actual'></p>
 				<button id='reset-env' title='Restarts simulation with default organism.'>Reset</button>
-				<button id='clear-env' title="Removes all organisms and walls. Will disable 'reset on extinction'"">Clear</button>
-				<br>
-				<button id='random-walls' title="Generates random walls.">Random Walls</button>
-				<br>
-				<label for="auto-reset">Reset on total extinction</label>
-				<input type="checkbox" id="auto-reset" checked>
-				<br>
-				<p id='reset-count'>Auto reset count: </p>
-				<h3>Grid Size</h3>
-				<label for="cell-size">Cell Size:</label>
-				<input type="number" id="cell-size" min="1" max="100" value=5 step="1">
-				<label for="fill-window">Fill Window</label>
-				<input type="checkbox" id="fill-window" checked>
-				<div class='col-row-input'>
-					<label for="col-input">Columns:</label>
-					<input type="number" id="col-input" min="1" value=100 step="1">
-					<label for="row-input">Rows:</label>
-					<input type="number" id="row-input" min="1" value=100 step="1">
-				</div>
-				<br>
-				<button id='resize'>Resize and Reset</button>
+				<button id='clear-env' title="Removes all organisms.">Clear</button>
 			</div>
 
 			<div id='tab-container' class='control-set'>
 
 				<div class="tabnav">
-					<p class='tabnav-item' id='about'>About</p>
+					<p class='tabnav-item open-tab' id='about'>About</p>
 					<p class='tabnav-item' id='editor'>Editor</p>
+					<p class='tabnav-item' id='world-controls'>World Controls</p>
 					<p class='tabnav-item' id='hyperparameters'>Simulation Controls</p>
-					<p class='tabnav-item' id='stats'>Stats</p>
-					<p class='tabnav-item' id='challenges'>Challenges</p>
+					<p class='tabnav-item' id='stats'>Statistics</p>
+					<!-- <p class='tabnav-item' id='challenges'>Challenges</p> -->
 					<button id="minimize" title="Minimze Control Panel."><i class="fa fa-minus-square"></i></button>
 				</div>
 
 				<div id='about' class='tab'>
 					<div class='left-half'>
-						<img src="./img/title.png" alt="Life Engine">
-						<p>The Life Engine is a virtual ecosystem that allows organisms to grow, spread, and compete.</p>
-						<p>Each organism is made up by a structure of cells, which provide different benefits based on their color.</p>
-						
-					</div>
-					<div class='right-half'>
-						<h4>Cell Types</h4>
+						<h3>The Life Engine</h3>
+						<p>The Life Engine is a virtual ecosystem that allows organisms to reproduce, compete, and evolve.</p>
+						<p>Each organism is made up of different colored cells. Hover over each color to learn what it does.</p>
 						<div id='cell-legend'>
 							<div class='cell-legend-type' id='mouth' title="Mouth: Eats adjacent food."></div>
 							<div class='cell-legend-type' id='producer' title="Producer: Produces adjacent food."></div>
@@ -85,14 +62,13 @@
 							<div class='cell-legend-type' id='eye' title="Eye: Observes cells and decides movement."></div>
 							<div class='cell-legend-type' id='food' title="Food: Not part of an organism. Once an organism has eaten enough food, it will reproduce."></div>
 							<div class='cell-legend-type' id='wall' title="Wall: Not part of an organism. Blocks movement and reproduction."></div>
-						</div>
-						<br>
-						<p>Hover over each color to learn what it does. For a more in depth explanation of the simulation, view the 
-							<a href="https://github.com/MaxRobinsonTheGreat/EvolutionSimulatorV2#readme">readme</a> and you can explore the source code.
-						</p>
+						</div><br>
+					</div>
+					<div class='right-half'>
+						<iframe id="video" src="https://www.youtube.com/embed/iSAKEnRfles"></iframe>
 					</div>
 					<div class='icon-links'>
-						<a href="https://www.youtube.com/channel/UCwBhBDsqiQflTMLy2epbQVw"><i class="fa fa-youtube"></i></a>
+						<a href=https://github.com/MaxRobinsonTheGreat/EvolutionSimulatorV2 title='View the code'><i class="fa fa-github"></i></a>
 						<a href="https://twitter.com/max_romana"><i class="fa fa-twitter"></i></a>
 					</div>
 				</div>
@@ -177,6 +153,43 @@
 
 					</div>
 				</div>
+				<div id='world-controls' class='tab'>
+					<div class='left-half'>
+						<h3>Grid Size</h3>
+						<label for="cell-size">Cell Size:</label>
+						<input type="number" id="cell-size" min="1" max="100" value=5 step="1">
+						<label for="fill-window">Fill Window</label>
+						<input type="checkbox" id="fill-window" checked>
+						<div class='col-row-input'>
+							<label for="col-input">Columns:</label>
+							<input type="number" class="grid-size-in" id="col-input" min="1" value=100 step="1">
+							<label for="row-input">Rows:</label>
+							<input type="number" class="grid-size-in" id="row-input" min="1" value=100 step="1">
+						</div>
+						<br>
+						<button id='resize'>Resize and Reset</button>
+						<h3>Reset Options</h3>
+						<label for="start-state">Starting state:</label>
+						<select name="start-state" id="start-state">
+							<option value="simple-prod">Simple producer</option>
+							<option value="rand-orgs">Random organisms</option>
+							<option value="no-orgs">No organisms</option>
+						</select> <br>
+						<label for="auto-reset">Reset on total extinction</label>
+						<input type="checkbox" id="auto-reset" checked>
+						<p id='reset-count'>Auto reset count: </p>
+						<label for="auto-pause" title='Will override reset on extinction'>Pause on total extinction</label>
+						<input type="checkbox" id="auto-pause">
+						<br>
+					</div>
+					<div class='right-half'>
+						<button id='random-walls' title="Generates random walls.">Generate random walls</button> <br>
+						<button id="clear-walls" title="Clear All Walls. Hotkey: B">Clear all walls</button>
+						<br>
+						<label for="clear-walls-reset" title='When on, walls will be cleared when the environment resets'>Clear walls on reset</label>
+						<input type="checkbox" id="clear-walls-reset">
+					</div>
+				</div>
 				<div id='hyperparameters' class='tab'>
 					<div class='left-half'>
 						<h2>Simulation Controls</h2>
@@ -186,11 +199,8 @@
 						<label for="lifespan-multiplier" title='An organism lives for this many ticks per cell in its body.'>Lifespan multiplier:</label>
 						<input type="number" id="lifespan-multiplier" min="1" max="10000" value=100 step="1">
 						<br>
-						<label for="mover-rot" title='Movers rotate randomly when they change directions.'>Movers can rotate</label>
-						<input type="checkbox" id="mover-rot" checked>
-						<br>
-						<label for="offspring-rot" title='Offspring will randomly rotate'>Offspring rotate</label>
-						<input type="checkbox" id="offspring-rot" checked>
+						<label for="rot-enabled" title='Organisms rotate when born and while moving.'>Rotation Enabled</label>
+						<input type="checkbox" id="rot-enabled" checked>
 						<br>
 						<label for="insta-kill" title='When on, killer cells immediatly kill organisms they touch. When off, organisms have as much health as they have cells and only take 1 damage from killer cells.'>One touch kill</label>
 						<input type="checkbox" id="insta-kill">
