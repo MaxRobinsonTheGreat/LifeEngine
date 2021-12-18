@@ -3,6 +3,8 @@
 ## 1.0.2 (current development)
 
 ### UI Enhancements:
+- Button to generate random walls with perlin noise generator
+- Can now drag view while rendering is off
 
 ### Simulation Enhancements:
 
