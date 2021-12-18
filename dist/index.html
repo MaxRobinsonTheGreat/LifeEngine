@@ -43,7 +43,7 @@
 					<p class='tabnav-item' id='editor'>Editor</p>
 					<p class='tabnav-item' id='world-controls'>World Controls</p>
 					<p class='tabnav-item' id='hyperparameters'>Simulation Controls</p>
-					<p class='tabnav-item' id='stats'>Stats</p>
+					<p class='tabnav-item' id='stats'>Statistics</p>
 					<!-- <p class='tabnav-item' id='challenges'>Challenges</p> -->
 					<button id="minimize" title="Minimze Control Panel."><i class="fa fa-minus-square"></i></button>
 				</div>
@@ -199,11 +199,8 @@
 						<label for="lifespan-multiplier" title='An organism lives for this many ticks per cell in its body.'>Lifespan multiplier:</label>
 						<input type="number" id="lifespan-multiplier" min="1" max="10000" value=100 step="1">
 						<br>
-						<label for="mover-rot" title='Movers rotate randomly when they change directions.'>Movers can rotate</label>
-						<input type="checkbox" id="mover-rot" checked>
-						<br>
-						<label for="offspring-rot" title='Offspring will randomly rotate'>Offspring rotate</label>
-						<input type="checkbox" id="offspring-rot" checked>
+						<label for="rot-enabled" title='Organisms rotate when born and while moving.'>Rotation Enabled</label>
+						<input type="checkbox" id="rot-enabled" checked>
 						<br>
 						<label for="insta-kill" title='When on, killer cells immediatly kill organisms they touch. When off, organisms have as much health as they have cells and only take 1 damage from killer cells.'>One touch kill</label>
 						<input type="checkbox" id="insta-kill">

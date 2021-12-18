@@ -217,11 +217,8 @@ class ControlPanel {
             Hyperparams.lifespanMultiplier = $('#lifespan-multiplier').val();
         }.bind(this));
 
-        $('#mover-rot').change(function() {
-            Hyperparams.moversCanRotate = this.checked;
-        });
-        $('#offspring-rot').change(function() {
-            Hyperparams.offspringRotate = this.checked;
+        $('#rot-enabled').change(function() {
+            Hyperparams.rotationEnabled = this.checked;
         });
         $('#insta-kill').change(function() {
             Hyperparams.instaKill = this.checked;
@@ -278,8 +275,7 @@ class ControlPanel {
         Hyperparams.setDefaults();
         $('#food-prod-prob').val(Hyperparams.foodProdProb);
         $('#lifespan-multiplier').val(Hyperparams.lifespanMultiplier);
-        $('#mover-rot').prop('checked', Hyperparams.moversCanRotate);
-        $('#offspring-rot').prop('checked', Hyperparams.offspringRotate);
+        $('#rot-enabled').prop('checked', Hyperparams.rotationEnabled);
         $('#insta-kill').prop('checked', Hyperparams.instaKill);
         $('#evolved-mutation').prop('checked', !Hyperparams.useGlobalMutability);
         $('#add-prob').val(Hyperparams.addProb);

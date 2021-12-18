@@ -17,7 +17,7 @@ class Organism {
         this.anatomy = new Anatomy(this)
         this.direction = Directions.down; // direction of movement
         this.rotation = Directions.up; // direction of rotation
-        this.can_rotate = Hyperparams.moversCanRotate;
+        this.can_rotate = Hyperparams.rotationEnabled;
         this.move_count = 0;
         this.move_range = 4;
         this.ignore_brain_for = 0;
@@ -63,7 +63,7 @@ class Organism {
         //produce mutated child
         //check nearby locations (is there room and a direct path)
         var org = new Organism(0, 0, this.env, this);
-        if(Hyperparams.offspringRotate){
+        if(Hyperparams.rotationEnabled){
             org.rotation = Directions.getRandomDirection();
         }
         var prob = this.mutability;

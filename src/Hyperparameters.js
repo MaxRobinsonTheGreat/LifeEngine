@@ -16,8 +16,7 @@ const Hyperparams = {
         this.changeProb = 33;
         this.removeProb = 33;
         
-        this.moversCanRotate = true;
-        this.offspringRotate = true;
+        this.rotationEnabled = true;
 
         this.foodBlocksReproduction = true;
         this.moversCanProduce = false;
