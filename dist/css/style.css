@@ -134,6 +134,10 @@ button:active{
     background-color: #81d2c7;
     color: black;
 }
+.open-tab {
+    background-color: #66a39b;
+    color: black;
+}
 
 .tab {
     grid-template-columns: repeat(2, 1fr);

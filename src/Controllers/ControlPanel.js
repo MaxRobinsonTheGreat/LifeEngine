@@ -114,11 +114,14 @@ class ControlPanel {
     defineEngineSpeedControls(){
         this.slider = document.getElementById("slider");
         this.slider.oninput = function() {
-            this.fps = this.slider.value
+            const max_fps = 300;
+            this.fps = this.slider.value;
+            if (this.fps>=max_fps) this.fps = 1000;
             if (this.engine.running) {
                 this.changeEngineSpeed(this.fps);
             }
-            $('#fps').text("Target FPS: "+this.fps);
+            let text = this.fps >= max_fps ? 'MAX' : this.fps;
+            $('#fps').text("Target FPS: "+text);
         }.bind(this);
         $('.pause-button').click(function() {
             $('.pause-button').find("i").toggleClass("fa fa-pause");
@@ -177,6 +180,8 @@ class ControlPanel {
             $('.tab').css('display', 'none');
             var tab = '#'+this.id+'.tab';
             $(tab).css('display', 'grid');
+            $('.tabnav-item').removeClass('open-tab')
+            $('#'+this.id+'.tabnav-item').addClass('open-tab');
             self.engine.organism_editor.is_active = (this.id == 'editor');
             self.stats_panel.stopAutoRender();
             if (this.id === 'stats') {
