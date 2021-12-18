@@ -269,10 +269,37 @@ class ControlPanel {
         $('#reset-rules').click(() => {
             this.setHyperparamDefaults();
         });
+        $('#save-controls').click(() => {
+            let data = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(Hyperparams));
+            let downloadEl = document.getElementById('download-el');
+            downloadEl.setAttribute("href", data);
+            downloadEl.setAttribute("download", "controls.json");
+            downloadEl.click();
+        });
+        $('#load-controls').click(() => {
+            $('#upload-el').click();
+        });
+        $('#upload-el').change((e)=>{
+            let files = e.target.files;
+            if (!files.length) {return;};
+            let reader = new FileReader();
+            reader.onload = (e) => {
+                let result=JSON.parse(e.target.result);
+                Hyperparams.loadJsonObj(result);
+                this.updateHyperparamUIValues();
+                // have to clear the value so change() will be triggered if the same file is uploaded again
+                $('#upload-el')[0].value = '';
+            };
+            reader.readAsText(files[0]);
+        });
     }
 
     setHyperparamDefaults() {
         Hyperparams.setDefaults();
+        this.updateHyperparamUIValues();
+    }
+
+    updateHyperparamUIValues(){
         $('#food-prod-prob').val(Hyperparams.foodProdProb);
         $('#lifespan-multiplier').val(Hyperparams.lifespanMultiplier);
         $('#rot-enabled').prop('checked', Hyperparams.rotationEnabled);
