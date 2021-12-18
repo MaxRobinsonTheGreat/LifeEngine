@@ -2,8 +2,6 @@ const Neighbors = require("./Grid/Neighbors");
 
 const Hyperparams = {
     setDefaults: function() {
-        this.headless = false;
-
         this.lifespanMultiplier = 100;
         this.foodProdProb = 5;
         this.killableNeighbors = Neighbors.adjacent;
@@ -27,6 +25,12 @@ const Hyperparams = {
 
         this.foodDropProb = 0;
     },
+
+    loadJsonObj(obj) {
+        for (let key in obj) {
+            this[key] = obj[key];
+        }
+    }
 }
 
 Hyperparams.setDefaults();
