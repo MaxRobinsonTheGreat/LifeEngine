@@ -269,3 +269,11 @@ button:active{
 .grid-size-in {
     width: 75px;
 }
+
+#video {
+    height: 100%;
+    max-height: 190px;
+    margin: auto;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
