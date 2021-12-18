@@ -19,7 +19,6 @@ class WorldEnvironment extends Environment{
         this.organisms = [];
         this.walls = [];
         this.total_mutability = 0;
-        this.auto_reset = true;
         this.largest_cell_count = 0;
         this.reset_count = 0;
         this.total_ticks = 0;
@@ -59,24 +58,37 @@ class WorldEnvironment extends Environment{
     }
 
     removeOrganisms(org_indeces) {
+        let start_pop = this.organisms.length;
         for (var i of org_indeces.reverse()){
             this.total_mutability -= this.organisms[i].mutability;
             this.organisms.splice(i, 1);
         }
-        if (this.organisms.length == 0 && this.auto_reset){
-            this.reset_count++;
-            this.reset(false);
+        if (this.organisms.length === 0 && start_pop > 0) {
+            if (WorldConfig.auto_pause)
+                $('.pause-button')[0].click();
+            else if(WorldConfig.auto_reset) {
+                this.reset_count++;
+                this.reset(false);
+            }
         }
     }
 
     OriginOfLife() {
         var center = this.grid_map.getCenter();
-        var org = new Organism(center[0], center[1], this);
-        org.anatomy.addDefaultCell(CellStates.mouth, 0, 0);
-        org.anatomy.addDefaultCell(CellStates.producer, 1, 1);
-        org.anatomy.addDefaultCell(CellStates.producer, -1, -1);
-        this.addOrganism(org);
-        FossilRecord.addSpecies(org, null);
+        switch (WorldConfig.start_state){
+            case 'simple-prod':
+                var org = new Organism(center[0], center[1], this);
+                org.anatomy.addDefaultCell(CellStates.mouth, 0, 0);
+                org.anatomy.addDefaultCell(CellStates.producer, 1, 1);
+                org.anatomy.addDefaultCell(CellStates.producer, -1, -1);
+                this.addOrganism(org);
+                FossilRecord.addSpecies(org, null);
+                break; 
+            case 'random-orgs':
+                break; 
+            case 'no-orgs':
+                break; 
+        }
     }
 
     addOrganism(organism) {

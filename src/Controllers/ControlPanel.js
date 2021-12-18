@@ -195,12 +195,18 @@ class ControlPanel {
         }.bind(this));
 
         $('#auto-reset').change(function() {
-            env.auto_reset = this.checked;
+            WorldConfig.auto_reset = this.checked;
         });
-
+        $('#auto-pause').change(function() {
+            WorldConfig.auto_pause = this.checked;
+        });
         $('#clear-walls-reset').change(function() {
             WorldConfig.clear_walls_on_reset = this.checked;
         })
+
+        $('#start-state').change ( function() {
+            WorldConfig.start_state = $("#start-state").val();
+        }.bind(this));
     }
 
     defineHyperparameterControls() {
@@ -338,8 +344,6 @@ class ControlPanel {
         $('#clear-env').click( () => {
             env.reset(true, false);
             this.stats_panel.reset();
-            env.auto_reset = false;
-            $('#auto-reset').prop('checked', false);;
         });
         $('#random-walls').click( function() {
             this.env_controller.randomizeWalls();

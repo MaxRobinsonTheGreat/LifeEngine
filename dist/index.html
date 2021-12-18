@@ -33,7 +33,7 @@
 				<p id='fps'>Target FPS: 60</p>
 				<p id='fps-actual'></p>
 				<button id='reset-env' title='Restarts simulation with default organism.'>Reset</button>
-				<button id='clear-env' title="Removes all organisms. Will disable 'reset on extinction'"">Clear</button>
+				<button id='clear-env' title="Removes all organisms.">Clear</button>
 			</div>
 
 			<div id='tab-container' class='control-set'>
@@ -169,16 +169,18 @@
 						<br>
 						<button id='resize'>Resize and Reset</button>
 						<h3>Reset Options</h3>
-						<label for="reset-options">Starting state:</label>
-						<select name="reset-options" id="reset-options">
+						<label for="start-state">Starting state:</label>
+						<select name="start-state" id="start-state">
 							<option value="simple-prod">Simple producer</option>
 							<option value="rand-orgs">Random organisms</option>
 							<option value="no-orgs">No organisms</option>
 						</select> <br>
 						<label for="auto-reset">Reset on total extinction</label>
 						<input type="checkbox" id="auto-reset" checked>
-						<br>
 						<p id='reset-count'>Auto reset count: </p>
+						<label for="auto-pause" title='Will override reset on extinction'>Pause on total extinction</label>
+						<input type="checkbox" id="auto-pause">
+						<br>
 					</div>
 					<div class='right-half'>
 						<button id='random-walls' title="Generates random walls.">Generate random walls</button> <br>
