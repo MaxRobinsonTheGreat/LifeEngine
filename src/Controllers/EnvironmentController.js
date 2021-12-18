@@ -4,7 +4,7 @@ const Modes = require("./ControlModes");
 const CellStates = require("../Organism/Cell/CellStates");
 const Neighbors = require("../Grid/Neighbors");
 const FossilRecord = require("../Stats/FossilRecord");
-const Hyperparams = require("../Hyperparameters");
+const WorldConfig = require("../WorldConfig");
 const Perlin = require("../Utils/Perlin");
 
 class EnvironmentController extends CanvasController{
@@ -98,7 +98,7 @@ class EnvironmentController extends CanvasController{
     }
 
     performModeAction() {
-        if (Hyperparams.headless && this.mode != Modes.Drag)
+        if (WorldConfig.headless && this.mode != Modes.Drag)
             return;
         var mode = this.mode;
         var right_click = this.right_click;

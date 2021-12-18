@@ -6,6 +6,7 @@ const CellStates = require('../Organism/Cell/CellStates');
 const EnvironmentController = require('../Controllers/EnvironmentController');
 const Hyperparams = require('../Hyperparameters.js');
 const FossilRecord = require('../Stats/FossilRecord');
+const WorldConfig = require('../WorldConfig');
 
 class WorldEnvironment extends Environment{
     constructor(cell_size) {
@@ -45,7 +46,7 @@ class WorldEnvironment extends Environment{
     }
 
     render() {
-        if (Hyperparams.headless) {
+        if (WorldConfig.headless) {
             this.renderer.cells_to_render.clear();
             return;
         }
@@ -136,7 +137,7 @@ class WorldEnvironment extends Environment{
             return;
 
         this.organisms = [];
-        this.grid_map.fillGrid(CellStates.empty);
+        this.grid_map.fillGrid(CellStates.empty, !WorldConfig.clear_walls_on_reset);
         this.renderer.renderFullGrid(this.grid_map.grid);
         this.total_mutability = 0;
         this.total_ticks = 0;

@@ -1,6 +1,7 @@
 const Hyperparams = require("../Hyperparameters");
 const Modes = require("./ControlModes");
 const StatsPanel = require("../Stats/StatsPanel");
+const WorldConfig = require("../WorldConfig");
 
 class ControlPanel {
     constructor(engine) {
@@ -137,14 +138,14 @@ class ControlPanel {
         $('.headless').click(function() {
             $('.headless').find("i").toggleClass("fa fa-eye");
             $('.headless').find("i").toggleClass("fa fa-eye-slash");
-            if (Hyperparams.headless){
+            if (WorldConfig.headless){
                 $('#headless-notification').css('display', 'none');
                 this.engine.env.renderFull();
             }
             else {
                 $('#headless-notification').css('display', 'block');
             }
-            Hyperparams.headless = !Hyperparams.headless;
+            WorldConfig.headless = !WorldConfig.headless;
         }.bind(this));
     }
 
@@ -411,7 +412,7 @@ class ControlPanel {
         $('#fps-actual').text("Actual FPS: " + Math.floor(this.engine.actual_fps));
         $('#reset-count').text("Auto reset count: " + this.engine.env.reset_count);
         this.stats_panel.updateDetails();
-        if (Hyperparams.headless)
+        if (WorldConfig.headless)
             this.updateHeadlessIcon(delta_time);
 
     }
