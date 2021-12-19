@@ -9,6 +9,7 @@ class CanvasController{
         this.mouse_c;
         this.mouse_r;
         this.left_click = false;
+        this.middle_click = false;
         this.right_click = false;
         this.cur_cell = null;
         this.cur_org = null;
@@ -30,16 +31,21 @@ class CanvasController{
             evt.preventDefault();
             this.updateMouseLocation(evt.offsetX, evt.offsetY)
             this.mouseUp();
-            this.left_click=false;
-            this.right_click=false;
+            if (evt.button == 0) 
+                this.left_click = false;
+            if (evt.button == 1) 
+                this.middle_click = false;
+            if (evt.button == 2) 
+                this.right_click = false;
         }.bind(this));
 
         this.canvas.addEventListener('mousedown', function(evt) {
             evt.preventDefault();
             this.updateMouseLocation(evt.offsetX, evt.offsetY)
-            if (evt.button == 0) {
+            if (evt.button == 0) 
                 this.left_click = true;
-            }
+            if (evt.button == 1) 
+                this.middle_click = true;
             if (evt.button == 2) 
                 this.right_click = true;
             this.mouseDown();
@@ -50,10 +56,24 @@ class CanvasController{
         });
 
         this.canvas.addEventListener('mouseleave', function(){
-            this.right_click = false;
-            this.left_click = false;
+            this.left_click   = false;
+            this.middle_click = false;
+            this.right_click  = false;
             this.env.renderer.clearAllHighlights(true);
         }.bind(this));
+
+        this.canvas.addEventListener('mouseenter', function(evt) {
+
+            this.left_click   = !!(evt.buttons & 1);
+            this.right_click  = !!(evt.buttons & 2);
+            this.middle_click = !!(evt.buttons & 4);
+
+            this.updateMouseLocation(evt.offsetX, evt.offsetY);
+            this.start_x = this.mouse_x;
+            this.start_y = this.mouse_y;
+
+
+        }.bind(this))
 
     }
 

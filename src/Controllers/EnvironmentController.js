@@ -4,12 +4,13 @@ const Modes = require("./ControlModes");
 const CellStates = require("../Organism/Cell/CellStates");
 const Neighbors = require("../Grid/Neighbors");
 const FossilRecord = require("../Stats/FossilRecord");
-const Hyperparams = require("../Hyperparameters");
+const WorldConfig = require("../WorldConfig");
+const Perlin = require("../Utils/Perlin");
 
 class EnvironmentController extends CanvasController{
     constructor(env, canvas) {
         super(env, canvas);
-        this.mode = Modes.Drag;
+        this.mode = Modes.FoodDrop;
         this.org_to_clone = null;
         this.add_new_species = false;
         this.defineZoomControls();
@@ -28,22 +29,14 @@ class EnvironmentController extends CanvasController{
             // Restrict scale
             scale = Math.max(0.5, this.scale+(sign*zoom_speed));
 
-            if (scale != 0.5) {
-                var cur_top = parseInt($('#env-canvas').css('top'));
-                var cur_left = parseInt($('#env-canvas').css('left'));
-                if (sign == 1) {
-                    // If we're zooming in, zoom towards wherever the mouse is
-                    var diff_x = ((this.canvas.width/2-cur_left/this.scale) - this.mouse_x)*this.scale/1.5;
-                    var diff_y = ((this.canvas.height/2-cur_top/this.scale) - this.mouse_y)*this.scale/1.5;
-                }
-                else {
-                    // If we're zooming out, zoom out towards the center
-                    var diff_x = -cur_left/scale;
-                    var diff_y = -cur_top/scale;
-                }
-                $('#env-canvas').css('top', (cur_top+diff_y)+'px');
-                $('#env-canvas').css('left', (cur_left+diff_x)+'px');
-            }
+            var cur_top = parseInt($('#env-canvas').css('top'));
+            var cur_left = parseInt($('#env-canvas').css('left'));
+
+            var diff_x = (this.canvas.width/2  - this.mouse_x) * (scale - this.scale);
+            var diff_y = (this.canvas.height/2 - this.mouse_y) * (scale - this.scale);
+
+            $('#env-canvas').css('top', (cur_top+diff_y)+'px');
+            $('#env-canvas').css('left', (cur_left+diff_x)+'px');
           
             // Apply scale transform
             el.style.transform = `scale(${scale})`;
@@ -59,8 +52,34 @@ class EnvironmentController extends CanvasController{
         this.scale = 1;
     }
 
+    /*
+    Iterate over grid from 0,0 to env.num_cols,env.num_rows and create random walls using perlin noise to create a more organic shape.
+    */
+    randomizeWalls(thickness=1) {
+        this.env.clearWalls();
+        const noise_threshold = -0.017;
+        let avg_noise = 0;
+        let resolution = 20;
+        Perlin.seed();
+
+        for (let r = 0; r < this.env.num_rows; r++) {
+            for (let c = 0; c < this.env.num_cols; c++) {
+                let xval = c/this.env.num_cols*(resolution/this.env.renderer.cell_size*(this.env.num_cols/this.env.num_rows));
+                let yval = r/this.env.num_rows*(resolution/this.env.renderer.cell_size*(this.env.num_rows/this.env.num_cols));
+                let noise = Perlin.get(xval, yval);
+                avg_noise += noise/(this.env.num_rows*this.env.num_cols);
+                if (noise > noise_threshold && noise < noise_threshold + thickness/resolution) {
+                    let cell = this.env.grid_map.cellAt(c, r);
+                    if (cell != null) {
+                        if(cell.owner != null) cell.owner.die();
+                        this.env.changeCell(c, r, CellStates.wall, null);
+                    }
+                }
+            }
+        }
+    }
+
     updateMouseLocation(offsetX, offsetY){
-        
         super.updateMouseLocation(offsetX, offsetY);
     }
 
@@ -79,7 +98,7 @@ class EnvironmentController extends CanvasController{
     }
 
     performModeAction() {
-        if (Hyperparams.headless)
+        if (WorldConfig.headless && this.mode != Modes.Drag)
             return;
         var mode = this.mode;
         var right_click = this.right_click;
@@ -134,6 +153,15 @@ class EnvironmentController extends CanvasController{
                     $('#env-canvas').css('left', new_left+'px');
                     break;
             }
+        }
+        else if (this.middle_click) {
+            //drag on middle click
+            var cur_top = parseInt($('#env-canvas').css('top'), 10);
+            var cur_left = parseInt($('#env-canvas').css('left'), 10);
+            var new_top = cur_top + ((this.mouse_y - this.start_y)*this.scale);
+            var new_left = cur_left + ((this.mouse_x - this.start_x)*this.scale);
+            $('#env-canvas').css('top', new_top+'px');
+            $('#env-canvas').css('left', new_left+'px');
         }
     }
 

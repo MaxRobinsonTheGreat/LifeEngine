@@ -37,7 +37,7 @@ body{
     bottom: 0;
     position: fixed;
     background-color: #3a4b68;
-    display: grid;
+    display: none;
     grid-template-columns: repeat(3, 1fr);
     /* opacity: 0.8; */
 }
@@ -57,11 +57,15 @@ body{
 
 img {
     image-rendering: -moz-crisp-edges;
-  image-rendering: -webkit-crisp-edges;
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
-    width: 60%;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    object-fit: cover;
+    width: 85%;
+    max-width: 500px;
+    max-height: 40%;
     border-radius: 10px;
+    overflow: hidden;
 }
 
 button {
@@ -75,9 +79,13 @@ button {
     display: inline-block;
     font-size: 16px;
     min-width: 30px;
+    margin: 2px;
 }
 button:hover{
     background-color: #81d2c7;
+}
+button:active{
+    background-color: #595e77;
 }
 
 .icon-links {
@@ -130,6 +138,10 @@ button:hover{
     background-color: #81d2c7;
     color: black;
 }
+.open-tab {
+    background-color: #66a39b;
+    color: black;
+}
 
 .tab {
     grid-template-columns: repeat(2, 1fr);
@@ -163,10 +175,7 @@ button:hover{
     height: 30px;
     margin-top: 5px;
 }
-.edit-mode-btn:hover{
-    background-color: #81d2c7;
-}
-.edit-mode-btn#drag-view {
+.edit-mode-btn.selected {
     background-color: #81d2c7;
 }
 .randomize-button {
@@ -239,7 +248,7 @@ button:hover{
     position: fixed;
     bottom: 10px;
     padding-left: 10px;
-    display: none;
+    /* display: none; */
 }
 
 #headless-notification {
@@ -258,4 +267,15 @@ button:hover{
 }
 #maximize-hot-control {
     right: 10px;
+}
+
+.grid-size-in {
+    width: 75px;
+}
+
+#video {
+    height: 200px;
+    margin: auto;
+    margin-bottom: 0;
+    padding-bottom: 0;
 }
