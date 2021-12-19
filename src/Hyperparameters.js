@@ -24,6 +24,8 @@ const Hyperparams = {
         this.lookRange = 20;
 
         this.foodDropProb = 0;
+
+        this.extraMoverFoodCost = 0;
     },
 
     loadJsonObj(obj) {

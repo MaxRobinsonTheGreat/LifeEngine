@@ -47,11 +47,10 @@ class Organism {
 
     // amount of food required before it can reproduce
     foodNeeded() {
-        return this.anatomy.cells.length;
+        return this.anatomy.is_mover ? this.anatomy.cells.length + Hyperparams.extraMoverFoodCost : this.anatomy.cells.length;
     }
 
     lifespan() {
-        // console.log(Hyperparams.lifespanMultiplier)
         return this.anatomy.cells.length * Hyperparams.lifespanMultiplier;
     }
 
@@ -118,7 +117,7 @@ class Organism {
                 org.species.addPop();
             }
         }
-        this.food_collected -= this.foodNeeded();
+        Math.max(this.food_collected -= this.foodNeeded(), 0);
 
     }
 
