@@ -14,7 +14,6 @@ class ControlPanel {
         this.defineHyperparameterControls();
         this.defineWorldControls();
         this.defineModeControls();
-        this.defineChallenges();
         this.fps = engine.fps;
         this.organism_record=0;
         this.env_controller = this.engine.env.controller;
@@ -198,11 +197,15 @@ class ControlPanel {
         });
         $('#clear-walls-reset').change(function() {
             WorldConfig.clear_walls_on_reset = this.checked;
-        })
-
-        $('#start-state').change ( function() {
-            WorldConfig.start_state = $("#start-state").val();
-        }.bind(this));
+        });
+        $('#reset-with-editor-org').click( () => {
+            let env = this.engine.env;
+            if (!env.reset(true, false)) return;
+            let center = env.grid_map.getCenter();
+            let org = this.editor_controller.env.getCopyOfOrg();
+            this.env_controller.add_new_species = true;
+            this.env_controller.dropOrganism(org, center[0], center[1])
+        });
     }
 
     defineHyperparameterControls() {
@@ -226,7 +229,6 @@ class ControlPanel {
             Hyperparams.foodDropProb = $('#food-drop-rate').val();
         });
         $('#extra-mover-cost').change(function() {
-            console.log(parseInt($('#extra-mover-cost').val()))
             Hyperparams.extraMoverFoodCost = parseInt($('#extra-mover-cost').val());
         });
 
@@ -346,9 +348,6 @@ class ControlPanel {
                 case "edit":
                     self.setMode(Modes.Edit);
                     break;
-                case "randomize":
-                    self.setMode(Modes.Randomize);
-                    self.editor_controller.setRandomizePanel();
                 case "drop-org":
                     self.setMode(Modes.Clone);
                     break;
@@ -358,7 +357,6 @@ class ControlPanel {
             $('.edit-mode-btn').removeClass('selected');
             $('.'+this.id).addClass('selected');
         });
-
         $('.reset-view').click( function(){
             this.env_controller.resetView();
         }.bind(this));
@@ -382,25 +380,13 @@ class ControlPanel {
             this.engine.organism_editor.clear();
             this.editor_controller.setEditorPanel();
         }.bind(this));
-        document.getElementById("random-width").addEventListener('input', function() {
-            var width = 2 * this.value + 1;
-            $('#random-width-display').text(width);
-            RandomOrganismGenerator.organismLayers = this.value;
-        });
-        document.getElementById("cell-spawn-chance").addEventListener("input", function() {
-            var value = parseFloat(this.value);
-            $('#spawn-chance-display').text((value * 100).toFixed(1) + "%");
-            RandomOrganismGenerator.cellSpawnChance = value;
-        });
         $('#generate-random').click( function() {
             this.engine.organism_editor.createRandom();
+            this.editor_controller.refreshDetailsPanel();
         }.bind(this));
-
-        $('#create-random-world').click( function() {
-            this.setPaused(true);
-            this.engine.organism_editor.createRandomWorld(this.engine.env);
+        $('.reset-random').click( function() {
+            this.engine.organism_editor.resetWithRandomOrgs(this.engine.env);
         }.bind(this));
-        }.bind(this))
 
         window.onbeforeunload = function (e) {
             e = e || window.event;
@@ -410,13 +396,6 @@ class ControlPanel {
             }
             return return_str;
         };
-    }
-
-    defineChallenges() {
-        $('.challenge-btn').click(function() {
-            $('#challenge-title').text($(this).text());
-            $('#challenge-description').text($(this).val());
-        });
     }
 
     setPaused(paused) {

@@ -7,7 +7,6 @@ const Modes = {
     Edit: 5,
     Clone: 6,
     Drag: 7,
-    Randomize: 8,
 }
 
 module.exports = Modes;

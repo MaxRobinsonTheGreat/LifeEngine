@@ -90,7 +90,6 @@ class OrganismEditor extends Environment{
     }
 
     createRandom() {
-
         this.grid_map.fillGrid(CellStates.empty);
 
         this.organism = RandomOrganismGenerator.generate(this);
@@ -98,26 +97,20 @@ class OrganismEditor extends Environment{
         this.organism.species = new Species(this.organism.anatomy, null, 0);
     }
 
-    createRandomWorld(worldEnvironment) {
+    resetWithRandomOrgs(env) {
+        let reset_confirmed = env.reset(true, false);
+        if (!reset_confirmed) return;
+        let numOrganisms = parseInt($('#num-random-orgs').val());
 
-        worldEnvironment.clear();
+        let size = Math.ceil(8);
 
-        var numOrganismCols = Math.floor(worldEnvironment.grid_map.cols / this.grid_map.cols);
-        var numOrganismRows = Math.floor(worldEnvironment.grid_map.rows / this.grid_map.rows);
-        var center = this.grid_map.getCenter();
-
-        for (var x = 0; x < numOrganismCols; x++) {
-            for (var y = 0; y < numOrganismRows; y++) {
-
-                var newOrganism = RandomOrganismGenerator.generate(this);
-                //newOrganism.updateGrid();
-                newOrganism.species = new Species(newOrganism.anatomy, null, 0);
-
-                var col = x * this.grid_map.cols + center[0];
-                var row = y * this.grid_map.rows + center[1];
-                worldEnvironment.controller.add_new_species = true;
-                worldEnvironment.controller.dropOrganism(newOrganism, col, row);
-            }
+        for (let i=0; i<numOrganisms; i++) {
+            let newOrganism = RandomOrganismGenerator.generate(this);
+            newOrganism.species = new Species(newOrganism.anatomy, null, 0);
+            var col = Math.floor(size + (Math.random() * (env.grid_map.cols-(size*2)) ) );
+            var row = Math.floor(size + (Math.random() * (env.grid_map.rows-(size*2)) ) );
+            env.controller.add_new_species = true;
+            env.controller.dropOrganism(newOrganism, col, row);
         }
     }
 }

@@ -169,20 +169,23 @@ class EnvironmentController extends CanvasController{
 
         // close the organism and drop it in the world
         var new_org = new Organism(col, row, this.env, organism);
-        if (this.add_new_species){
-            FossilRecord.addSpeciesObj(new_org.species);
-            new_org.species.start_tick = this.env.total_ticks;
-            this.add_new_species = false;
-            new_org.species.population = 0;
-        }
-        else if (this.org_to_clone.species.extinct){
-            FossilRecord.resurrect(this.org_to_clone.species);
-        }
 
-        if (new_org.isClear(this.mouse_c, this.mouse_r)){
+        if (new_org.isClear(col, row)) {
+            if (this.add_new_species){
+                FossilRecord.addSpeciesObj(new_org.species);
+                new_org.species.start_tick = this.env.total_ticks;
+                this.add_new_species = false;
+                new_org.species.population = 0;
+            }
+            else if (this.org_to_clone.species.extinct){
+                FossilRecord.resurrect(this.org_to_clone.species);
+            }
+
             this.env.addOrganism(new_org);
             new_org.species.addPop();
+            return true;
         }
+        return false;
     }
 
     dropCellType(col, row, state, killBlocking=false) {

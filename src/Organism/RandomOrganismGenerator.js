@@ -45,16 +45,7 @@ class RandomOrganismGenerator {
         }
 
         // randomize the organism's brain
-        var decisions = organism.brain.decisions;
-        decisions[CellStates.empty.name]    = Brain.Decision.getRandom();
-        decisions[CellStates.food.name]     = Brain.Decision.getRandom();
-        decisions[CellStates.wall.name]     = Brain.Decision.getRandom();
-        decisions[CellStates.mouth.name]    = Brain.Decision.getRandom();
-        decisions[CellStates.producer.name] = Brain.Decision.getRandom();
-        decisions[CellStates.mover.name]    = Brain.Decision.getRandom();
-        decisions[CellStates.killer.name]   = Brain.Decision.getRandom();
-        decisions[CellStates.armor.name]    = Brain.Decision.getRandom();
-        decisions[CellStates.eye.name]      = Brain.Decision.getRandom();
+        organism.brain.randomizeDecisions(true);
 
         return organism;
     }
@@ -71,7 +62,7 @@ class RandomOrganismGenerator {
 
 }
 
-RandomOrganismGenerator.organismLayers = 2;
+RandomOrganismGenerator.organismLayers = 4;
 RandomOrganismGenerator.cellSpawnChance = 0.75;
 
 module.exports = RandomOrganismGenerator;

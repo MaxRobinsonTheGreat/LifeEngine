@@ -42,9 +42,8 @@
 					<p class='tabnav-item open-tab' id='about'>About</p>
 					<p class='tabnav-item' id='editor'>Editor</p>
 					<p class='tabnav-item' id='world-controls'>World Controls</p>
-					<p class='tabnav-item' id='hyperparameters'>Simulation Controls</p>
+					<p class='tabnav-item' id='hyperparameters'>Evolution Controls</p>
 					<p class='tabnav-item' id='stats'>Statistics</p>
-					<!-- <p class='tabnav-item' id='challenges'>Challenges</p> -->
 					<button id="minimize" title="Minimze Control Panel."><i class="fa fa-minus-square"></i></button>
 				</div>
 
@@ -79,7 +78,6 @@
 							<button class="edit-mode-btn select" id="select" title="Select organism from world. Hotkey: Z"><i class="fa fa-hand-pointer-o"></i></button>
 							<button class="edit-mode-btn edit" id="edit" title="Edit organism. Hotkey: X"><i class="fa fa-pencil"></i></button>
 							<button class="edit-mode-btn drop-org" id="drop-org" title="Drop organism in world. Hotkey: C"><i class="fa fa-plus"></i></button>
-							<button class="edit-mode-btn" id='randomize' title="Randomize"><i class="fa fa-random"></i></button>
 						</div>
 						<div id='editor-env'>
 							<canvas id='editor-canvas'></canvas>
@@ -97,6 +95,8 @@
 							</div>
 
 							<button id='clear-editor'>Clear</button>
+							<button class='randomize-button' id='generate-random' title="Randomizes organism"><i class="fa fa-random"></i></button>
+							<br>
 						</div>
 						
 					</div>
@@ -126,7 +126,7 @@
 								<label for="mutation-rate-edit" title='Probability that offspring of this organism will mutate'>Mutation Rate:</label>
 								<input type="number" id="mutation-rate-edit" min="1" max="100" value=3 step="1">
 							</div>
-							<br>
+							<!-- <br> -->
 							<div class='brain-details'>
 								<h4>Brain</h4>
 								<label for="observation-type-edit">Observation: </label>
@@ -151,25 +151,8 @@
 								<p class='retreat-types'>Move Away From: killer</p>
 							</div>
 						</div>
-
-						<div id='randomize-organism-details' style="display:none;">
-							<h3>Generate Random Organism</h3>
-
-							<label for='random-width' title='The maximum width of the generated organism'>Max Width:</label>
-							<input type='range' id='random-width' min="1" max="7" value="2" step="1">
-							<span id='random-width-display'>5</span>
-							<br />
-
-							<label for='cell-spawn-chance' title='The chance a cell will spawn in the innermost layer (becomes less likely near the edges)'>Cell Spawn Chance:</label>
-							<input type='range' id='cell-spawn-chance' min="0.01" max="1" value="0.75" step='0.001'>
-							<span id='spawn-chance-display'>75%</span>
-							<br />
-
-							<button class='randomize-button' id='generate-random' title="Generate a random organism in the editor window.">Generate</button>
-							<br />
-							<button class='randomize-button' id='create-random-world' title="Generate hundreds of random organisms in the world.">Create Random World</button>
-
-						</div>
+						
+						<button id='reset-with-editor-org' title='Reset the environment with the organism in the editor'>Reset with Editor Organism</button>
 					</div>
 				</div>
 				<div id='world-controls' class='tab'>
@@ -185,23 +168,20 @@
 							<label for="row-input">Rows:</label>
 							<input type="number" class="grid-size-in" id="row-input" min="1" value=100 step="1">
 						</div>
-						<br>
 						<button id='resize'>Resize and Reset</button>
 						<h3>Reset Options</h3>
-						<label for="start-state">Starting state:</label>
-						<select name="start-state" id="start-state">
-							<option value="simple-prod">Simple producer</option>
-							<option value="rand-orgs">Random organisms</option>
-							<option value="no-orgs">No organisms</option>
-						</select> <br>
 						<label for="auto-reset">Reset on total extinction</label>
 						<input type="checkbox" id="auto-reset" checked>
 						<p id='reset-count'>Auto reset count: </p>
 						<label for="auto-pause" title='Will override reset on extinction'>Pause on total extinction</label>
 						<input type="checkbox" id="auto-pause">
 						<br>
+						<button class='randomize-button reset-random' title="Generate many random organisms in the world.">Reset with Random Organisms</button>
+						<label for="num-random-orgs" title='Number of random organisms to generate'>Num to generate:</label>
+						<input type="number" id="num-random-orgs" min="1" value=100 step="1">
 					</div>
 					<div class='right-half'>
+						<br>
 						<button id='random-walls' title="Generates random walls.">Generate random walls</button> <br>
 						<button id="clear-walls" title="Clear All Walls. Hotkey: B">Clear all walls</button>
 						<br>
@@ -211,7 +191,7 @@
 				</div>
 				<div id='hyperparameters' class='tab'>
 					<div class='left-half'>
-						<h2>Simulation Controls</h2>
+						<h2>Evolution Controls</h2>
 						<label for="food-prod-prob" title='The probability that a producer cell will produce food each tick.'>Probability of producing food:</label>
 						<input type="number" id="food-prod-prob" min=".001" max="100" value=4 step="1">
 						<br>
@@ -255,8 +235,8 @@
 						<label for="food-blocks" title='When on, reproduction will fail if offspring intersect with food. When off, offspring will remove blocking food.'>Food blocks reproduction</label>
 						<input type="checkbox" id="food-blocks" checked>
 						<br>
-						<button id='save-controls'>Save</button>
-						<button id='load-controls'>Load</button>
+						<button id='save-controls' title="Save all Evolution Controls in a .json file">Save & Download</button>
+						<button id='load-controls' title="Load saved Evolution Controls with a .json file">Load</button>
 						<a id="download-el" style="display: none;"></a>
 						<input id="upload-el" style="display: none;" type="file">
 					</div>
@@ -282,22 +262,6 @@
 						<div id="chartContainer"></div>
 					</div>
 					
-				</div>
-				<div id='challenges' class='tab'>
-					<div class='left-half'>
-						<h2>Challenges</h2>
-						<button class='challenge-btn' value='Without editing any organisms, evolve a static producer organism with 15 cells. '>Megaflora</button>
-						<button class='challenge-btn' value='Without editing any organisms, evolve a mover organism with 10 cells.'>Megafauna</button>
-						<button class='challenge-btn' value='Use the editor to create a new organism that dominates the current ecosystem and causes many species to go extinct.'>Invasive Species</button>
-						<button class='challenge-btn' value='Either through editing or evolving, create two different species that have a mutually beneficial relationship.'>Symbiosis</button>
-						<button class='challenge-btn' value='Evolve a stable ecosystem with 10 significantly different species.'>Biodiversity</button>
-						<button class='challenge-btn' value='Evolve a stable ecosystem without any killer cells.'>Utopia</button>
-					</div>
-					<div class='right-half'>
-						<h2 id='challenge-title'>Select a Challenge</h2>
-						<br>
-						<p id='challenge-description'>Challenge yourself to create interesting ecosystems and organisms. There is no formal way to win or lose, its just for fun! </p>
-					</div>
 				</div>
 			</div>
 		</div>

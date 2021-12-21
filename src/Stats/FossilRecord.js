@@ -82,8 +82,7 @@ const FossilRecord = {
         this.species_counts.push(this.extant_species.length);
         this.av_mut_rates.push(this.env.averageMutability());
         this.calcCellCountAverages();
-
-        if (this.tick_record.length > this.record_size_limit) {
+        while (this.tick_record.length > this.record_size_limit) {
             this.tick_record.shift();
             this.pop_counts.shift();
             this.species_counts.shift();

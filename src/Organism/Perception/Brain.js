@@ -32,8 +32,12 @@ class Brain {
         this.decisions[CellStates.eye.name] = Decision.neutral;
     }
 
-    randomizeDecisions() {
+    randomizeDecisions(randomize_all=false) {
         // randomize the non obvious decisions
+        if (randomize_all) {
+            this.decisions[CellStates.food.name] = Decision.getRandom();
+            this.decisions[CellStates.killer.name] = Decision.getRandom();
+        }
         this.decisions[CellStates.mouth.name] = Decision.getRandom();
         this.decisions[CellStates.producer.name] = Decision.getRandom();
         this.decisions[CellStates.mover.name] = Decision.getRandom();

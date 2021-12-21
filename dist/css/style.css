@@ -178,9 +178,6 @@ button:active{
 .edit-mode-btn.selected {
     background-color: #81d2c7;
 }
-.randomize-button {
-    margin-top: 5px;
-}
 #clear-walls {
     margin-top: 5px;
 }
@@ -278,4 +275,8 @@ button:active{
     margin: auto;
     margin-bottom: 0;
     padding-bottom: 0;
+}
+
+#reset-with-editor-org{
+    margin-top: 5px;
 }
