@@ -32,8 +32,12 @@ class Brain {
         this.decisions[CellStates.eye.name] = Decision.neutral;
     }
 
-    randomizeDecisions() {
+    randomizeDecisions(randomize_all=false) {
         // randomize the non obvious decisions
+        if (randomize_all) {
+            this.decisions[CellStates.food.name] = Decision.getRandom();
+            this.decisions[CellStates.killer.name] = Decision.getRandom();
+        }
         this.decisions[CellStates.mouth.name] = Decision.getRandom();
         this.decisions[CellStates.producer.name] = Decision.getRandom();
         this.decisions[CellStates.mover.name] = Decision.getRandom();
@@ -78,5 +82,7 @@ class Brain {
         this.decisions[CellStates.empty.name] = Decision.neutral; // if the empty cell has a decision it gets weird
     }
 }
+
+Brain.Decision = Decision;
 
 module.exports = Brain;

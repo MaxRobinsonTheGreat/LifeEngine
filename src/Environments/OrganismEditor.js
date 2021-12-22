@@ -5,6 +5,7 @@ const Renderer = require('../Rendering/Renderer');
 const CellStates = require('../Organism/Cell/CellStates');
 const EditorController = require("../Controllers/EditorController");
 const Species = require('../Stats/Species');
+const RandomOrganismGenerator = require('../Organism/RandomOrganismGenerator')
 
 class OrganismEditor extends Environment{
     constructor() {
@@ -86,6 +87,31 @@ class OrganismEditor extends Environment{
         this.organism.anatomy.addDefaultCell(CellStates.mouth, 0, 0);
         this.organism.updateGrid();
         this.organism.species = new Species(this.organism.anatomy, null, 0);
+    }
+
+    createRandom() {
+        this.grid_map.fillGrid(CellStates.empty);
+
+        this.organism = RandomOrganismGenerator.generate(this);
+        this.organism.updateGrid();
+        this.organism.species = new Species(this.organism.anatomy, null, 0);
+    }
+
+    resetWithRandomOrgs(env) {
+        let reset_confirmed = env.reset(true, false);
+        if (!reset_confirmed) return;
+        let numOrganisms = parseInt($('#num-random-orgs').val());
+
+        let size = Math.ceil(8);
+
+        for (let i=0; i<numOrganisms; i++) {
+            let newOrganism = RandomOrganismGenerator.generate(this);
+            newOrganism.species = new Species(newOrganism.anatomy, null, 0);
+            var col = Math.floor(size + (Math.random() * (env.grid_map.cols-(size*2)) ) );
+            var row = Math.floor(size + (Math.random() * (env.grid_map.rows-(size*2)) ) );
+            env.controller.add_new_species = true;
+            env.controller.dropOrganism(newOrganism, col, row);
+        }
     }
 }
 

@@ -95,6 +95,7 @@ const CellStates = {
         return this.living[Math.floor(Math.random() * this.living.length)];
     }
 }
+
 CellStates.defineLists();
 
 module.exports = CellStates;

@@ -17,7 +17,7 @@ class Organism {
         this.anatomy = new Anatomy(this)
         this.direction = Directions.down; // direction of movement
         this.rotation = Directions.up; // direction of rotation
-        this.can_rotate = Hyperparams.moversCanRotate;
+        this.can_rotate = Hyperparams.rotationEnabled;
         this.move_count = 0;
         this.move_range = 4;
         this.ignore_brain_for = 0;
@@ -47,11 +47,10 @@ class Organism {
 
     // amount of food required before it can reproduce
     foodNeeded() {
-        return this.anatomy.cells.length;
+        return this.anatomy.is_mover ? this.anatomy.cells.length + Hyperparams.extraMoverFoodCost : this.anatomy.cells.length;
     }
 
     lifespan() {
-        // console.log(Hyperparams.lifespanMultiplier)
         return this.anatomy.cells.length * Hyperparams.lifespanMultiplier;
     }
 
@@ -63,7 +62,7 @@ class Organism {
         //produce mutated child
         //check nearby locations (is there room and a direct path)
         var org = new Organism(0, 0, this.env, this);
-        if(Hyperparams.offspringRotate){
+        if(Hyperparams.rotationEnabled){
             org.rotation = Directions.getRandomDirection();
         }
         var prob = this.mutability;
@@ -118,7 +117,7 @@ class Organism {
                 org.species.addPop();
             }
         }
-        this.food_collected -= this.foodNeeded();
+        Math.max(this.food_collected -= this.foodNeeded(), 0);
 
     }
 
@@ -237,14 +236,13 @@ class Organism {
         return cell != null && (cell.state == CellStates.empty || cell.owner == this || cell.owner == parent || cell.state == CellStates.food);
     }
 
-    isClear(col, row, rotation=this.rotation, ignore_armor=false) {
+    isClear(col, row, rotation=this.rotation) {
         for(var loccell of this.anatomy.cells) {
             var cell = this.getRealCell(loccell, col, row, rotation);
             if (cell==null) {
                 return false;
             }
-            // console.log(cell.owner == this)
-            if (cell.owner==this || cell.state==CellStates.empty || (!Hyperparams.foodBlocksReproduction && cell.state==CellStates.food) || (ignore_armor && loccell.state==CellStates.armor && cell.state==CellStates.food)){
+            if (cell.owner==this || cell.state==CellStates.empty || (!Hyperparams.foodBlocksReproduction && cell.state==CellStates.food)){
                 continue;
             }
             return false;

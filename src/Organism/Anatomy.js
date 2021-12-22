@@ -91,6 +91,22 @@ class Anatomy {
     getRandomCell() {
         return this.cells[Math.floor(Math.random() * this.cells.length)];
     }
+
+    getNeighborsOfCell(col, row) {
+
+        var neighbors = [];
+
+        for (var x = -1; x <= 1; x++) {
+            for (var y = -1; y <= 1; y++) {
+
+                var neighbor = this.getLocalCell(col + x, row + y);
+                if (neighbor)
+                    neighbors.push(neighbor)
+            }
+        }
+
+        return neighbors;
+    }
 }
 
 module.exports = Anatomy;

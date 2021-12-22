@@ -4,7 +4,8 @@ const Modes = require("./ControlModes");
 const CellStates = require("../Organism/Cell/CellStates");
 const Neighbors = require("../Grid/Neighbors");
 const FossilRecord = require("../Stats/FossilRecord");
-const Hyperparams = require("../Hyperparameters");
+const WorldConfig = require("../WorldConfig");
+const Perlin = require("../Utils/Perlin");
 
 class EnvironmentController extends CanvasController{
     constructor(env, canvas) {
@@ -51,8 +52,34 @@ class EnvironmentController extends CanvasController{
         this.scale = 1;
     }
 
+    /*
+    Iterate over grid from 0,0 to env.num_cols,env.num_rows and create random walls using perlin noise to create a more organic shape.
+    */
+    randomizeWalls(thickness=1) {
+        this.env.clearWalls();
+        const noise_threshold = -0.017;
+        let avg_noise = 0;
+        let resolution = 20;
+        Perlin.seed();
+
+        for (let r = 0; r < this.env.num_rows; r++) {
+            for (let c = 0; c < this.env.num_cols; c++) {
+                let xval = c/this.env.num_cols*(resolution/this.env.renderer.cell_size*(this.env.num_cols/this.env.num_rows));
+                let yval = r/this.env.num_rows*(resolution/this.env.renderer.cell_size*(this.env.num_rows/this.env.num_cols));
+                let noise = Perlin.get(xval, yval);
+                avg_noise += noise/(this.env.num_rows*this.env.num_cols);
+                if (noise > noise_threshold && noise < noise_threshold + thickness/resolution) {
+                    let cell = this.env.grid_map.cellAt(c, r);
+                    if (cell != null) {
+                        if(cell.owner != null) cell.owner.die();
+                        this.env.changeCell(c, r, CellStates.wall, null);
+                    }
+                }
+            }
+        }
+    }
+
     updateMouseLocation(offsetX, offsetY){
-        
         super.updateMouseLocation(offsetX, offsetY);
     }
 
@@ -71,7 +98,7 @@ class EnvironmentController extends CanvasController{
     }
 
     performModeAction() {
-        if (Hyperparams.headless)
+        if (WorldConfig.headless && this.mode != Modes.Drag)
             return;
         var mode = this.mode;
         var right_click = this.right_click;
@@ -114,21 +141,7 @@ class EnvironmentController extends CanvasController{
 
                 case Modes.Clone:
                     if (this.org_to_clone != null){
-                        var new_org = new Organism(this.mouse_c, this.mouse_r, this.env, this.org_to_clone);
-                        if (this.add_new_species){
-                            FossilRecord.addSpeciesObj(new_org.species);
-                            new_org.species.start_tick = this.env.total_ticks;
-                            this.add_new_species = false;
-                            new_org.species.population = 0;
-                        }
-                        else if (this.org_to_clone.species.extinct){
-                            FossilRecord.resurrect(this.org_to_clone.species);
-                        }
-
-                        if (new_org.isClear(this.mouse_c, this.mouse_r)){
-                            this.env.addOrganism(new_org);
-                            new_org.species.addPop();
-                        }
+                        this.dropOrganism(this.org_to_clone, this.mouse_c, this.mouse_r);
                     }
                     break;
                 case Modes.Drag:
@@ -150,6 +163,29 @@ class EnvironmentController extends CanvasController{
             $('#env-canvas').css('top', new_top+'px');
             $('#env-canvas').css('left', new_left+'px');
         }
+    }
+
+    dropOrganism(organism, col, row) {
+
+        // close the organism and drop it in the world
+        var new_org = new Organism(col, row, this.env, organism);
+
+        if (new_org.isClear(col, row)) {
+            if (this.add_new_species){
+                FossilRecord.addSpeciesObj(new_org.species);
+                new_org.species.start_tick = this.env.total_ticks;
+                this.add_new_species = false;
+                new_org.species.population = 0;
+            }
+            else if (this.org_to_clone.species.extinct){
+                FossilRecord.resurrect(this.org_to_clone.species);
+            }
+
+            this.env.addOrganism(new_org);
+            new_org.species.addPop();
+            return true;
+        }
+        return false;
     }
 
     dropCellType(col, row, state, killBlocking=false) {

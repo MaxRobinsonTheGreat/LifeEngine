@@ -112,6 +112,7 @@ class EditorController extends CanvasController{
     clearDetailsPanel() {
         $('#organism-details').css('display', 'none');
         $('#edit-organism-details').css('display', 'none');
+        $('#randomize-organism-details').css('display', 'none');
     }
 
     refreshDetailsPanel() {
@@ -212,6 +213,11 @@ class EditorController extends CanvasController{
         $('#observation-type-edit').val(name);
         var reaction = this.env.organism.brain.decisions[name];
         $('#reaction-edit').val(reaction);
+    }
+
+    setRandomizePanel() {
+        this.clearDetailsPanel();
+        $('#randomize-organism-details').css('display', 'block');
     }
 }
 

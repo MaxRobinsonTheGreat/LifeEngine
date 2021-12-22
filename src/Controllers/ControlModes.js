@@ -6,7 +6,7 @@ const Modes = {
     Select: 4,
     Edit: 5,
     Clone: 6,
-    Drag: 7
+    Drag: 7,
 }
 
 module.exports = Modes;
