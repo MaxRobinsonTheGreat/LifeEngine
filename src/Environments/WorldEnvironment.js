@@ -75,20 +75,12 @@ class WorldEnvironment extends Environment{
 
     OriginOfLife() {
         var center = this.grid_map.getCenter();
-        switch (WorldConfig.start_state){
-            case 'simple-prod':
-                var org = new Organism(center[0], center[1], this);
-                org.anatomy.addDefaultCell(CellStates.mouth, 0, 0);
-                org.anatomy.addDefaultCell(CellStates.producer, 1, 1);
-                org.anatomy.addDefaultCell(CellStates.producer, -1, -1);
-                this.addOrganism(org);
-                FossilRecord.addSpecies(org, null);
-                break; 
-            case 'random-orgs':
-                break; 
-            case 'no-orgs':
-                break; 
-        }
+        var org = new Organism(center[0], center[1], this);
+        org.anatomy.addDefaultCell(CellStates.mouth, 0, 0);
+        org.anatomy.addDefaultCell(CellStates.producer, 1, 1);
+        org.anatomy.addDefaultCell(CellStates.producer, -1, -1);
+        this.addOrganism(org);
+        FossilRecord.addSpecies(org, null);
     }
 
     addOrganism(organism) {
@@ -146,7 +138,7 @@ class WorldEnvironment extends Environment{
 
     reset(confirm_reset=true, reset_life=true) {
         if (confirm_reset && !confirm('The current environment will be lost. Proceed?'))
-            return;
+            return false;
 
         this.organisms = [];
         this.grid_map.fillGrid(CellStates.empty, !WorldConfig.clear_walls_on_reset);
@@ -156,7 +148,7 @@ class WorldEnvironment extends Environment{
         FossilRecord.clear_record();
         if (reset_life)
             this.OriginOfLife();
-
+        return true;
     }
 
     resizeGridColRow(cell_size, cols, rows) {

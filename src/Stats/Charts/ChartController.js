@@ -45,34 +45,43 @@ class ChartController {
     }
 
     updateData() {
-        var r_len = FossilRecord.tick_record.length;
-        var newest_t = -1;
-        var oldest_t = 0;
-        if (this.data[0].dataPoints.length>0) {
-            newest_t = this.data[0].dataPoints[this.data[0].dataPoints.length-1].x;
-            newest_t = this.data[0].dataPoints[0].x;
+        let record_size = FossilRecord.tick_record.length;
+        let data_points = this.data[0].dataPoints;
+        let newest_t = -1;
+        if (data_points.length>0) {
+            newest_t = this.data[0].dataPoints[data_points.length-1].x;
         }
-        if (newest_t < FossilRecord.tick_record[r_len-1]) {
-            this.addNewest();
+        let to_add = 0;
+        let cur_t = FossilRecord.tick_record[record_size-1];
+        // first count up the number of new datapoints the chart is missing
+        while (cur_t !== newest_t) {
+            to_add++;
+            cur_t = FossilRecord.tick_record[record_size-to_add-1]
         }
-        if (oldest_t < FossilRecord.tick_record[0]) {
+        // then add them in order
+        this.addNewest(to_add)
+
+        // remove oldest datapoints until the chart is the same size as the saved records
+        while (data_points.length > FossilRecord.tick_record.length) {
             this.removeOldest();
         }
     }
 
-    addNewest() {
-        var i = FossilRecord.tick_record.length-1;
-        this.addDataPoint(i);
-    }
-
-    addDataPoint(i) {
-        alert("Must override addDataPoint")
+    addNewest(to_add) {
+        for (let i=to_add; i>0; i--) {
+            let j = FossilRecord.tick_record.length-i;
+            this.addDataPoint(j);
+        }
     }
 
     removeOldest() {
         for (var dps of this.data) {
             dps.dataPoints.shift();
         }
+    }
+
+    addDataPoint(i) {
+        alert("Must override addDataPoint")
     }
 
     clear() {

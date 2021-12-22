@@ -276,3 +276,7 @@ button:active{
     margin-bottom: 0;
     padding-bottom: 0;
 }
+
+#reset-with-editor-org{
+    margin-top: 5px;
+}

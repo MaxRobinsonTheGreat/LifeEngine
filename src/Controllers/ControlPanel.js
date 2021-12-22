@@ -1,6 +1,7 @@
 const Hyperparams = require("../Hyperparameters");
 const Modes = require("./ControlModes");
 const StatsPanel = require("../Stats/StatsPanel");
+const RandomOrganismGenerator = require("../Organism/RandomOrganismGenerator")
 const WorldConfig = require("../WorldConfig");
 
 class ControlPanel {
@@ -13,7 +14,6 @@ class ControlPanel {
         this.defineHyperparameterControls();
         this.defineWorldControls();
         this.defineModeControls();
-        this.defineChallenges();
         this.fps = engine.fps;
         this.organism_record=0;
         this.env_controller = this.engine.env.controller;
@@ -124,17 +124,12 @@ class ControlPanel {
             let text = this.fps >= max_fps ? 'MAX' : this.fps;
             $('#fps').text("Target FPS: "+text);
         }.bind(this);
+
         $('.pause-button').click(function() {
-            $('.pause-button').find("i").toggleClass("fa fa-pause");
-            $('.pause-button').find("i").toggleClass("fa fa-play");
-            this.paused = !this.paused;
-            if (this.engine.running) {
-                this.engine.stop();
-            }
-            else if (!this.engine.running){
-                this.engine.start(this.fps);
-            }
+            // toggle pause
+            this.setPaused(this.engine.running);
         }.bind(this));
+
         $('.headless').click(function() {
             $('.headless').find("i").toggleClass("fa fa-eye");
             $('.headless').find("i").toggleClass("fa fa-eye-slash");
@@ -202,11 +197,15 @@ class ControlPanel {
         });
         $('#clear-walls-reset').change(function() {
             WorldConfig.clear_walls_on_reset = this.checked;
-        })
-
-        $('#start-state').change ( function() {
-            WorldConfig.start_state = $("#start-state").val();
-        }.bind(this));
+        });
+        $('#reset-with-editor-org').click( () => {
+            let env = this.engine.env;
+            if (!env.reset(true, false)) return;
+            let center = env.grid_map.getCenter();
+            let org = this.editor_controller.env.getCopyOfOrg();
+            this.env_controller.add_new_species = true;
+            this.env_controller.dropOrganism(org, center[0], center[1])
+        });
     }
 
     defineHyperparameterControls() {
@@ -230,7 +229,6 @@ class ControlPanel {
             Hyperparams.foodDropProb = $('#food-drop-rate').val();
         });
         $('#extra-mover-cost').change(function() {
-            console.log(parseInt($('#extra-mover-cost').val()))
             Hyperparams.extraMoverFoodCost = parseInt($('#extra-mover-cost').val());
         });
 
@@ -359,7 +357,6 @@ class ControlPanel {
             $('.edit-mode-btn').removeClass('selected');
             $('.'+this.id).addClass('selected');
         });
-
         $('.reset-view').click( function(){
             this.env_controller.resetView();
         }.bind(this));
@@ -382,7 +379,14 @@ class ControlPanel {
         $('#clear-editor').click( function() {
             this.engine.organism_editor.clear();
             this.editor_controller.setEditorPanel();
-        }.bind(this))
+        }.bind(this));
+        $('#generate-random').click( function() {
+            this.engine.organism_editor.createRandom();
+            this.editor_controller.refreshDetailsPanel();
+        }.bind(this));
+        $('.reset-random').click( function() {
+            this.engine.organism_editor.resetWithRandomOrgs(this.engine.env);
+        }.bind(this));
 
         window.onbeforeunload = function (e) {
             e = e || window.event;
@@ -394,11 +398,22 @@ class ControlPanel {
         };
     }
 
-    defineChallenges() {
-        $('.challenge-btn').click(function() {
-            $('#challenge-title').text($(this).text());
-            $('#challenge-description').text($(this).val());
-        });
+    setPaused(paused) {
+
+        if (paused) {
+
+            $('.pause-button').find("i").removeClass("fa-pause");
+            $('.pause-button').find("i").addClass("fa-play");
+            if (this.engine.running) 
+                this.engine.stop();
+        }
+        else if (!paused) {
+            
+            $('.pause-button').find("i").addClass("fa-pause");
+            $('.pause-button').find("i").removeClass("fa-play");
+            if (!this.engine.running)
+                this.engine.start(this.fps);
+        }
     }
 
     setMode(mode) {
@@ -429,7 +444,7 @@ class ControlPanel {
     }
 
     updateHeadlessIcon(delta_time) {
-        if (this.paused)
+        if (!this.engine.running)
             return;
         const min_opacity = 0.4;
         var op = this.headless_opacity + (this.opacity_change_rate*delta_time/1000);

@@ -236,7 +236,7 @@ class Organism {
         return cell != null && (cell.state == CellStates.empty || cell.owner == this || cell.owner == parent || cell.state == CellStates.food);
     }
 
-    isClear(col, row, rotation=this.rotation, ignore_armor=false) {
+    isClear(col, row, rotation=this.rotation) {
         for(var loccell of this.anatomy.cells) {
             var cell = this.getRealCell(loccell, col, row, rotation);
             if (cell==null) {
