@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.2 (current development)
+## 1.0.2 (12/21/2021)
 
 ### UI Enhancements:
 - New tab "World Controls"
