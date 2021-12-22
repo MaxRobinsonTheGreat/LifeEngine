@@ -444,7 +444,7 @@ class ControlPanel {
     }
 
     updateHeadlessIcon(delta_time) {
-        if (this.engine.running)
+        if (!this.engine.running)
             return;
         const min_opacity = 0.4;
         var op = this.headless_opacity + (this.opacity_change_rate*delta_time/1000);
