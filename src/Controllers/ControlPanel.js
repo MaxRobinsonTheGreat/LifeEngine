@@ -206,6 +206,37 @@ class ControlPanel {
             this.env_controller.add_new_species = true;
             this.env_controller.dropOrganism(org, center[0], center[1])
         });
+        $('#apply-color-scheme').click(function() {
+            this.engine.colorscheme.applyColorScheme();
+        }.bind(this));
+        $('#reset-color-scheme').click(function() {
+            this.engine.colorscheme.resetColorScheme();
+        }.bind(this));
+        $('#save-color-scheme').click(() => {
+            let data = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.engine.colorscheme.color_scheme));
+            let downloadEl = document.getElementById('download-csh');
+            downloadEl.setAttribute("href", data);
+            downloadEl.setAttribute("download", "color-scheme.json");
+            downloadEl.click();
+        });
+        $('#load-color-scheme').click(() => {
+            $('#upload-csh').click();
+        });
+        $('#upload-csh').change((e)=>{
+            let files = e.target.files;
+            if (!files.length) {return;};
+            let reader = new FileReader();
+            reader.onload = (e) => {
+                let result=JSON.parse(e.target.result);
+                for (let key in result) {
+                    this.engine.colorscheme.color_scheme[key] = result[key];
+                }
+                this.engine.colorscheme.loadColorScheme();
+                // have to clear the value so change() will be triggered if the same file is uploaded again
+                $('#upload-csh')[0].value = '';
+            };
+            reader.readAsText(files[0]);
+        });
     }
 
     defineHyperparameterControls() {
