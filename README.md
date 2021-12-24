@@ -1,6 +1,7 @@
 # The Life Engine
 
 This is a fork of [The Life Engine](https://github.com/MaxRobinsonTheGreat/LifeEngine), in which i add features because i can. > :<zero-width space>)
+
 In contrast to Max's goal of having the simulator being incredibly simple and intuitive, I have a goal of making it realistic, but still relatively intuitive.
 
 ## TODO
