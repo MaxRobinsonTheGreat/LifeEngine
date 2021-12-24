@@ -1,13 +1,13 @@
-const MouthCell = require( "./MouthCell" ),
-      ProducerCell = require( "./ProducerCell" ),
-      MoverCell = require( "./MoverCell" ),
-      KillerCell = require( "./KillerCell" ),
-      ArmorCell = require( "./ArmorCell" ),
-      EyeCell = require( "./EyeCell" ),
-      CellStates = require( "../CellStates" );
+import { MouthCell } from "./MouthCell.js"; 
+import { ProducerCell } from "./ProducerCell.js"; 
+import { MoverCell } from "./MoverCell.js"; 
+import { KillerCell } from "./KillerCell.js"; 
+import { ArmorCell } from "./ArmorCell.js"; 
+// import { EyeCell } from "./NYI-EyeCell"; 
+import { CellStates } from "./CellStates.js"; 
 
 
-const BodyCellFactory = {
+export const BodyCellFactory = {
   init: function() {
     var type_map = {};
 
@@ -16,7 +16,6 @@ const BodyCellFactory = {
     type_map[ CellStates.mover.name ] = MoverCell;
     type_map[ CellStates.killer.name ] = KillerCell;
     type_map[ CellStates.armor.name ] = ArmorCell;
-    type_map[ CellStates.eye.name ] = EyeCell;
     this.type_map = type_map;
   },
 
@@ -28,14 +27,14 @@ const BodyCellFactory = {
   },
 
   createRandom: function( org, state, loc_col, loc_row ) {
-    var cell = new this.type_map[ state.name ]( org, loc_col, loc_row );
+    var cell = new ( this.type_map[ state.name ] )( org, loc_col, loc_row );
 
     cell.initRandom();
     return cell;
   },
 
   createDefault: function( org, state, loc_col, loc_row ) {
-    var cell = new this.type_map[ state.name ]( org, loc_col, loc_row );
+    var cell = new ( this.type_map[ state.name ] )( org, loc_col, loc_row );
 
     cell.initDefault();
     return cell;
@@ -43,5 +42,3 @@ const BodyCellFactory = {
 };
 
 BodyCellFactory.init();
-
-module.exports = BodyCellFactory;

@@ -1,10 +1,10 @@
-const CanvasController = require( "./CanvasController" ),
-      Modes = require( "./ControlModes" ),
-      CellStates = require( "../Organism/Cell/CellStates" ),
-      Directions = require( "../Organism/Directions" ),
-      Hyperparams = require( "../Hyperparameters" );
+import { CanvasController } from "./CanvasController";
+import { Modes } from "./ControlModes";
+import { CellStates } from "../Organism/Cell/CellStates"; 
+import { Hyperparams } from "../Hyperparameters" ;
+import $ from "jquery";
 
-class EditorController extends CanvasController{
+export class EditorController extends CanvasController{
   constructor( env, canvas ) {
     super( env, canvas );
     this.mode = Modes.None;
@@ -34,14 +34,14 @@ class EditorController extends CanvasController{
     if ( this.edit_cell_type == null || this.mode != Modes.Edit )
       return;
     if ( this.left_click )
-      if ( this.edit_cell_type == CellStates.eye && this.cur_cell.state == CellStates.eye ) {
-        var loc_cell = this.getCurLocalCell();
+    // if ( this.edit_cell_type == CellStates.eye && this.cur_cell.state == CellStates.eye ) {
+    //   var loc_cell = this.getCurLocalCell();
 
-        loc_cell.direction = Directions.rotateRight( loc_cell.direction );
-        this.env.renderFull();
-      }
-      else
-        this.env.addCellToOrg( this.mouse_c, this.mouse_r, this.edit_cell_type );
+      //   loc_cell.direction = Directions.rotateRight( loc_cell.direction );
+      //   this.env.renderFull();
+      // }
+      // else
+      this.env.addCellToOrg( this.mouse_c, this.mouse_r, this.edit_cell_type );
         
     else if ( this.right_click )
       this.env.removeCellFromOrg( this.mouse_c, this.mouse_r );
@@ -76,9 +76,9 @@ class EditorController extends CanvasController{
       case "armor":
         self.edit_cell_type = CellStates.armor;
         break;
-      case "eye":
-        self.edit_cell_type = CellStates.eye;
-        break;
+      // case "eye":
+      //   self.edit_cell_type = CellStates.eye;
+      //   break;
       }
       $( ".cell-type" ).css( "border-color", "black" );
       var selected = "#" + this.id + ".cell-type";
@@ -229,5 +229,3 @@ class EditorController extends CanvasController{
     $( "#randomize-organism-details" ).css( "display", "block" );
   }
 }
-
-module.exports = EditorController;

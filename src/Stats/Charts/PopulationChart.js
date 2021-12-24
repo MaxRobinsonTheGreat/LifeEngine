@@ -1,7 +1,7 @@
-const FossilRecord = require( "../FossilRecord" ),
-      ChartController = require( "./ChartController" );
+import { FossilRecord } from "../FossilRecord";
+import { ChartController } from "./ChartController";
 
-class PopulationChart extends ChartController {
+export class PopulationChart extends ChartController {
   constructor() {
     super( "Population" );
   }
@@ -27,5 +27,3 @@ class PopulationChart extends ChartController {
     this.data[ 0 ].dataPoints.push( { x:t, y:p } );
   }
 }
-
-module.exports = PopulationChart;

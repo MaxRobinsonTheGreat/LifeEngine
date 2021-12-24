@@ -4,7 +4,7 @@
  *
  * @class Cell
  */
-class Cell{
+export class Cell{
   constructor( state, col, row, x, y ){
     this.owner = null; // owner organism
     this.cell_owner = null; // specific body cell of the owner organism that occupies this grid cell
@@ -19,5 +19,3 @@ class Cell{
     this.state = state;
   }
 }
-
-module.exports = Cell;

@@ -1,6 +1,6 @@
-const CellStates = require( "../CellStates" ),
-      BodyCell = require( "./BodyCell" ),
-      Hyperparams = require( "../../../Hyperparameters" );
+import { CellStates } from "./CellStates.js";
+import { BodyCell } from "./BodyCell.js";
+import { Hyperparams } from "../../Hyperparameters";
 
 /**
  *
@@ -8,7 +8,7 @@ const CellStates = require( "../CellStates" ),
  * @class KillerCell
  * @extends {BodyCell}
  */
-class KillerCell extends BodyCell{
+export class KillerCell extends BodyCell {
   constructor( org, loc_col, loc_row ){
     super( CellStates.killer, org, loc_col, loc_row );
   }
@@ -37,5 +37,3 @@ class KillerCell extends BodyCell{
         
   }
 }
-
-module.exports = KillerCell;

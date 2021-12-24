@@ -1,6 +1,6 @@
-const Hyperparams = require( "../../../Hyperparameters" ),
-      Directions = require( "../../Directions" ),
-      CellStates = require( "../CellStates" );
+const Hyperparams } from "../../../Hyperparameters" ),
+      Directions } from "../../Directions" ),
+      CellStates } from "../CellStates" );
 
 const Decision = {
   neutral: 0,
@@ -34,7 +34,7 @@ class Brain {
     this.decisions[ CellStates.mover.name ] = Decision.neutral;
     this.decisions[ CellStates.killer.name ] = Decision.retreat;
     this.decisions[ CellStates.armor.name ] = Decision.neutral;
-    this.decisions[ CellStates.eye.name ] = Decision.neutral;
+    // this.decisions[ CellStates.eye.name ] = Decision.neutral;
   }
 
   randomizeDecisions( randomize_all = false ) {
@@ -47,7 +47,7 @@ class Brain {
     this.decisions[ CellStates.producer.name ] = Decision.getRandom();
     this.decisions[ CellStates.mover.name ] = Decision.getRandom();
     this.decisions[ CellStates.armor.name ] = Decision.getRandom();
-    this.decisions[ CellStates.eye.name ] = Decision.getRandom();
+    // this.decisions[ CellStates.eye.name ] = Decision.getRandom();
   }
 
   observe( observation ) {
@@ -84,7 +84,7 @@ class Brain {
   }
 
   mutate() {
-    this.decisions[ CellStates.getRandomName() ] = Decision.getRandom();
+    this.decisions[ CellStates.randomName ] = Decision.getRandom();
     this.decisions[ CellStates.empty.name ] = Decision.neutral; // if the empty cell has a decision it gets weird
   }
 }

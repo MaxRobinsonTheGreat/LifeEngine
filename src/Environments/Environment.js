@@ -1,5 +1,5 @@
 /** An evironment has a grid_map, controller, and renderer */
-class Environment{
+export class Environment{
   constructor() {
   }
 
@@ -12,6 +12,3 @@ class Environment{
     this.grid_map.setCellOwner( c, r, owner );
   }
 }
-
-
-module.exports = Environment;

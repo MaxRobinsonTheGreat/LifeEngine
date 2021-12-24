@@ -1,6 +1,6 @@
-const Neighbors = require( "./Grid/Neighbors" );
+import { Neighbors } from "./Grid/Neighbors";
 
-const Hyperparams = {
+export const Hyperparams = {
   setDefaults: function() {
     this.lifespanMultiplier = 100;
     this.foodProdProb = 5;
@@ -36,5 +36,3 @@ const Hyperparams = {
 };
 
 Hyperparams.setDefaults();
-
-module.exports = Hyperparams;

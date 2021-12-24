@@ -1,7 +1,7 @@
-const CellStates = require( "./Cell/CellStates" ),
-      BodyCellFactory = require( "./Cell/BodyCells/BodyCellFactory" );
+import { CellStates } from "./Cell/CellStates" ;
+import { BodyCellFactory } from "./Cell/BodyCellFactory" ;
 
-class Anatomy {
+export class Anatomy {
   constructor( owner ) {
     this.owner = owner;
     this.cells = [];
@@ -28,8 +28,8 @@ class Anatomy {
   }
 
   addRandomizedCell( state, c, r ) {
-    if ( state == CellStates.eye && !this.has_eyes ) 
-      this.owner.brain.randomizeDecisions();
+    // if ( state == CellStates.eye && !this.has_eyes ) 
+    //   this.owner.brain.randomizeDecisions();
         
     var new_cell = BodyCellFactory.createRandom( this.owner, state, c, r );
 
@@ -87,8 +87,8 @@ class Anatomy {
         this.is_producer = true;
       if ( cell.state == CellStates.mover )
         this.is_mover = true;
-      if ( cell.state == CellStates.eye )
-        this.has_eyes = true;
+      // if ( cell.state == CellStates.eye )
+      //   this.has_eyes = true;
     }
   }
 
@@ -113,5 +113,3 @@ class Anatomy {
     return neighbors;
   }
 }
-
-module.exports = Anatomy;

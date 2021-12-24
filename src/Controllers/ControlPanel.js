@@ -1,10 +1,10 @@
-const Hyperparams = require( "../Hyperparameters" ),
-      Modes = require( "./ControlModes" ),
-      StatsPanel = require( "../Stats/StatsPanel" ),
-      RandomOrganismGenerator = require( "../Organism/RandomOrganismGenerator" ),
-      WorldConfig = require( "../WorldConfig" );
+import { Hyperparams } from "../Hyperparameters"; 
+import { Modes } from "./ControlModes"; 
+import { StatsPanel } from "../Stats/StatsPanel"; 
+import { WorldConfig } from "../WorldConfig"; 
+import $ from "jquery";
 
-class ControlPanel {
+export class ControlPanel {
   constructor( engine ) {
     this.engine = engine;
     this.defineMinMaxControls();
@@ -487,6 +487,3 @@ class ControlPanel {
   }
 
 }
-
-
-module.exports = ControlPanel;

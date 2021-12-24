@@ -26,6 +26,6 @@
   },
   "dependencies": {
     "animejs": "^3.2.1",
-    "pixi.js": "^5.0.0-rc"
+    "jquery": "^3.6.0"
   }
 }

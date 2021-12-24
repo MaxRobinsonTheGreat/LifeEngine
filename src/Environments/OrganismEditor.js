@@ -1,13 +1,14 @@
-const Environment = require( "./Environment" ),
-      Organism = require( "../Organism/Organism" ),
-      GridMap = require( "../Grid/GridMap" ),
-      Renderer = require( "../Rendering/Renderer" ),
-      CellStates = require( "../Organism/Cell/CellStates" ),
-      EditorController = require( "../Controllers/EditorController" ),
-      Species = require( "../Stats/Species" ),
-      RandomOrganismGenerator = require( "../Organism/RandomOrganismGenerator" );
+import { Environment } from "./Environment";
+import { Organism } from "../Organism/Organism";
+import { GridMap } from "../Grid/GridMap";
+import { Renderer } from "../Rendering/Renderer";
+import { CellStates } from "../Organism/Cell/CellStates";
+import { EditorController } from "../Controllers/EditorController";
+import { Species } from "../Stats/Species";
+import { RandomOrganismGenerator } from "../Organism/RandomOrganismGenerator";
+import $ from "jquery";
 
-class OrganismEditor extends Environment{
+export class OrganismEditor extends Environment{
   constructor() {
     super();
     this.is_active = true;
@@ -125,5 +126,3 @@ class OrganismEditor extends Environment{
     }
   }
 }
-
-module.exports = OrganismEditor;

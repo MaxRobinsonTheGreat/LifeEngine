@@ -1,7 +1,7 @@
-const CellStates = require( "../Organism/Cell/CellStates" ),
-      Species = require( "./Species" );
+import { CellStates } from "../Organism/Cell/CellStates"; 
+import { Species } from "./Species" ;
 
-const FossilRecord = {
+export const FossilRecord = {
   init: function(){
     this.extant_species = [];
     this.extinct_species = [];
@@ -137,5 +137,3 @@ const FossilRecord = {
 };
 
 FossilRecord.init();
-
-module.exports = FossilRecord;

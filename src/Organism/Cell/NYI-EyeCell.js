@@ -1,9 +1,12 @@
-const CellStates = require( "../CellStates" ),
-      BodyCell = require( "./BodyCell" ),
-      Hyperparams = require( "../../../Hyperparameters" ),
-      Directions = require( "../../Directions" ),
-      Observation = require( "../Perception/Observation" );
+// const CellStates } from "../CellStates" ),
+//       BodyCell } from "./BodyCell" ),
+//       Hyperparams } from "../../../Hyperparameters" ),
+//       Directions } from "../../Directions" ),
+//       Observation } from "../Perception/Observation" );
 
+import { CellStates } from "./CellStates.js";
+import { BodyCell } from "./BodyCell.js";
+import { Hyperparams } from "../../Hyperparameters";
 /**
  *
  *
@@ -88,5 +91,3 @@ class EyeCell extends BodyCell{
     return new Observation( cell, Hyperparams.lookRange, direction );
   }
 }
-
-module.exports = EyeCell;

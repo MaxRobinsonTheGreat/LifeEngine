@@ -1,12 +1,12 @@
-const CellStates = require( "./Cell/CellStates" ),
-      Neighbors = require( "../Grid/Neighbors" ),
-      Hyperparams = require( "../Hyperparameters" ),
-      Directions = require( "./Directions" ),
-      Anatomy = require( "./Anatomy" ),
-      Brain = require( "./Cell/Perception/Brain" ),
-      FossilRecord = require( "../Stats/FossilRecord" );
+import { CellStates } from "./Cell/CellStates"; 
+import { Neighbors } from "../Grid/Neighbors"; 
+import { Hyperparams } from "../Hyperparameters"; 
+import { Directions } from "./Directions";
+import { Anatomy } from "./Anatomy"; 
+// Brain } from "./Cell/Perception/Brain" ),
+import { FossilRecord } from "../Stats/FossilRecord";
 
-class Organism {
+export class Organism {
   constructor( col, row, env, parent = null ) {
     this.c = col;
     this.r = row;
@@ -23,7 +23,7 @@ class Organism {
     this.ignore_brain_for = 0;
     this.mutability = 5;
     this.damage = 0;
-    this.brain = new Brain( this );
+    // this.brain = new Brain( this );
     if ( parent != null ) 
       this.inherit( parent );
         
@@ -38,9 +38,9 @@ class Organism {
     // deep copy parent cells
       this.anatomy.addInheritCell( c );
         
-    if ( parent.anatomy.is_mover ) 
-      for ( var i in parent.brain.decisions ) 
-        this.brain.decisions[ i ] = parent.brain.decisions[ i ];
+    // if ( parent.anatomy.is_mover ) 
+    //   for ( var i in parent.brain.decisions ) 
+    //     this.brain.decisions[ i ] = parent.brain.decisions[ i ];
             
         
   }
@@ -86,9 +86,9 @@ class Organism {
     if ( Math.random() * 100 <= prob ) 
       if ( org.anatomy.is_mover && Math.random() * 100 <= 10 ) { 
         if ( org.anatomy.has_eyes ) 
-          org.brain.mutate();
+        // org.brain.mutate();
                 
-        org.move_range += Math.floor( Math.random() * 4 ) - 2;
+          org.move_range += Math.floor( Math.random() * 4 ) - 2;
         if ( org.move_range <= 0 )
           org.move_range = 1;
                 
@@ -129,7 +129,7 @@ class Organism {
 
     if ( this.calcRandomChance( Hyperparams.addProb ) ) {
       let branch = this.anatomy.getRandomCell(),
-          state = CellStates.getRandomLivingType(), // branch.state;
+          state = CellStates.randomLivingType, // branch.state;
           growth_direction = Neighbors.all[ Math.floor( Math.random() * Neighbors.all.length ) ],
           c = branch.loc_col + growth_direction[ 0 ],
           r = branch.loc_row + growth_direction[ 1 ];
@@ -141,7 +141,7 @@ class Organism {
     }
     if ( this.calcRandomChance( Hyperparams.changeProb ) ){
       let cell = this.anatomy.getRandomCell(),
-          state = CellStates.getRandomLivingType();
+          state = CellStates.randomLivingType;
 
       this.anatomy.replaceCell( state, cell.loc_col, cell.loc_row );
       mutated = true;
@@ -231,13 +231,13 @@ class Organism {
     }
     else {
       if ( c1 > c2 ){
-        var temp = c2;
+        temp = c2;
 
         c2 = c1;
         c1 = temp;
       }
-      for ( var i = c1; i != c2; i++ ) {
-        var cell = this.env.grid_map.cellAt( i, r1 );
+      for ( i = c1; i != c2; i++ ) {
+        cell = this.env.grid_map.cellAt( i, r1 );
 
         if ( !this.isPassableCell( cell, parent ) )
           return false;
@@ -310,24 +310,24 @@ class Organism {
         
     if ( this.anatomy.is_mover ) {
       this.move_count++;
-      var changed_dir = false;
+      var changed_dir = false,
 
-      if ( this.ignore_brain_for == 0 )
-        changed_dir = this.brain.decide();
+        // if ( this.ignore_brain_for == 0 )
+        //   changed_dir = this.brain.decide();
               
-      else 
-        this.ignore_brain_for--;
+        // else 
+        //   this.ignore_brain_for--;
             
-      var moved = this.attemptMove();
+          moved = this.attemptMove();
 
       if ( ( this.move_count > this.move_range && !changed_dir ) || !moved ){
         var rotated = this.attemptRotate();
 
-        if ( !rotated ) {
+        if ( !rotated ) 
           this.changeDirection( Directions.getRandomDirection() );
-          if ( changed_dir )
-            this.ignore_brain_for = this.move_range + 1;
-        }
+          // if ( changed_dir )
+          //   this.ignore_brain_for = this.move_range + 1;
+        
       }
     }
 
@@ -342,5 +342,3 @@ class Organism {
   }
 
 }
-
-module.exports = Organism;

@@ -1,23 +1,11 @@
-const CellStates = require( "./CellStates" ),
-      Directions = require( "../Directions" );
-
+import { Directions } from "../Directions.js";
 /**
  * A cell defines the relative location of the cell in it's parent organism. It also defines their functional behavior.
  *
- * @class BodyCell
+ * @class BaseCell
  */
-class BodyCell{
-  constructor( state, org, loc_col, loc_row ){
-    this.state = state;
-    this.org = org;
-    this.loc_col = loc_col;
-    this.loc_row = loc_row;
-
-    var distance = Math.max( Math.abs( loc_row ) * 2 + 2, Math.abs( loc_col ) * 2 + 2 );
-
-    if ( this.org.anatomy.birth_distance < distance ) 
-      this.org.anatomy.birth_distance = distance;
-        
+export class BaseCell {
+  constructor(){
   }
 
   initInherit( parent ) {
@@ -34,7 +22,7 @@ class BodyCell{
     // initialize to default values 
   }
 
-  performFunction( env ) {
+  performFunction() {
     // default behavior: none
   }
 
@@ -80,5 +68,3 @@ class BodyCell{
     }
   }
 }
-
-module.exports = BodyCell;

@@ -1,6 +1,7 @@
-const CellStates = require( "../Organism/Cell/CellStates" );
+import { CellStates } from "../Organism/Cell/CellStates";
+import { FossilRecord } from "./FossilRecord";
 
-class Species {
+export class Species {
   constructor( anatomy, ancestor, start_tick ) {
     this.anatomy = anatomy;
     // this.ancestor = ancestor; // garbage collect ancestors to avoid memory problems
@@ -34,7 +35,6 @@ class Species {
     this.population--;
     if ( this.population <= 0 ) {
       this.extinct = true;
-      const FossilRecord = require( "./FossilRecord" );
 
       FossilRecord.fossilize( this );
     }
@@ -44,5 +44,3 @@ class Species {
     return this.end_tick - this.start_tick;
   }
 }
-
-module.exports = Species;

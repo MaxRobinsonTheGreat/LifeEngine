@@ -1,9 +1,11 @@
-// const CellTypes = require("../Organism/Cell/CellTypes");
-const CellStates = require( "../Organism/Cell/CellStates" ),
-      Directions = require( "../Organism/Directions" );
+import $ from "jquery";
 
-// Renderer controls access to a canvas. There is one renderer for each canvas
-class Renderer {
+/**
+ * Renderer controls access to a canvas. There is one renderer for each canvas
+ *
+ * @class Renderer
+ */
+export class Renderer {
   constructor( canvas_id, container_id, cell_size ) {
     this.cell_size = cell_size;
     this.canvas = document.getElementById( canvas_id );
@@ -106,5 +108,3 @@ class Renderer {
         
   }
 }
-
-module.exports = Renderer;

@@ -1,14 +1,13 @@
-const CellStates = require( "../CellStates" ),
-      BodyCell = require( "./BodyCell" ),
-      Hyperparams = require( "../../../Hyperparameters" );
-
+import { CellStates } from "./CellStates.js";
+import { BodyCell } from "./BodyCell.js";
+import { Hyperparams } from "../../Hyperparameters";
 /**
  *
  *
  * @class MouthCell
  * @extends {BodyCell}
  */
-class MouthCell extends BodyCell{
+export class MouthCell extends BodyCell {
   constructor( org, loc_col, loc_row ){
     super( CellStates.mouth, org, loc_col, loc_row );
   }
@@ -34,5 +33,3 @@ class MouthCell extends BodyCell{
     }
   }
 }
-
-module.exports = MouthCell;

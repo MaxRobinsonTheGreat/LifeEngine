@@ -1,9 +1,10 @@
-const CellStates = require( "./Cell/CellStates" ),
-      Organism = require( "./Organism" ),
-      Brain = require( "./Cell/Perception/Brain" );
+import { CellStates  } from "./Cell/CellStates"; 
+import { Organism } from "./Organism" ;
+// Brain } from "./Cell/Perception/Brain" );
 
-class RandomOrganismGenerator {
-
+export class RandomOrganismGenerator {
+  static organismLayers = 4;
+  static cellSpawnChance = 0.75;
   static generate( env ) {
 
     var center = env.grid_map.getCenter(),
@@ -46,7 +47,7 @@ class RandomOrganismGenerator {
     }
 
     // randomize the organism's brain
-    organism.brain.randomizeDecisions( true );
+    // organism.brain.randomizeDecisions( true );
 
     return organism;
   }
@@ -56,15 +57,10 @@ class RandomOrganismGenerator {
     var neighbors = organism.anatomy.getNeighborsOfCell( x, y );
 
     if ( neighbors.length && Math.random() < spawnChance ) {
-      organism.anatomy.addRandomizedCell( CellStates.getRandomLivingType(), x, y );
+      organism.anatomy.addRandomizedCell( CellStates.randomLivingType, x, y );
       return true;
     }
     return false;
   }
 
 }
-
-RandomOrganismGenerator.organismLayers = 4;
-RandomOrganismGenerator.cellSpawnChance = 0.75;
-
-module.exports = RandomOrganismGenerator;

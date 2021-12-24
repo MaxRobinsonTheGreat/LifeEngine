@@ -1,14 +1,14 @@
-const Environment = require( "./Environment" ),
-      Renderer = require( "../Rendering/Renderer" ),
-      GridMap = require( "../Grid/GridMap" ),
-      Organism = require( "../Organism/Organism" ),
-      CellStates = require( "../Organism/Cell/CellStates" ),
-      EnvironmentController = require( "../Controllers/EnvironmentController" ),
-      Hyperparams = require( "../Hyperparameters.js" ),
-      FossilRecord = require( "../Stats/FossilRecord" ),
-      WorldConfig = require( "../WorldConfig" );
-
-class WorldEnvironment extends Environment{
+import { Environment } from "./Environment";
+import { Renderer }  from "../Rendering/Renderer"; 
+import { GridMap } from "../Grid/GridMap"; 
+import { Organism } from "../Organism/Organism"; 
+import { CellStates } from "../Organism/Cell/CellStates"; 
+import { EnvironmentController } from "../Controllers/EnvironmentController"; 
+import { Hyperparams } from "../Hyperparameters.js"; 
+import { FossilRecord } from "../Stats/FossilRecord"; 
+import { WorldConfig } from "../WorldConfig"; 
+import $ from "jquery";
+export class WorldEnvironment extends Environment{
   constructor( cell_size ) {
     super();
     this.renderer = new Renderer( "env-canvas", "env", cell_size );
@@ -171,5 +171,3 @@ class WorldEnvironment extends Environment{
     this.grid_map.resize( this.num_cols, this.num_rows, cell_size );
   }
 }
-
-module.exports = WorldEnvironment;

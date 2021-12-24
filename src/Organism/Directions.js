@@ -1,4 +1,4 @@
-const Directions = {
+export const Directions = {
   up:0,
   right:1,
   down:2,
@@ -30,5 +30,3 @@ const Directions = {
     return dir;
   }
 };
-
-module.exports = Directions;

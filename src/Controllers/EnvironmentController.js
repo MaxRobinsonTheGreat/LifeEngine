@@ -1,13 +1,14 @@
-const CanvasController = require( "./CanvasController" ),
-      Organism = require( "../Organism/Organism" ),
-      Modes = require( "./ControlModes" ),
-      CellStates = require( "../Organism/Cell/CellStates" ),
-      Neighbors = require( "../Grid/Neighbors" ),
-      FossilRecord = require( "../Stats/FossilRecord" ),
-      WorldConfig = require( "../WorldConfig" ),
-      Perlin = require( "../Utils/Perlin" );
+import { CanvasController } from "./CanvasController"; 
+import { Organism } from "../Organism/Organism"; 
+import { Modes } from "./ControlModes"; 
+import { CellStates } from "../Organism/Cell/CellStates"; 
+import { Neighbors } from "../Grid/Neighbors"; 
+import { FossilRecord } from "../Stats/FossilRecord"; 
+import { WorldConfig } from "../WorldConfig"; 
+import { Perlin } from "../Utils/Perlin";
+import $ from "jquery";
 
-class EnvironmentController extends CanvasController{
+export class EnvironmentController extends CanvasController{
   constructor( env, canvas ) {
     super( env, canvas );
     this.mode = Modes.FoodDrop;
@@ -60,8 +61,8 @@ class EnvironmentController extends CanvasController{
     this.env.clearWalls();
     const noise_threshold = -0.017;
 
-    let avg_noise = 0,
-        resolution = 20;
+    // let avg_noise = 0,
+    let resolution = 20;
 
     Perlin.seed();
 
@@ -71,7 +72,7 @@ class EnvironmentController extends CanvasController{
             yval = r / this.env.num_rows * ( resolution / this.env.renderer.cell_size * ( this.env.num_rows / this.env.num_cols ) ),
             noise = Perlin.get( xval, yval );
 
-        avg_noise += noise / ( this.env.num_rows * this.env.num_cols );
+        // avg_noise += noise / ( this.env.num_rows * this.env.num_cols );
         if ( noise > noise_threshold && noise < noise_threshold + thickness / resolution ) {
           let cell = this.env.grid_map.cellAt( c, r );
 
@@ -152,10 +153,10 @@ class EnvironmentController extends CanvasController{
                     
         break;
       case Modes.Drag:
-        var cur_top = parseInt( $( "#env-canvas" ).css( "top" ), 10 );
-        var cur_left = parseInt( $( "#env-canvas" ).css( "left" ), 10 );
-        var new_top = cur_top + ( ( this.mouse_y - this.start_y ) * this.scale );
-        var new_left = cur_left + ( ( this.mouse_x - this.start_x ) * this.scale );
+        var cur_top = parseInt( $( "#env-canvas" ).css( "top" ), 10 ),
+            cur_left = parseInt( $( "#env-canvas" ).css( "left" ), 10 ),
+            new_top = cur_top + ( ( this.mouse_y - this.start_y ) * this.scale ),
+            new_left = cur_left + ( ( this.mouse_x - this.start_x ) * this.scale );
 
         $( "#env-canvas" ).css( "top", new_top + "px" );
         $( "#env-canvas" ).css( "left", new_left + "px" );
@@ -240,5 +241,3 @@ class EnvironmentController extends CanvasController{
 
 
 }
-
-module.exports = EnvironmentController;

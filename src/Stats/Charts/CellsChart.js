@@ -1,8 +1,8 @@
-const CellStates = require( "../../Organism/Cell/CellStates" ),
-      FossilRecord = require( "../FossilRecord" ),
-      ChartController = require( "./ChartController" );
+import { CellStates } from "../../Organism/Cell/CellStates"; 
+import { FossilRecord } from "../FossilRecord"; 
+import { ChartController } from "./ChartController" ;
 
-class CellsChart extends ChartController {
+export class CellsChart extends ChartController {
   constructor() {
     super( "Organism Size / Composition", 
       "Avg. Number of Cells per Organism",
@@ -52,5 +52,3 @@ class CellsChart extends ChartController {
     }
   }
 }
-
-module.exports = CellsChart;

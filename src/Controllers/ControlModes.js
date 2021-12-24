@@ -1,4 +1,4 @@
-const Modes = {
+export const Modes = {
   None: 0,
   FoodDrop: 1,
   WallDrop: 2,
@@ -8,5 +8,3 @@ const Modes = {
   Clone: 6,
   Drag: 7,
 };
-
-module.exports = Modes;

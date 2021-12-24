@@ -1,6 +1,7 @@
-const FossilRecord = require( "../FossilRecord" );
+import { FossilRecord } from "../FossilRecord"; 
+import $ from "jquery";
 
-class ChartController {
+export class ChartController {
   constructor( title, y_axis = "", note = "" ) {
     this.data = [];
     this.chart = new CanvasJS.Chart( "chartContainer", {
@@ -82,7 +83,7 @@ class ChartController {
         
   }
 
-  addDataPoint( i ) {
+  addDataPoint() {
     alert( "Must override addDataPoint" );
   }
 
@@ -91,5 +92,3 @@ class ChartController {
     this.chart.render();
   }
 }
-
-module.exports = ChartController;

@@ -1,7 +1,7 @@
-const Cell = require( "../Organism/Cell/GridCell" ),
-      CellStates = require( "../Organism/Cell/CellStates" );
+import { Cell } from "../Organism/Cell/GridCell";
+import { CellStates } from "../Organism/Cell/CellStates";
 
-class GridMap {
+export class GridMap {
   constructor( cols, rows, cell_size ) {
     this.resize( cols, rows, cell_size );
   }
@@ -82,5 +82,3 @@ class GridMap {
     return [ c, r ];
   }
 }
-
-module.exports = GridMap;

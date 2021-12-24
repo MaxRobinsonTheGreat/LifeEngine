@@ -1,13 +1,14 @@
-const PopulationChart = require( "./Charts/PopulationChart" ),
-      SpeciesChart = require( "./Charts/SpeciesChart" ),
-      MutationChart = require( "./Charts/MutationChart" ),
-      CellsChart = require( "./Charts/CellsChart" ),
-      FossilRecord = require( "./FossilRecord" );
+import { PopulationChart } from "./Charts/PopulationChart";
+import { SpeciesChart } from "./Charts/SpeciesChart";
+import { MutationChart } from "./Charts/MutationChart";
+import { CellsChart } from "./Charts/CellsChart";
+import { FossilRecord } from "./FossilRecord";
+import $ from "jquery";
 
 
 const ChartSelections = [ PopulationChart, SpeciesChart, CellsChart, MutationChart ];
 
-class StatsPanel {
+export class StatsPanel {
   constructor( env ) {
     this.defineControls();
     this.chart_selection = 0;
@@ -63,5 +64,3 @@ class StatsPanel {
   }
     
 }
-
-module.exports = StatsPanel;

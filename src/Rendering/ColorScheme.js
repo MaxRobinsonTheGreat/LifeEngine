@@ -1,4 +1,5 @@
-const CellStates = require( "../Organism/Cell/CellStates" );
+import { CellStates } from "../Organism/Cell/CellStates";
+import $ from "jquery";
 
 var color_scheme = {
   "empty":"#0E1318",
@@ -14,7 +15,7 @@ var color_scheme = {
 };
 
 // Renderer controls access to a canvas. There is one renderer for each canvas
-class ColorScheme {
+export class ColorScheme {
   constructor( world_env, editor_env ) {
     this.world_env = world_env;
     this.editor_env = editor_env;
@@ -24,7 +25,7 @@ class ColorScheme {
     for ( var state of CellStates.all ) 
       state.color = color_scheme[ state.name ];
         
-    CellStates.eye.slit_color = color_scheme[ "eye-slit" ];
+    // CellStates.eye.slit_color = color_scheme[ "eye-slit" ];
     for ( var cell_type in color_scheme ) {
       $( "#" + cell_type + ".cell-type " ).css( "background-color", color_scheme[ cell_type ] );
       $( "#" + cell_type + ".cell-legend-type" ).css( "background-color", color_scheme[ cell_type ] );
@@ -34,5 +35,3 @@ class ColorScheme {
     this.editor_env.renderer.renderFullGrid( this.editor_env.grid_map.grid );
   }
 }
-
-module.exports = ColorScheme;

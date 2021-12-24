@@ -1,7 +1,7 @@
-const FossilRecord = require( "../FossilRecord" ),
-      ChartController = require( "./ChartController" );
+import { FossilRecord } from "../FossilRecord"; 
+import { ChartController } from "./ChartController" ;
 
-class MutationChart extends ChartController {
+export class MutationChart extends ChartController {
   constructor() {
     super( "Mutation Rate" );
   }
@@ -27,5 +27,3 @@ class MutationChart extends ChartController {
     this.data[ 0 ].dataPoints.push( { x:t, y:p } );
   }
 }
-
-module.exports = MutationChart;

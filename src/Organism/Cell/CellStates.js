@@ -5,6 +5,7 @@
  * @class CellState
  */
 class CellState{
+
   constructor( name ) {
     this.name = name;
     this.color = "black";
@@ -56,53 +57,51 @@ class Armor extends CellState {
     super( "armor" );
   }
 }
-class Eye extends CellState {
-  constructor() {
-    super( "eye" );
-    this.slit_color = "black";
-  }
+// class Eye extends CellState {
+//   constructor() {
+//     super( "eye" );
+//     this.slit_color = "black";
+//   }
 
-  render( ctx, cell, size ) {
-    ctx.fillStyle = this.color;
-    ctx.fillRect( cell.x, cell.y, size, size );
-    if ( size == 1 )
-      return;
-    var half = size / 2,
-        x = -( size ) / 8,
-        y = -half,
-        h = size / 2 + size / 4,
-        w = size / 4;
+//   render( ctx, cell, size ) {
+//     ctx.fillStyle = this.color;
+//     ctx.fillRect( cell.x, cell.y, size, size );
+//     if ( size == 1 )
+//       return;
+//     var half = size / 2,
+//         x = -( size ) / 8,
+//         y = -half,
+//         h = size / 2 + size / 4,
+//         w = size / 4;
 
-    ctx.translate( cell.x + half, cell.y + half );
-    ctx.rotate( ( cell.cell_owner.getAbsoluteDirection() * 90 ) * Math.PI / 180 );
-    ctx.fillStyle = this.slit_color;
-    ctx.fillRect( x, y, w, h );
-    ctx.setTransform( 1, 0, 0, 1, 0, 0 );
-  }
-}
+//     ctx.translate( cell.x + half, cell.y + half );
+//     ctx.rotate( ( cell.cell_owner.getAbsoluteDirection() * 90 ) * Math.PI / 180 );
+//     ctx.fillStyle = this.slit_color;
+//     ctx.fillRect( x, y, w, h );
+//     ctx.setTransform( 1, 0, 0, 1, 0, 0 );
+//   }
+// }
 
-const CellStates = {
-  empty: new Empty(),
-  food: new Food(),
-  wall: new Wall(),
-  mouth: new Mouth(),
-  producer: new Producer(),
-  mover: new Mover(),
-  killer: new Killer(),
-  armor: new Armor(),
-  eye: new Eye(),
-  defineLists() {
-    this.all = [ this.empty, this.food, this.wall, this.mouth, this.producer, this.mover, this.killer, this.armor, this.eye ];
-    this.living = [ this.mouth, this.producer, this.mover, this.killer, this.armor, this.eye ];
-  },
-  getRandomName: function() {
+
+export class CellStates {
+  static empty = new Empty();
+  static food = new Food();
+  static wall = new Wall();
+  static mouth = new Mouth();
+  static producer = new Producer();
+  static mover = new Mover();
+  static killer = new Killer();
+  static armor = new Armor();
+
+  
+  static all = [ this.empty, this.food, this.wall, this.mouth, this.producer, this.mover, this.killer, this.armor ];
+  static living = [ this.mouth, this.producer, this.mover, this.killer, this.armor ];
+
+  static get randomName() {
     return this.all[ Math.floor( Math.random() * this.all.length ) ].name;
-  },
-  getRandomLivingType: function() {
+  }
+
+  static get randomLivingType() {
     return this.living[ Math.floor( Math.random() * this.living.length ) ];
   }
-};
-
-CellStates.defineLists();
-
-module.exports = CellStates;
+}
