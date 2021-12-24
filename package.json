@@ -1,7 +1,7 @@
 {
-  "name": "EvolutionSimulatorV2",
+  "name": "the-life-engine",
   "version": "1.0.0",
-  "description": "Version 2 of the evolution simulator",
+  "description": "life",
   "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -21,8 +21,11 @@
   },
   "homepage": "https://github.com/MaxRobinsonTheGreat/EvolutionSimulatorV2#readme",
   "devDependencies": {
-    "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.12"
+    "webpack": "5.65.0",
+    "webpack-cli": "4.9.1"
   },
-  "dependencies": {}
+  "dependencies": {
+    "animejs": "^3.2.1",
+    "pixi.js": "^5.0.0-rc"
+  }
 }
