@@ -13,7 +13,7 @@ import { Hyperparams } from "../../Hyperparameters";
  * @class EyeCell
  * @extends {BodyCell}
  */
-class EyeCell extends BodyCell{
+export class EyeCell extends BodyCell{
   constructor( org, loc_col, loc_row ){
     super( CellStates.eye, org, loc_col, loc_row );
     this.org.anatomy.has_eyes = true;

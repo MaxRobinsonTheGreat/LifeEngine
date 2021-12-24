@@ -1,6 +1,6 @@
-const Hyperparams } from "../../../Hyperparameters" ),
-      Directions } from "../../Directions" ),
-      CellStates } from "../CellStates" );
+import { Hyperparams } from "../../../Hyperparameters"; 
+import { Directions } from "../../Directions"; 
+import { CellStates } from "../CellStates" ;
 
 const Decision = {
   neutral: 0,
@@ -19,7 +19,7 @@ const Decision = {
  *
  * @class Brain
  */
-class Brain {
+export class Brain {
   constructor( owner ){
     this.owner = owner;
     this.observations = [];
