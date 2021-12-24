@@ -1,7 +1,9 @@
-const CellStates = require( "./CellStates" ),
-      Hyperparams = require( "../../Hyperparameters" );
-
 // A cell exists in a grid map.
+/**
+ *
+ *
+ * @class Cell
+ */
 class Cell{
   constructor( state, col, row, x, y ){
     this.owner = null; // owner organism

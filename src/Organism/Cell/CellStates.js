@@ -1,4 +1,9 @@
 // A cell state is used to differentiate type and render the cell
+/**
+ *
+ *
+ * @class CellState
+ */
 class CellState{
   constructor( name ) {
     this.name = name;

@@ -2,6 +2,12 @@ const CellStates = require( "../CellStates" ),
       BodyCell = require( "./BodyCell" ),
       Hyperparams = require( "../../../Hyperparameters" );
 
+/**
+ *
+ *
+ * @class MouthCell
+ * @extends {BodyCell}
+ */
 class MouthCell extends BodyCell{
   constructor( org, loc_col, loc_row ){
     super( CellStates.mouth, org, loc_col, loc_row );

@@ -1,8 +1,8 @@
-const CellStates = require( "../CellStates" ),
-      Directions = require( "../../Directions" );
+const CellStates = require( "./CellStates" ),
+      Directions = require( "../Directions" );
 
 /**
- * A body cell defines the relative location of the cell in it's parent organism. It also defines their functional behavior.
+ * A cell defines the relative location of the cell in it's parent organism. It also defines their functional behavior.
  *
  * @class BodyCell
  */

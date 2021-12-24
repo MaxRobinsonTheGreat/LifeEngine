@@ -2,6 +2,12 @@ const CellStates = require( "../CellStates" ),
       BodyCell = require( "./BodyCell" ),
       Hyperparams = require( "../../../Hyperparameters" );
 
+/**
+ *
+ *
+ * @class ProducerCell
+ * @extends {BodyCell}
+ */
 class ProducerCell extends BodyCell{
   constructor( org, loc_col, loc_row ){
     super( CellStates.producer, org, loc_col, loc_row );

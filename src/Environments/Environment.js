@@ -1,5 +1,4 @@
-
-// An evironment has a grid_map, controller, and renderer
+/** An evironment has a grid_map, controller, and renderer */
 class Environment{
   constructor() {
   }

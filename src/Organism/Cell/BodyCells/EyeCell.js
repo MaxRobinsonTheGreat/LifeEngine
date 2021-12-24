@@ -2,8 +2,14 @@ const CellStates = require( "../CellStates" ),
       BodyCell = require( "./BodyCell" ),
       Hyperparams = require( "../../../Hyperparameters" ),
       Directions = require( "../../Directions" ),
-      Observation = require( "../../Perception/Observation" );
+      Observation = require( "../Perception/Observation" );
 
+/**
+ *
+ *
+ * @class EyeCell
+ * @extends {BodyCell}
+ */
 class EyeCell extends BodyCell{
   constructor( org, loc_col, loc_row ){
     super( CellStates.eye, org, loc_col, loc_row );
