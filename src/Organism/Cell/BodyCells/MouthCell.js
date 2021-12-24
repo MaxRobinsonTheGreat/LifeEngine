@@ -1,6 +1,6 @@
-import { CellStates } from "./CellStates.js";
+import { CellStates } from "../CellStates.js";
 import { BodyCell } from "./BodyCell.js";
-import { Hyperparams } from "../../Hyperparameters";
+import { Hyperparams } from "../../../Hyperparameters";
 /**
  *
  *

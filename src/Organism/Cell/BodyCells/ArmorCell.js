@@ -1,4 +1,4 @@
-import { CellStates } from "./CellStates.js";
+import { CellStates } from "../CellStates.js";
 import { BodyCell } from "./BodyCell.js";
 
 /**

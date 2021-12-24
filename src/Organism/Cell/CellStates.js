@@ -57,30 +57,30 @@ class Armor extends CellState {
     super( "armor" );
   }
 }
-// class Eye extends CellState {
-//   constructor() {
-//     super( "eye" );
-//     this.slit_color = "black";
-//   }
+class Eye extends CellState {
+  constructor() {
+    super( "eye" );
+    this.slit_color = "black";
+  }
 
-//   render( ctx, cell, size ) {
-//     ctx.fillStyle = this.color;
-//     ctx.fillRect( cell.x, cell.y, size, size );
-//     if ( size == 1 )
-//       return;
-//     var half = size / 2,
-//         x = -( size ) / 8,
-//         y = -half,
-//         h = size / 2 + size / 4,
-//         w = size / 4;
+  render( ctx, cell, size ) {
+    ctx.fillStyle = this.color;
+    ctx.fillRect( cell.x, cell.y, size, size );
+    if ( size == 1 )
+      return;
+    var half = size / 2,
+        x = -( size ) / 8,
+        y = -half,
+        h = size / 2 + size / 4,
+        w = size / 4;
 
-//     ctx.translate( cell.x + half, cell.y + half );
-//     ctx.rotate( ( cell.cell_owner.getAbsoluteDirection() * 90 ) * Math.PI / 180 );
-//     ctx.fillStyle = this.slit_color;
-//     ctx.fillRect( x, y, w, h );
-//     ctx.setTransform( 1, 0, 0, 1, 0, 0 );
-//   }
-// }
+    ctx.translate( cell.x + half, cell.y + half );
+    ctx.rotate( ( cell.cell_owner.getAbsoluteDirection() * 90 ) * Math.PI / 180 );
+    ctx.fillStyle = this.slit_color;
+    ctx.fillRect( x, y, w, h );
+    ctx.setTransform( 1, 0, 0, 1, 0, 0 );
+  }
+}
 
 
 export class CellStates {
@@ -92,10 +92,11 @@ export class CellStates {
   static mover = new Mover();
   static killer = new Killer();
   static armor = new Armor();
+  static eye = new Eye();
 
   
-  static all = [ this.empty, this.food, this.wall, this.mouth, this.producer, this.mover, this.killer, this.armor ];
-  static living = [ this.mouth, this.producer, this.mover, this.killer, this.armor ];
+  static all = [ this.empty, this.food, this.wall, this.mouth, this.producer, this.mover, this.killer, this.armor, this.eye ];
+  static living = [ this.mouth, this.producer, this.mover, this.killer, this.armor, this.eye ];
 
   static get randomName() {
     return this.all[ Math.floor( Math.random() * this.all.length ) ].name;

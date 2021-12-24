@@ -1,6 +1,6 @@
-import { Hyperparams } from "../../../Hyperparameters"; 
-import { Directions } from "../../Directions"; 
-import { CellStates } from "../CellStates" ;
+import { Hyperparams } from "../../Hyperparameters"; 
+import { Directions } from "../Directions"; 
+import { CellStates } from "../Cell/CellStates.js" ;
 
 const Decision = {
   neutral: 0,
@@ -34,7 +34,7 @@ export class Brain {
     this.decisions[ CellStates.mover.name ] = Decision.neutral;
     this.decisions[ CellStates.killer.name ] = Decision.retreat;
     this.decisions[ CellStates.armor.name ] = Decision.neutral;
-    // this.decisions[ CellStates.eye.name ] = Decision.neutral;
+    this.decisions[ CellStates.eye.name ] = Decision.neutral;
   }
 
   randomizeDecisions( randomize_all = false ) {
@@ -90,5 +90,3 @@ export class Brain {
 }
 
 Brain.Decision = Decision;
-
-module.exports = Brain;

@@ -3,7 +3,7 @@ import { Neighbors } from "../Grid/Neighbors";
 import { Hyperparams } from "../Hyperparameters"; 
 import { Directions } from "./Directions";
 import { Anatomy } from "./Anatomy"; 
-// Brain } from "./Cell/Perception/Brain" ),
+import { Brain } from "./Perception/Brain";
 import { FossilRecord } from "../Stats/FossilRecord";
 
 export class Organism {
@@ -23,7 +23,7 @@ export class Organism {
     this.ignore_brain_for = 0;
     this.mutability = 5;
     this.damage = 0;
-    // this.brain = new Brain( this );
+    this.brain = new Brain( this );
     if ( parent != null ) 
       this.inherit( parent );
         
@@ -38,9 +38,9 @@ export class Organism {
     // deep copy parent cells
       this.anatomy.addInheritCell( c );
         
-    // if ( parent.anatomy.is_mover ) 
-    //   for ( var i in parent.brain.decisions ) 
-    //     this.brain.decisions[ i ] = parent.brain.decisions[ i ];
+    if ( parent.anatomy.is_mover ) 
+      for ( var i in parent.brain.decisions ) 
+        this.brain.decisions[ i ] = parent.brain.decisions[ i ];
             
         
   }
@@ -86,9 +86,9 @@ export class Organism {
     if ( Math.random() * 100 <= prob ) 
       if ( org.anatomy.is_mover && Math.random() * 100 <= 10 ) { 
         if ( org.anatomy.has_eyes ) 
-        // org.brain.mutate();
+          org.brain.mutate();
                 
-          org.move_range += Math.floor( Math.random() * 4 ) - 2;
+        org.move_range += Math.floor( Math.random() * 4 ) - 2;
         if ( org.move_range <= 0 )
           org.move_range = 1;
                 
@@ -310,23 +310,23 @@ export class Organism {
         
     if ( this.anatomy.is_mover ) {
       this.move_count++;
-      var changed_dir = false,
+      var changed_dir = false;
 
-        // if ( this.ignore_brain_for == 0 )
-        //   changed_dir = this.brain.decide();
+      if ( this.ignore_brain_for == 0 )
+        changed_dir = this.brain.decide();
               
-        // else 
-        //   this.ignore_brain_for--;
+      else 
+        this.ignore_brain_for--;
             
-          moved = this.attemptMove();
+      var moved = this.attemptMove();
 
       if ( ( this.move_count > this.move_range && !changed_dir ) || !moved ){
         var rotated = this.attemptRotate();
 
         if ( !rotated ) 
           this.changeDirection( Directions.getRandomDirection() );
-          // if ( changed_dir )
-          //   this.ignore_brain_for = this.move_range + 1;
+        if ( changed_dir )
+          this.ignore_brain_for = this.move_range + 1;
         
       }
     }

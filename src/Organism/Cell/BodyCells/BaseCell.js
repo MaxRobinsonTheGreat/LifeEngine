@@ -1,4 +1,4 @@
-import { Directions } from "../Directions.js";
+import { Directions } from "../../Directions.js";
 /**
  * A cell defines the relative location of the cell in it's parent organism. It also defines their functional behavior.
  *

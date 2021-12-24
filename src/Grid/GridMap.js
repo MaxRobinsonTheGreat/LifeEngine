@@ -1,4 +1,4 @@
-import { Cell } from "../Organism/Cell/GridCell";
+import { Cell } from "../Organism/Cell/GridCell.js";
 import { CellStates } from "../Organism/Cell/CellStates";
 
 export class GridMap {

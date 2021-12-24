@@ -1,9 +1,9 @@
-import { MouthCell } from "./MouthCell.js"; 
-import { ProducerCell } from "./ProducerCell.js"; 
-import { MoverCell } from "./MoverCell.js"; 
-import { KillerCell } from "./KillerCell.js"; 
-import { ArmorCell } from "./ArmorCell.js"; 
-// import { EyeCell } from "./NYI-EyeCell"; 
+import { MouthCell } from "./BodyCells/MouthCell.js"; 
+import { ProducerCell } from "./BodyCells/ProducerCell.js"; 
+import { MoverCell } from "./BodyCells/MoverCell.js"; 
+import { KillerCell } from "./BodyCells/KillerCell.js"; 
+import { ArmorCell } from "./BodyCells/ArmorCell.js"; 
+import { EyeCell } from "./BodyCells/EyeCell"; 
 import { CellStates } from "./CellStates.js"; 
 
 
@@ -16,6 +16,7 @@ export const BodyCellFactory = {
     type_map[ CellStates.mover.name ] = MoverCell;
     type_map[ CellStates.killer.name ] = KillerCell;
     type_map[ CellStates.armor.name ] = ArmorCell;
+    type_map[ CellStates.eye.name ] = EyeCell;
     this.type_map = type_map;
   },
 

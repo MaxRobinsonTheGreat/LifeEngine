@@ -1,12 +1,9 @@
-// const CellStates } from "../CellStates" ),
-//       BodyCell } from "./BodyCell" ),
-//       Hyperparams } from "../../../Hyperparameters" ),
-//       Directions } from "../../Directions" ),
-//       Observation } from "../Perception/Observation" );
+import { CellStates } from "../CellStates";
+import { BodyCell } from "./BodyCell";
+import { Directions } from "../../Directions";
+import { Hyperparams } from "../../../Hyperparameters";
+import { Observation } from "../../Perception/Observation"; 
 
-import { CellStates } from "./CellStates.js";
-import { BodyCell } from "./BodyCell.js";
-import { Hyperparams } from "../../Hyperparameters";
 /**
  *
  *

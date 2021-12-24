@@ -1,6 +1,5 @@
 import { CellStates  } from "./Cell/CellStates"; 
 import { Organism } from "./Organism" ;
-// Brain } from "./Cell/Perception/Brain" );
 
 export class RandomOrganismGenerator {
   static organismLayers = 4;
@@ -47,7 +46,7 @@ export class RandomOrganismGenerator {
     }
 
     // randomize the organism's brain
-    // organism.brain.randomizeDecisions( true );
+    organism.brain.randomizeDecisions( true );
 
     return organism;
   }
