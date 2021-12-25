@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "allowJs": true,
+    "checkJs": true,
+    "target": "es2021",
+    "moduleResolution": "node",
+    // "declaration": true,
+    // "declarationMap": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true
+  }
+}
