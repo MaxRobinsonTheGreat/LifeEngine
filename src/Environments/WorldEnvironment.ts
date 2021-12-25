@@ -55,7 +55,6 @@ export class WorldEnvironment extends Environment{
     this.total_ticks++;
     if ( this.total_ticks % this.data_update_rate == 0 ) 
       FossilRecord.updateData();
-        
   }
 
   render() {

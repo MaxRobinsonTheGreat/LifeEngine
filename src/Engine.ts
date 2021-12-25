@@ -76,7 +76,6 @@ export class Engine {
         this.updateUIDeltaTime();
         this.necessaryUpdate();
       }, 1000 / min_render_speed );
-        
   }
 
   updateSimDeltaTime() {
@@ -96,8 +95,6 @@ export class Engine {
     this.env.update();
     if ( this.ui_loop == null ) 
       this.necessaryUpdate();
-        
-            
   }
 
   necessaryUpdate() {

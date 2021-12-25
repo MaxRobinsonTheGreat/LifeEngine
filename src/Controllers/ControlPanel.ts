@@ -162,23 +162,24 @@ export class ControlPanel {
 
   defineTabNavigation() {
     this.tab_id = "about";
+    var self = this;
 
-    $( ".tabnav-item" ).click( () => {
+    $( ".tabnav-item" ).click( function() {
       $( ".tab" ).css( "display", "none" );
-      var tab = "#" + $( ".edit-mode-btn" ).id + ".tab";
+      var tab = "#" + this.id + ".tab";
 
       $( tab ).css( "display", "grid" );
       $( ".tabnav-item" ).removeClass( "open-tab" );
-      $( "#" + $( ".edit-mode-btn" ).id + ".tabnav-item" ).addClass( "open-tab" );
-      this.engine.organism_editor.is_active = ( $( ".edit-mode-btn" ).id == "editor" );
-      this.stats_panel.stopAutoRender();
-      if ( $( ".edit-mode-btn" ).id === "stats" ) 
-        this.stats_panel.startAutoRender();
+      $( "#" + this.id + ".tabnav-item" ).addClass( "open-tab" );
+      self.engine.organism_editor.is_active = ( this.id == "editor" );
+      self.stats_panel.stopAutoRender();
+      if ( this.id === "stats" ) 
+        self.stats_panel.startAutoRender();
             
-      else if ( $( ".edit-mode-btn" ).id === "editor" ) 
-        this.editor_controller.refreshDetailsPanel();
+      else if ( this.id === "editor" ) 
+        self.editor_controller.refreshDetailsPanel();
             
-      this.tab_id = $( ".edit-mode-btn" ).id;
+      self.tab_id = this.id;
     } );
   }
 
@@ -353,11 +354,11 @@ export class ControlPanel {
 
   defineModeControls() {
 
-    $( ".edit-mode-btn" ).click( () => {
+    $( ".tabnav-item" ).click( () => {
       $( "#cell-selections" ).css( "display", "none" );
       $( "#organism-options" ).css( "display", "none" );
       this.editor_controller.setDetailsPanel();
-      switch ( $( ".edit-mode-btn" ).id ) {
+      switch ( $( ".tabnav-item" ).id ) {
       case "food-drop":
         this.setMode( Modes.FoodDrop );
         break;
@@ -379,8 +380,8 @@ export class ControlPanel {
       case "drag-view":
         this.setMode( Modes.Drag );
       }
-      $( ".edit-mode-btn" ).removeClass( "selected" );
-      $( "." + $( ".edit-mode-btn" ).id ).addClass( "selected" );
+      $( ".tabnav-item" ).removeClass( "selected" );
+      $( "." + $( ".tabnav-item" ).id ).addClass( "selected" );
     } );
     $( ".reset-view" ).click( () => {
       this.env_controller.resetView();

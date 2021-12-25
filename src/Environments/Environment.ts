@@ -2,9 +2,7 @@
 export class Environment{
   grid_map: any;
 
-  update(){
-    alert( "Environment.update() must be overriden" );
-  }
+  update(){}
 
   changeCell( c, r, state, owner ) {
     this.grid_map.setCellType( c, r, state );

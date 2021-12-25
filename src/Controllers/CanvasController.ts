@@ -113,15 +113,9 @@ export class CanvasController{
     }
   }
 
-  mouseMove() {
-    alert( "mouse move must be overridden" );
-  }
+  mouseMove() {}
 
-  mouseDown() {
-    alert( "mouse down must be overridden" );
-  }
+  mouseDown() {}
 
-  mouseUp(){
-    alert( "mouse up must be overridden" );
-  }
+  mouseUp() {}
 }

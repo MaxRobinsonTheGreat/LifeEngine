@@ -63,30 +63,31 @@ export class EditorController extends CanvasController{
   }
 
   defineCellTypeSelection() {
+    var self = this;
 
-    $( ".cell-type" ).click( () => {
-      switch ( $( ".cell-type" ).id ){
+    $( ".cell-type" ).click( function() {
+      switch ( this.id ){
       case "mouth":
-        this.edit_cell_type = CellStates.mouth;
+        self.edit_cell_type = CellStates.mouth;
         break;
       case "producer":
-        this.edit_cell_type = CellStates.producer;
+        self.edit_cell_type = CellStates.producer;
         break;
       case "mover":
-        this.edit_cell_type = CellStates.mover;
+        self.edit_cell_type = CellStates.mover;
         break;
       case "killer":
-        this.edit_cell_type = CellStates.killer;
+        self.edit_cell_type = CellStates.killer;
         break;
       case "armor":
-        this.edit_cell_type = CellStates.armor;
+        self.edit_cell_type = CellStates.armor;
         break;
       case "eye":
-        this.edit_cell_type = CellStates.eye;
+        self.edit_cell_type = CellStates.eye;
         break;
       }
       $( ".cell-type" ).css( "border-color", "black" );
-      var selected = "#" + $( ".cell-type" ).id + ".cell-type";
+      var selected = "#" + this.id + ".cell-type";
 
       $( selected ).css( "border-color", "yellow" );
     } );

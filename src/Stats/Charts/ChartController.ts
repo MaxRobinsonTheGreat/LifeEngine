@@ -28,10 +28,10 @@ export class ChartController {
   }
 
   setMinimum() {
-    var min = 0;
+    // var min = 0;
 
-    if ( this.data[ 0 ].dataPoints != [] )
-      min = this.data[ 0 ].dataPoints[ 0 ].x;
+    // if ( this.data[ 0 ].dataPoints != [] )
+    // min = this.data[ 0 ].dataPoints[ 0 ].x;
     // this.chart.options.axisX.minimum = min;
   }
 
@@ -85,9 +85,7 @@ export class ChartController {
         
   }
 
-  addDataPoint( i ) {
-    alert( "Must override addDataPoint" );
-  }
+  addDataPoint( i ) {}
 
   clear() {
     this.data.length = 0;
