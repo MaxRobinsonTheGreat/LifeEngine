@@ -8,14 +8,22 @@ class ProducerCell extends BodyCell{
         this.org.anatomy.is_producer = true;
     }
 
+    FPP() {
+        const z = this.getRealRow();
+        const k = Hyperparams.vertExtCoef;
+        const e = Math.E;
+        const p = Hyperparams.foodProdProb;
+        const FPP = p * (e ^ ((-k) * z));
+        return FPP;
+    }
+
     performFunction() {
         if (this.org.anatomy.is_mover && !Hyperparams.moversCanProduce)
             return;
         var env = this.org.env;
-        var prob = Hyperparams.foodProdProb;
         var real_c = this.getRealCol();
         var real_r = this.getRealRow();
-        if (Math.random() * 100 <= prob) {
+        if (Math.random() <= this.FPP()) {
             var loc = Hyperparams.growableNeighbors[Math.floor(Math.random() * Hyperparams.growableNeighbors.length)]
             var loc_c=loc[0];
             var loc_r=loc[1];
