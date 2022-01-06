@@ -23,6 +23,7 @@ class WorldEnvironment extends Environment{
         this.reset_count = 0;
         this.total_ticks = 0;
         this.data_update_rate = 100;
+        this.foods = new Set();
         FossilRecord.setEnv(this);
     }
 
@@ -38,6 +39,21 @@ class WorldEnvironment extends Environment{
             this.generateFood();
         }
         this.removeOrganisms(to_remove);
+        const old_foods = new Set(this.foods);
+        if (gravity) {
+            for (let food of old_foods) {
+                if (Math.random() * 100 <= 2 * Hyperparams.gravity) {
+                    const c = food.col;
+                    const r = food.row;
+                    if (this.grid_map.isValidLoc(c, r+1) && this.grid_map.cellAt(c, r+1).state === CellStates.empty) {
+                        this.changeCell(c, r, CellStates.empty, null);
+                        this.foods.delete(food);
+                        this.changeCell(c, r+1, CellStates.food, null);
+                        this.foods.add(this.grid_map.cellAt(c, r+1));
+                    }
+                }
+            }
+        }
         this.total_ticks ++;
         if (this.total_ticks % this.data_update_rate == 0) {
             FossilRecord.updateData();
@@ -131,6 +147,7 @@ class WorldEnvironment extends Environment{
 
                 if (this.grid_map.cellAt(c, r).state == CellStates.empty){
                     this.changeCell(c, r, CellStates.food, null);
+                    this.foods.add(this.grid_map.cellAt(c, r));
                 }
             }
         }
@@ -140,6 +157,7 @@ class WorldEnvironment extends Environment{
         if (confirm_reset && !confirm('The current environment will be lost. Proceed?'))
             return false;
 
+        this.foods = new Set();
         this.organisms = [];
         this.grid_map.fillGrid(CellStates.empty, !WorldConfig.clear_walls_on_reset);
         this.renderer.renderFullGrid(this.grid_map.grid);

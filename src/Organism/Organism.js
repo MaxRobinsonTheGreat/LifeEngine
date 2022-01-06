@@ -153,24 +153,28 @@ class Organism {
         return (Math.random() * 100) < prob;
     }
 
+    attemptChangePosition(c, r) {
+        if (this.isClear(c, r)) {
+            for (var cell of this.anatomy.cells) {
+                var real_c = this.c + cell.rotatedCol(this.rotation);
+                var real_r = this.r + cell.rotatedRow(this.rotation);
+                this.env.changeCell(real_c, real_r, CellStates.empty, null);
+            }
+            this.c = c;
+            this.r = r;
+            this.updateGrid();
+            return true;
+        }
+        return false;
+    }
+
     attemptMove() {
         var direction = Directions.scalars[this.direction];
         var direction_c = direction[0];
         var direction_r = direction[1];
         var new_c = this.c + direction_c;
         var new_r = this.r + direction_r;
-        if (this.isClear(new_c, new_r)) {
-            for (var cell of this.anatomy.cells) {
-                var real_c = this.c + cell.rotatedCol(this.rotation);
-                var real_r = this.r + cell.rotatedRow(this.rotation);
-                this.env.changeCell(real_c, real_r, CellStates.empty, null);
-            }
-            this.c = new_c;
-            this.r = new_r;
-            this.updateGrid();
-            return true;
-        }
-        return false;
+        return this.attemptChangePosition(new_c, new_r);
     }
 
     attemptRotate() {
@@ -262,6 +266,7 @@ class Organism {
             var real_c = this.c + cell.rotatedCol(this.rotation);
             var real_r = this.r + cell.rotatedRow(this.rotation);
             this.env.changeCell(real_c, real_r, CellStates.food, null);
+            this.env.foods.add(this.env.grid_map.cellAt(real_c, real_r));
         }
         this.species.decreasePop();
         this.living = false;
@@ -281,6 +286,7 @@ class Organism {
             this.die();
             return this.living;
         }
+
         if (this.food_collected >= this.foodNeeded()) {
             this.reproduce();
         }
@@ -308,6 +314,10 @@ class Organism {
                         this.ignore_brain_for = this.move_range + 1;
                 }
             }
+        }
+
+        if (gravity && Math.random() * 100 <= this.anatomy.cells.length * Hyperparams.gravity) {
+            this.attemptChangePosition(this.c, this.r + 1);
         }
 
         return this.living;
