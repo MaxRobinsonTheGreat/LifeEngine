@@ -263,6 +263,8 @@ class Organism {
             var real_r = this.r + cell.rotatedRow(this.rotation);
             if(Hyperparams.cost[cell.state.name] > 0) {
                 this.env.changeCell(real_c, real_r, CellStates.food, {food_value: Hyperparams.cost[cell.state.name]});
+            }else{
+                this.env.changeCell(real_c, real_r, CellStates.empty, null);
             }
         }
         this.species.decreasePop();
