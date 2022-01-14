@@ -261,7 +261,13 @@ class Organism {
         for (var cell of this.anatomy.cells) {
             var real_c = this.c + cell.rotatedCol(this.rotation);
             var real_r = this.r + cell.rotatedRow(this.rotation);
-            this.env.changeCell(real_c, real_r, CellStates.food, null);
+            /*  
+                IMPORTANT BUG FIX:
+                For example, when the cost of a cell is 0.35 (below 1), the organism spends 0.35 to reproduce that cell, but when that cell 
+                dies, it gives 1 food at position. This means 0.65 food that exist out of nothing in the system. To correct this gap, the food
+                cell was given a food_value that was equal to the cost of the cell.
+            */
+            this.env.changeCell(real_c, real_r, CellStates.food, {food_value: Hyperparams.cost[cell.state.name]});
         }
         this.species.decreasePop();
         this.living = false;
