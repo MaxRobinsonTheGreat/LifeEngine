@@ -386,7 +386,7 @@ class ControlPanel {
 
         $('.cell-legend-type').click(function() {
             if(Hyperparams.cost[this.id] != null) {
-                let val = parseFloat(prompt('Enter the reproduce cost of ' + this.id + ' cell:', Hyperparams.cost[this.id]));
+                let val = parseFloat(prompt('Enter the reproduce cost of ' + this.id + ' cell:', Hyperparams.cost[this.id].toFixed(2)));
                 
                 Hyperparams.cost[this.id] = isNaN(val) ? Hyperparams.cost[this.id] : val;
             }
