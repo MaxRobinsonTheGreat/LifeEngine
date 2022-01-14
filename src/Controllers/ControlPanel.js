@@ -388,7 +388,7 @@ class ControlPanel {
             if(Hyperparams.cost[this.id] != null) {
                 let val = parseFloat(prompt('Enter the reproduce cost of ' + this.id + ' cell:', Hyperparams.cost[this.id].toFixed(2)));
                 
-                Hyperparams.cost[this.id] = isNaN(val) ? Hyperparams.cost[this.id] : val;
+                Hyperparams.cost[this.id] = isNaN(val) ? Hyperparams.cost[this.id] : Math.max(val, 0.001);
             }
         });
 
