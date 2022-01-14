@@ -1,5 +1,6 @@
 const CellStates = require("./Cell/CellStates");
 const BodyCellFactory = require("./Cell/BodyCells/BodyCellFactory");
+const Hyperparams = require("../Hyperparameters");
 
 class Anatomy {
     constructor(owner) {
@@ -106,6 +107,15 @@ class Anatomy {
         }
 
         return neighbors;
+    }
+
+    getTotalCost() {
+        var total_cost = 0;
+
+        for (var cell of this.cells) {
+            total_cost += Hyperparams.cost[cell.state.name];
+        }
+        return total_cost;
     }
 }
 

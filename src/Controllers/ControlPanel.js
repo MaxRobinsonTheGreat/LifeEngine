@@ -228,9 +228,6 @@ class ControlPanel {
         $('#food-drop-rate').change(function() {
             Hyperparams.foodDropProb = $('#food-drop-rate').val();
         });
-        $('#extra-mover-cost').change(function() {
-            Hyperparams.extraMoverFoodCost = parseInt($('#extra-mover-cost').val());
-        });
 
         $('#evolved-mutation').change( function() {
             if (this.checked) {
@@ -313,7 +310,6 @@ class ControlPanel {
         $('#movers-produce').prop('checked', Hyperparams.moversCanProduce);
         $('#food-blocks').prop('checked', Hyperparams.foodBlocksReproduction);
         $('#food-drop-rate').val(Hyperparams.foodDropProb);
-        $('#extra-mover-cost').val(Hyperparams.extraMoverFoodCost);
         $('#look-range').val(Hyperparams.lookRange);
 
         if (!Hyperparams.useGlobalMutability) {
@@ -387,6 +383,14 @@ class ControlPanel {
         $('.reset-random').click( function() {
             this.engine.organism_editor.resetWithRandomOrgs(this.engine.env);
         }.bind(this));
+
+        $('.cell-legend-type').click(function() {
+            if(Hyperparams.cost[this.id] != null) {
+                let val = parseFloat(prompt('Enter the reproduce cost of ' + this.id + ' cell:', Hyperparams.cost[this.id]));
+                
+                Hyperparams.cost[this.id] = isNaN(val) ? Hyperparams.cost[this.id] : val;
+            }
+        });
 
         window.onbeforeunload = function (e) {
             e = e || window.event;

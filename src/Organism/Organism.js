@@ -47,7 +47,7 @@ class Organism {
 
     // amount of food required before it can reproduce
     foodNeeded() {
-        return this.anatomy.is_mover ? this.anatomy.cells.length + Hyperparams.extraMoverFoodCost : this.anatomy.cells.length;
+        return this.anatomy.getTotalCost();
     }
 
     lifespan() {
