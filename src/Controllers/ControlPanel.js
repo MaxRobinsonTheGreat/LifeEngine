@@ -384,7 +384,7 @@ class ControlPanel {
             this.engine.organism_editor.resetWithRandomOrgs(this.engine.env);
         }.bind(this));
 
-        $('.cell-legend-type').click(function() {
+        $('.cell-legend-type-living').click(function() {
             if(Hyperparams.cost[this.id] != null) {
                 let val = parseFloat(prompt('Enter the reproduce cost of ' + this.id + ' cell:', Hyperparams.cost[this.id].toFixed(2)));
                 
