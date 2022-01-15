@@ -6,8 +6,8 @@ const hyperperams = require('./Hyperparameters.js);
 class HealCell extends BodyCell{
                       constructor(org, loc_col, loc_row){
                         super(CellStates.HealCell,org,loc_col,loc_row)
-                        if 
-                          this.org.anatomy.Can_Heal = True
+                        if(this.healing_enabled)
+                          this.org.anatomy.Can_Heal = True;
                       }
                       performFunction() {
                          var env = this.org.env;
