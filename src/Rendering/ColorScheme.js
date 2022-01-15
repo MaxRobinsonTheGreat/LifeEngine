@@ -27,6 +27,7 @@ class ColorScheme {
         CellStates.eye.slit_color=color_scheme['eye-slit']
         for (var cell_type in color_scheme) {
             $('#'+cell_type+'.cell-type ').css('background-color', color_scheme[cell_type]);
+            $('#'+cell_type+'.cell-legend-type').css('background-color', color_scheme[cell_type]);
             $('#'+cell_type+'.cell-legend-type-living').css('background-color', color_scheme[cell_type]);
             
         }
