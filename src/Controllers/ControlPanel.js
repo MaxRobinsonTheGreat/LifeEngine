@@ -363,7 +363,9 @@ class ControlPanel {
         }.bind(this));
 
         $('#copy-dc-code').click( function(){
-            let cells = this.engine.organism_editor.organism.anatomy.cells;
+            let org = this.engine.organism_editor.organism;
+            let anatomy = org.anatomy;
+            let cells = anatomy.cells;
             let code = "";
             let startx = 0;
             let starty = 0;
@@ -414,7 +416,34 @@ class ControlPanel {
                         }
                     }
                 }
-                code += "\n";
+
+                code += '\n';
+            }
+
+            code += "Cell Count: " + cells.length + "\n";
+            if(anatomy.is_mover) code += "Move Range: " + org.move_range + "\n";
+            code += "Mutation Rate: " + org.mutability + "\n";
+            if(anatomy.is_mover && anatomy.has_eyes){
+                let brain = org.brain;
+
+                let chase_types = [];
+                let retreat_types = [];
+                for(let cell_name in brain.decisions) {
+                    let decision = brain.decisions[cell_name];
+                    if (decision == 1) {
+                        retreat_types.push(cell_name)
+                    }
+                    else if (decision == 2) {
+                        chase_types.push(cell_name);
+                    }
+                }
+
+                if(chase_types.length > 0) {
+                    code += "Move Towards: " + chase_types.join(', ') + "\n";
+                }
+                if(retreat_types.length > 0) {
+                    code += "Move Away From: " + retreat_types.join(', ') + "\n";
+                }
             }
 
             console.log(code);
