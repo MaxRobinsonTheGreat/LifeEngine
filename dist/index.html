@@ -80,6 +80,7 @@
 							<button class="edit-mode-btn select" id="select" title="Select organism from world. Hotkey: Z"><i class="fa fa-hand-pointer-o"></i></button>
 							<button class="edit-mode-btn edit" id="edit" title="Edit organism. Hotkey: X"><i class="fa fa-pencil"></i></button>
 							<button class="edit-mode-btn drop-org" id="drop-org" title="Drop organism in world. Hotkey: C"><i class="fa fa-plus"></i></button>
+							<button class="copy-code" id='copy-dc-code' title='Copy organism emoji code to clipboard (works with Emergent Garden server)'><i class="fab fa-discord"></i></button>
 						</div>
 						<div id='editor-env'>
 							<canvas id='editor-canvas'></canvas>
@@ -155,8 +156,6 @@
 						</div>
 						
 						<button id='reset-with-editor-org' title='Reset the environment with the organism in the editor'>Reset with Editor Organism</button>
-						<!-- copy button to copy organism discord code to clipboard -->
-						<button id='copy-organism-discord-code' title='Copy organism discord code to clipboard'></button>
 					</div>
 				</div>
 				<div id='world-controls' class='tab'>

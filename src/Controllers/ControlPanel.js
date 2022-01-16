@@ -3,6 +3,7 @@ const Modes = require("./ControlModes");
 const StatsPanel = require("../Stats/StatsPanel");
 const RandomOrganismGenerator = require("../Organism/RandomOrganismGenerator")
 const WorldConfig = require("../WorldConfig");
+const CellStates = require("../Organism/Cell/CellStates");
 
 class ControlPanel {
     constructor(engine) {
@@ -359,6 +360,65 @@ class ControlPanel {
         });
         $('.reset-view').click( function(){
             this.env_controller.resetView();
+        }.bind(this));
+
+        $('#copy-dc-code').click( function(){
+            let cells = this.engine.organism_editor.organism.anatomy.cells;
+            let code = "";
+            let startx = 0;
+            let starty = 0;
+            let endx = 0;
+            let endy = 0;
+
+            for (var cell of cells) {
+                if(cell.loc_col < startx) {
+                    startx = cell.loc_col;
+                }
+                if(cell.loc_col > endx) {
+                    endx = cell.loc_col;
+                }
+                if(cell.loc_row < starty) {
+                    starty = cell.loc_row;
+                }
+                if(cell.loc_row > endy) {
+                    endy = cell.loc_row;
+                }
+            }
+            //iterate from top left to bottom right
+            for(var i = starty; i <= endy; i++) {
+                for(var j = startx; j <= endx; j++) {
+                    let cell = cells.find(c => c.loc_row == i && c.loc_col == j);
+                    if(cell == undefined) {
+                        code += CellStates.empty.dc_code;
+                    }else {
+                        if(cell.state.dc_code == ':eye:'){
+                            switch (cell.direction) {
+                                case 0://up
+                                    code += ':eyeu:';
+                                    break;
+                                case 1://right
+                                    code += ':eyer:';
+                                    break;
+                                case 2://down
+                                    code += ':eyed:';
+                                    break;
+                                case 3://left
+                                    code += ':eyel:';
+                                    break;
+                                default:
+                                    code += ':eye:';
+                                    break;
+                            }
+                        }else{
+                            code += cell.state.dc_code;
+                        }
+                    }
+                }
+                code += "\n";
+            }
+
+            console.log(code);
+            navigator.clipboard.writeText(code);
         }.bind(this));
 
         var env = this.engine.env;
