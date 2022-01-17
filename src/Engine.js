@@ -85,7 +85,7 @@ class Engine {
         this.actual_fps = (1000/this.sim_delta_time);
         
         if(WorldConfig.skip_frames){
-            this.skipped_fps = this.actual_fps/this.render_period;
+            this.skipped_fps = this.actual_fps/(this.render_period+1);
         }else{
             this.skipped_fps = 0;
         }
