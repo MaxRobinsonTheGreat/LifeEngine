@@ -145,6 +145,7 @@ class ControlPanel {
             }
             //disable skip frames checkbox
             $('#skip-frames').prop('disabled', !WorldConfig.headless);
+            $('#skip-frames-number').prop('disabled', !WorldConfig.headless);
             $('.skip-frames-label').css('color', WorldConfig.headless ? 'black' : 'gray');
             WorldConfig.headless = !WorldConfig.headless;
         }.bind(this));
@@ -152,6 +153,10 @@ class ControlPanel {
         $('#skip-frames').click(function() {
             WorldConfig.skip_frames = !WorldConfig.skip_frames;
             $('#skip-frames').prop('checked', WorldConfig.skip_frames);
+        }.bind(this));
+
+        $('#skip-frames-number').change(function() {
+            this.engine.render_period = parseInt($('#skip-frames-number').val()) || 0;
         }.bind(this));
     }
 
@@ -473,7 +478,7 @@ class ControlPanel {
 
     update(delta_time) {
         if(WorldConfig.skip_frames && !WorldConfig.headless) {
-            $('#fps-actual').text("Actual FPS: " + Math.floor(this.engine.actual_fps/this.engine.render_period) + " (" + Math.floor(this.engine.actual_fps) + ")");
+            $('#fps-actual').text("Actual FPS: " + Math.floor(this.engine.skipped_fps) + " (" + Math.floor(this.engine.actual_fps) + ")");
         }else{
             $('#fps-actual').text("Actual FPS: " + Math.floor(this.engine.actual_fps));
         }

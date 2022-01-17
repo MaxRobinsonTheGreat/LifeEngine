@@ -50,10 +50,9 @@ class WorldEnvironment extends Environment{
             return;
         }
 
-        //skip frames to match 30 fps
-        var render_period = this.controller.control_panel.engine.render_period;
+        var render_period = WorldConfig.skip_frames ? this.controller.control_panel.engine.render_period : 1;
 
-        if(this.total_ticks % render_period != 0) return;
+        if(this.total_ticks % (render_period + 1) != 0) return;
 
         this.renderer.renderCells();
         this.renderer.renderHighlights();

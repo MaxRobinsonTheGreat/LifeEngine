@@ -280,3 +280,7 @@ button:active{
 #reset-with-editor-org{
     margin-top: 5px;
 }
+
+#skip-frames-number{
+    width: 30px;
+}

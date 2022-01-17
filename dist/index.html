@@ -31,7 +31,9 @@
 				<button class='pause-button' title="Play/Pause. Hotkey: Spacebar"><i class="fa fa-pause"></i></button>
 				<button class="headless" title="Toggle rendering. Hotkey: H"><i class="fa fa-eye-slash"></i></button>
 				<div>
-				<label class="skip-frames-label" title="Run the simulation with targeted fps in the backend, but skip the frames to display 30fps. Hotkey: J" for="skip-frames">Skip Frames (30fps Time-lapse)</label>
+				<label class="skip-frames-label" title="Skip the entered number of frames every time before render. Hotkey: J" for="skip-frames">
+					Skip Every <input type="number" id="skip-frames-number" min="0" max="1000" value=4 step="1"> Frames 
+				</label>
 				<input id="skip-frames" type="checkbox">
 				</div>
 				<p id='fps'>Target FPS: 60</p>

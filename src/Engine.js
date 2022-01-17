@@ -25,7 +25,8 @@ class Engine {
         this.ui_delta_time = 0;
 
         this.actual_fps = 0;
-        this.render_period = 1;
+        this.render_period = 4;
+        this.skipped_fps = 0;
         this.running = false;
     }
 
@@ -84,11 +85,9 @@ class Engine {
         this.actual_fps = (1000/this.sim_delta_time);
         
         if(WorldConfig.skip_frames){
-            this.render_period = Math.floor(this.actual_fps/30);
-            if(this.render_period <= 1) this.render_period = Math.floor(this.fps/30);//if fps is too low to decide on render period, just use fps
-            if(this.render_period <= 0) this.render_period = 1;//division with 0 is undefined
+            this.skipped_fps = this.actual_fps/this.render_period;
         }else{
-            this.render_period = 1;
+            this.skipped_fps = 0;
         }
 
         this.env.update(this.sim_delta_time);
