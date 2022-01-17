@@ -91,7 +91,10 @@ class ControlPanel {
                 case 'c':
                     $('#drop-org').click();
                     break;
-                case 'v': // toggle hud
+                case 'v':
+                    $('#copy-dc-code').click();
+                    break;
+                case 'b': // toggle hud
                     if (this.no_hud) {
                         let control_panel_display = this.control_panel_active ? 'grid' : 'none';
                         let hot_control_display = !this.control_panel_active ? 'block' : 'none';
@@ -107,7 +110,7 @@ class ControlPanel {
                     }
                     this.no_hud = !this.no_hud;
                     break;
-                case 'b':
+                case 'n':
                     $('#clear-walls').click();
             }
         });
