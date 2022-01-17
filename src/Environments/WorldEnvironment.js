@@ -50,7 +50,7 @@ class WorldEnvironment extends Environment{
             return;
         }
 
-        var render_period = WorldConfig.skip_frames ? this.controller.control_panel.engine.render_period : 1;
+        var render_period = WorldConfig.skip_frames ? this.controller.control_panel.engine.render_period : 0;
 
         if(this.total_ticks % (render_period + 1) != 0) return;
 
