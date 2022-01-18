@@ -1,8 +1,9 @@
 // A cell state is used to differentiate type and render the cell
 class CellState{
-    constructor(name) {
+    constructor(name, dc_code = ':__:') {
         this.name = name;
         this.color = 'black';
+        this.dc_code = dc_code;
     }
 
     render(ctx, cell, size) {
@@ -13,47 +14,47 @@ class CellState{
 
 class Empty extends CellState {
     constructor() {
-        super('empty');
+        super('empty',':vd:');
     }
 }
 class Food extends CellState {
     constructor() {
-        super('food');
+        super('food',':food:');
     }
 }
 class Wall extends CellState {
     constructor() {
-        super('wall');
+        super('wall',':wall:');
     }
 }
 class Mouth extends CellState {
     constructor() {
-        super('mouth');
+        super('mouth',':eat:');
     }
 }
 class Producer extends CellState {
     constructor() {
-        super('producer');
+        super('producer',':prod:');
     }
 }
 class Mover extends CellState {
     constructor() {
-        super('mover');
+        super('mover',':mov:');
     }
 }
 class Killer extends CellState {
     constructor() {
-        super('killer');
+        super('killer',':kill:');
     }
 }
 class Armor extends CellState {
     constructor() {
-        super('armor');
+        super('armor',':arm:');
     }
 }
 class Eye extends CellState {
     constructor() {
-        super('eye');
+        super('eye',':eye:');
         this.slit_color = 'black';
     }
     render(ctx, cell, size) {
