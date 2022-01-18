@@ -14,7 +14,7 @@ class CellState{
 
 class Empty extends CellState {
     constructor() {
-        super('empty',':vd:');
+        super('empty',':__:');
     }
 }
 class Food extends CellState {
