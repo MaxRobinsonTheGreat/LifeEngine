@@ -49,6 +49,11 @@ class WorldEnvironment extends Environment{
             this.renderer.cells_to_render.clear();
             return;
         }
+
+        var render_period = WorldConfig.skip_frames ? this.controller.control_panel.engine.render_period : 0;
+
+        if(this.total_ticks % (render_period + 1) != 0) return;
+
         this.renderer.renderCells();
         this.renderer.renderHighlights();
     }

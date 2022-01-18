@@ -70,6 +70,9 @@ class ControlPanel {
                     $('.headless')[0].click();
                     break;
                 case 'j':
+                    $('#skip-frames').click();
+                    break;
+                case 'k':
                 case ' ':
                     e.preventDefault();
                     $('.pause-button')[0].click();
@@ -144,7 +147,20 @@ class ControlPanel {
             else {
                 $('#headless-notification').css('display', 'block');
             }
+            //disable skip frames checkbox
+            $('#skip-frames').prop('disabled', !WorldConfig.headless);
+            $('#skip-frames-number').prop('disabled', !WorldConfig.headless);
+            $('.skip-frames-label').css('color', WorldConfig.headless ? 'black' : 'gray');
             WorldConfig.headless = !WorldConfig.headless;
+        }.bind(this));
+
+        $('#skip-frames').click(function() {
+            WorldConfig.skip_frames = !WorldConfig.skip_frames;
+            $('#skip-frames').prop('checked', WorldConfig.skip_frames);
+        }.bind(this));
+
+        $('#skip-frames-number').change(function() {
+            this.engine.render_period = parseInt($('#skip-frames-number').val()) || 0;
         }.bind(this));
     }
 
@@ -557,7 +573,11 @@ class ControlPanel {
     }
 
     update(delta_time) {
-        $('#fps-actual').text("Actual FPS: " + Math.floor(this.engine.actual_fps));
+        if(WorldConfig.skip_frames && !WorldConfig.headless) {
+            $('#fps-actual').text("Actual FPS: " + Math.floor(this.engine.skipped_fps) + " (" + Math.floor(this.engine.actual_fps) + ")");
+        }else{
+            $('#fps-actual').text("Actual FPS: " + Math.floor(this.engine.actual_fps));
+        }
         $('#reset-count').text("Auto reset count: " + this.engine.env.reset_count);
         this.stats_panel.updateDetails();
         if (WorldConfig.headless)
