@@ -1,6 +1,6 @@
 // A cell state is used to differentiate type and render the cell
 class CellState{
-    constructor(name, dc_code = ':vd:') {
+    constructor(name, dc_code = ':__:') {
         this.name = name;
         this.color = 'black';
         this.dc_code = dc_code;
@@ -14,7 +14,7 @@ class CellState{
 
 class Empty extends CellState {
     constructor() {
-        super('empty',':__:');
+        super('empty',':vd:');
     }
 }
 class Food extends CellState {
