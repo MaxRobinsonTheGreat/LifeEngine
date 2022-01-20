@@ -87,19 +87,19 @@ class Organism {
             var amount;
             //mutate the add probability
             amount = Math.random()*4 - 2;
-            org.addProb += amount.toFixed(2);
+            org.addProb += amount;
             org.addProb = Math.min(Math.max(org.addProb, 0), 100);
             org.changeProb = 100 - org.addProb - org.removeProb;
             org.removeProb = 100 - org.addProb - org.changeProb;
             //mutate the change probability
             amount = Math.random()*4 - 2;
-            org.changeProb += amount.toFixed(2);
+            org.changeProb += amount;
             org.changeProb = Math.min(Math.max(org.changeProb, 0), 100);
             org.addProb = 100 - org.changeProb - org.removeProb;
             org.removeProb = 100 - org.changeProb - org.addProb;
             //mutate the remove probability
             amount = Math.random()*4 - 2;
-            org.removeProb += amount.toFixed(2);
+            org.removeProb += amount;
             org.removeProb = Math.min(Math.max(org.removeProb, 0), 100);
             org.addProb = 100 - org.removeProb - org.changeProb;
             org.changeProb = 100 - org.removeProb - org.addProb;
