@@ -93,8 +93,8 @@ class Organism {
             org.changeProb -= amount/2;
             org.removeProb -= amount/2;
             //fix the probabilities (floating point errors)
-            org.changeProb = 100 - org.addProb - org.removeProb;
-            org.removeProb = 100 - org.addProb - org.changeProb;
+            org.changeProb = Math.min(Math.max(100 - org.addProb - org.removeProb, 0), 100);
+            org.removeProb = Math.min(Math.max(100 - org.addProb - org.changeProb, 0), 100);
             //mutate the change probability
             amount = Math.random()*mutation_type_mutability - mutation_type_mutability/2;
             org.changeProb += amount;
@@ -102,8 +102,8 @@ class Organism {
             org.addProb -= amount/2;
             org.removeProb -= amount/2;
             //fix the probabilities (floating point errors)
-            org.addProb = 100 - org.changeProb - org.removeProb;
-            org.removeProb = 100 - org.changeProb - org.addProb;
+            org.addProb = Math.min(Math.max(100 - org.changeProb - org.removeProb, 0), 100);
+            org.removeProb = Math.min(Math.max(100 - org.changeProb - org.addProb, 0), 100);
             //mutate the remove probability
             amount = Math.random()*mutation_type_mutability - mutation_type_mutability/2;
             org.removeProb += amount;
@@ -111,8 +111,8 @@ class Organism {
             org.addProb -= amount/2;
             org.changeProb -= amount/2;
             //fix the probabilities (floating point errors)
-            org.addProb = 100 - org.removeProb - org.changeProb;
-            org.changeProb = 100 - org.removeProb - org.addProb;
+            org.addProb = Math.min(Math.max(100 - org.removeProb - org.changeProb, 0), 100);
+            org.changeProb = Math.min(Math.max(100 - org.removeProb - org.addProb, 0), 100);
         } 
         var mutated = false;
         if (Math.random() * 100 <= prob) {
