@@ -88,18 +88,18 @@ class Organism {
             //mutate the add probability
             amount = Math.random()*4 - 2;
             org.addProb += amount;
-            org.changeProb -= 100 - org.addProb - org.removeProb;
-            org.removeProb -= 100 - org.addProb - org.changeProb;
+            org.changeProb = 100 - org.addProb - org.removeProb;
+            org.removeProb = 100 - org.addProb - org.changeProb;
             //mutate the change probability
             amount = Math.random()*4 - 2;
             org.changeProb += amount;
-            org.addProb -= 100 - org.changeProb - org.removeProb;
-            org.removeProb -= 100 - org.changeProb - org.addProb;
+            org.addProb = 100 - org.changeProb - org.removeProb;
+            org.removeProb = 100 - org.changeProb - org.addProb;
             //mutate the remove probability
             amount = Math.random()*4 - 2;
             org.removeProb += amount;
-            org.addProb -= 100 - org.removeProb - org.changeProb;
-            org.changeProb -= 100 - org.removeProb - org.addProb;
+            org.addProb = 100 - org.removeProb - org.changeProb;
+            org.changeProb = 100 - org.removeProb - org.addProb;
         } 
         var mutated = false;
         if (Math.random() * 100 <= prob) {
