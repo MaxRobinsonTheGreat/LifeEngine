@@ -85,8 +85,9 @@ class Organism {
                     org.mutability = 1;
             }
             var amount;
+            var mutation_type_mutability = 5;
             //mutate the add probability
-            amount = Math.random()*2 - 1;
+            amount = Math.random()*mutation_type_mutability - mutation_type_mutability/2;
             org.addProb += amount;
             org.addProb = Math.min(Math.max(org.addProb, 0), 100);
             org.changeProb -= amount/2;
@@ -95,7 +96,7 @@ class Organism {
             org.changeProb = 100 - org.addProb - org.removeProb;
             org.removeProb = 100 - org.addProb - org.changeProb;
             //mutate the change probability
-            amount = Math.random()*2 - 1;
+            amount = Math.random()*mutation_type_mutability - mutation_type_mutability/2;
             org.changeProb += amount;
             org.changeProb = Math.min(Math.max(org.changeProb, 0), 100);
             org.addProb -= amount/2;
@@ -104,7 +105,7 @@ class Organism {
             org.addProb = 100 - org.changeProb - org.removeProb;
             org.removeProb = 100 - org.changeProb - org.addProb;
             //mutate the remove probability
-            amount = Math.random()*2 - 1;
+            amount = Math.random()*mutation_type_mutability - mutation_type_mutability/2;
             org.removeProb += amount;
             org.removeProb = Math.min(Math.max(org.removeProb, 0), 100);
             org.addProb -= amount/2;
