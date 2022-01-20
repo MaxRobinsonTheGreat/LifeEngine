@@ -129,6 +129,9 @@ class ControlPanel {
         }.bind(this);
 
         $('.pause-button').click(function() {
+            if(this.engine.running && WorldConfig.skip_frames) {
+                this.engine.env.renderFull();
+            }
             // toggle pause
             this.setPaused(this.engine.running);
         }.bind(this));
