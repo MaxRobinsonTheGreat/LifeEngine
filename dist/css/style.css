@@ -280,3 +280,7 @@ button:active{
 #reset-with-editor-org{
     margin-top: 5px;
 }
+
+input[type=number]{
+    max-width: 47px;
+}

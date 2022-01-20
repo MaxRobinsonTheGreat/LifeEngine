@@ -22,7 +22,7 @@ class Organism {
         this.move_range = 4;
         this.ignore_brain_for = 0;
         this.mutability = 5;
-        this.addProb = 34;
+        this.addProb = 33;
         this.changeProb = 33;
         this.removeProb = 33;
         this.damage = 0;
@@ -86,21 +86,30 @@ class Organism {
             }
             var amount;
             //mutate the add probability
-            amount = Math.random()*4 - 2;
+            amount = Math.random()*2 - 1;
             org.addProb += amount;
             org.addProb = Math.min(Math.max(org.addProb, 0), 100);
+            org.changeProb -= amount/2;
+            org.removeProb -= amount/2;
+            //fix the probabilities (floating point errors)
             org.changeProb = 100 - org.addProb - org.removeProb;
             org.removeProb = 100 - org.addProb - org.changeProb;
             //mutate the change probability
-            amount = Math.random()*4 - 2;
+            amount = Math.random()*2 - 1;
             org.changeProb += amount;
             org.changeProb = Math.min(Math.max(org.changeProb, 0), 100);
+            org.addProb -= amount/2;
+            org.removeProb -= amount/2;
+            //fix the probabilities (floating point errors)
             org.addProb = 100 - org.changeProb - org.removeProb;
             org.removeProb = 100 - org.changeProb - org.addProb;
             //mutate the remove probability
-            amount = Math.random()*4 - 2;
+            amount = Math.random()*2 - 1;
             org.removeProb += amount;
             org.removeProb = Math.min(Math.max(org.removeProb, 0), 100);
+            org.addProb -= amount/2;
+            org.changeProb -= amount/2;
+            //fix the probabilities (floating point errors)
             org.addProb = 100 - org.removeProb - org.changeProb;
             org.changeProb = 100 - org.removeProb - org.addProb;
         } 
