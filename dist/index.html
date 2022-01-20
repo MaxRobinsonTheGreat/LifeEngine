@@ -106,7 +106,8 @@
 							<p class='cell-count'>Cell count: </p>
 							<p id='move-range'>Move Range: </p>
 							<p id='mutation-rate'>Mutation Rate: </p>
-							<br>
+							<h4 title='When an organism mutates, it can choose from one of the following mutation types.'>Mutation Type Probabilities</h4>
+							<p id='mutation-probs'>Add: 34, Change: 33, Remove: 33</p>
 						
 							<div class='brain-details'>
 								<h4>Brain</h4>
@@ -221,14 +222,6 @@
 						<input type="checkbox" id="evolved-mutation" checked> </br>
 						<label class="global-mutation-in" for="global-mutation">Global mutation rate: </label>
 						<input class="global-mutation-in" type="number" id="global-mutation" min="1" max="100" value=5 step="1">
-						<h4 title='When an organism mutates, it can choose from one of the following mutation types.'>Mutation Type Probabilities</h4>
-						<label for="add-prob" title='A new cell will stem from an existing one'>Add Cell:</label>
-						<input class="mut-prob" type="number" id="add-prob" min="0" max="100" value=33>
-						<label for="change-prob" title='A currently existing cell will change its color.'>Change Cell:</label>
-						<input class="mut-prob" type="number" id="change-prob" min="0" max="100" value=33>
-						<label for="remove-prob" title='An existing cell will be removed.'>Remove Cell:</label>
-						<input class="mut-prob" type="number" id="remove-prob" min="0" max="100" value=33>
-						<br/>
 						<label for="movers-produce" title='When on, movers can produce food from producer cells. When off, producer cells are disabled on mover organisms.'>Movers can produce food</label>
 						<input type="checkbox" id="movers-produce">
 						<br/>
@@ -252,7 +245,7 @@
 						<select name="chart-option" id="chart-option">
 							<option value="population">Population</option>
 							<option value="species">Species</option>
-							<option value="mut-rate">Organism Structure</option>
+							<option value="org-structure">Organism Structure</option>
 							<option value="mut-rate">Mutation Rate</option>
 						</select>
 						<p id='chart-note'></p>

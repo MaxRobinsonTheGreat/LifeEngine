@@ -22,6 +22,9 @@ class Organism {
         this.move_range = 4;
         this.ignore_brain_for = 0;
         this.mutability = 5;
+        this.addProb = 34;
+        this.changeProb = 33;
+        this.removeProb = 33;
         this.damage = 0;
         this.brain = new Brain(this);
         if (parent != null) {
@@ -32,6 +35,9 @@ class Organism {
     inherit(parent) {
         this.move_range = parent.move_range;
         this.mutability = parent.mutability;
+        this.addProb = parent.addProb;
+        this.changeProb = parent.changeProb;
+        this.removeProb = parent.removeProb;
         this.species = parent.species;
         // this.birth_distance = parent.birth_distance;
         for (var c of parent.anatomy.cells){
@@ -78,6 +84,49 @@ class Organism {
                 if (org.mutability < 1)
                     org.mutability = 1;
             }
+            //mutate the add probability
+            if (Math.random() <= 0.5){
+                org.addProb++;
+                org.changeProb -= 0.5;
+                org.removeProb -= 0.5;
+            }else{
+                org.addProb--;
+                org.changeProb += 0.5;
+                org.removeProb += 0.5;
+            }
+            //mutate the change probability
+            if (Math.random() <= 0.5){
+                org.addProb -= 0.5;
+                org.changeProb++;
+                org.removeProb -= 0.5;
+            }else{
+                org.addProb += 0.5;
+                org.changeProb--;
+                org.removeProb += 0.5;
+            }
+            //mutate the remove probability
+            if (Math.random() <= 0.5){
+                org.addProb -= 0.5;
+                org.changeProb -= 0.5;
+                org.removeProb++;
+            }else{
+                org.addProb += 0.5;
+                org.changeProb += 0.5;
+                org.removeProb--;
+            }
+            //fit to the range
+            if (org.addProb > 100)
+                org.addProb = 100;
+            if (org.changeProb > 100)
+                org.changeProb = 100;
+            if (org.removeProb > 100)
+                org.removeProb = 100;
+            if (org.addProb < 0)
+                org.addProb = 0;
+            if (org.changeProb < 0)
+                org.changeProb = 0;
+            if (org.removeProb < 0)
+                org.removeProb = 0;
         } 
         var mutated = false;
         if (Math.random() * 100 <= prob) {
@@ -123,7 +172,7 @@ class Organism {
 
     mutate() {
         let mutated = false;
-        if (this.calcRandomChance(Hyperparams.addProb)) {
+        if (this.calcRandomChance(this.addProb)) {
             let branch = this.anatomy.getRandomCell();
             let state = CellStates.getRandomLivingType();//branch.state;
             let growth_direction = Neighbors.all[Math.floor(Math.random() * Neighbors.all.length)]
@@ -134,13 +183,13 @@ class Organism {
                 this.anatomy.addRandomizedCell(state, c, r);
             }
         }
-        if (this.calcRandomChance(Hyperparams.changeProb)){
+        if (this.calcRandomChance(this.changeProb)){
             let cell = this.anatomy.getRandomCell();
             let state = CellStates.getRandomLivingType();
             this.anatomy.replaceCell(state, cell.loc_col, cell.loc_row);
             mutated = true;
         }
-        if (this.calcRandomChance(Hyperparams.removeProb)){
+        if (this.calcRandomChance(this.removeProb)){
             if(this.anatomy.cells.length > 1) {
                 let cell = this.anatomy.getRandomCell();
                 mutated = this.anatomy.removeCell(cell.loc_col, cell.loc_row);
