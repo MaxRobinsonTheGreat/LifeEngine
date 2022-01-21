@@ -389,6 +389,14 @@ class ControlPanel {
                 let val = parseFloat(prompt('Enter the reproduce cost(food count) of ' + this.id + ' cell:', Hyperparams.cost[this.id].toFixed(2)));
                 
                 Hyperparams.cost[this.id] = isNaN(val) ? Hyperparams.cost[this.id] : Math.max(val, 0.001);
+
+                if(val != null) {//check and if not then add a p inside of .cell-legend-type-living with the cost of the cell or just set its text to the cost
+                    if($(this).find('p').length > 0) {
+                        $(this).find('p').text(Hyperparams.cost[this.id].toFixed(2));
+                    } else {
+                        $(this).append('<p>' + Hyperparams.cost[this.id].toFixed(2) + '</p>');
+                    }
+                }
             }
         });
 

@@ -228,6 +228,23 @@ button:active{
     margin: 1px;
     cursor: pointer;
 }
+/* p is white with a black outline */
+.cell-legend-type-living p {
+    opacity: 0;
+    color: black;
+    font-size: 20px;
+    font-weight: bolder;
+    text-align: center;
+    transition: opacity 0.5s;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.cell-legend-type-living p:hover {
+    opacity: 1;
+}
 .cell-legend-hover {
     border-color: black;
     border: 5px;
