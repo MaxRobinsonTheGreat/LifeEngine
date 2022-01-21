@@ -2,7 +2,6 @@ const WorldEnvironment = require('./Environments/WorldEnvironment');
 const ControlPanel = require('./Controllers/ControlPanel');
 const OrganismEditor = require('./Environments/OrganismEditor');
 const ColorScheme = require('./Rendering/ColorScheme');
-const WorldConfig = require('./WorldConfig');
 
 // If the simulation speed is below this value, a new interval will be created to handle ui rendering
 // at a reasonable speed. If it is above, the simulation interval will be used to update the ui.
@@ -25,8 +24,6 @@ class Engine {
         this.ui_delta_time = 0;
 
         this.actual_fps = 0;
-        this.render_period = 4;
-        this.skipped_fps = 0;
         this.running = false;
     }
 
@@ -83,13 +80,6 @@ class Engine {
 
     environmentUpdate() {
         this.actual_fps = (1000/this.sim_delta_time);
-        
-        if(WorldConfig.skip_frames){
-            this.skipped_fps = this.actual_fps/(this.render_period+1);
-        }else{
-            this.skipped_fps = 0;
-        }
-
         this.env.update(this.sim_delta_time);
         if(this.ui_loop == null) {
             this.necessaryUpdate();

@@ -170,7 +170,7 @@ button:active{
 #editor-panel{
     display: flex;
 }
-.edit-mode-btn, .copy-code {
+.edit-mode-btn {
     width: 30px;
     height: 30px;
     margin-top: 5px;
@@ -184,7 +184,7 @@ button:active{
 #organism-options {
     display: none;
 }
-#copy-dc-code {
+#drop-org {
     bottom: 0;
 }
 #editor-env {
@@ -221,12 +221,6 @@ button:active{
     width: 50px;
     height: 50px;
     margin: 1px;
-}
-.cell-legend-type-living {
-    width: 50px;
-    height: 50px;
-    margin: 1px;
-    cursor: pointer;
 }
 .cell-legend-hover {
     border-color: black;
@@ -289,8 +283,4 @@ button:active{
 
 input[type=number]{
     max-width: 47px;
-}
-
-#skip-frames-number{
-    width: 30px;
 }

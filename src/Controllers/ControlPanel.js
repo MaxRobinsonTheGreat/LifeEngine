@@ -3,7 +3,6 @@ const Modes = require("./ControlModes");
 const StatsPanel = require("../Stats/StatsPanel");
 const RandomOrganismGenerator = require("../Organism/RandomOrganismGenerator")
 const WorldConfig = require("../WorldConfig");
-const CellStates = require("../Organism/Cell/CellStates");
 
 class ControlPanel {
     constructor(engine) {
@@ -70,9 +69,6 @@ class ControlPanel {
                     $('.headless')[0].click();
                     break;
                 case 'j':
-                    $('#skip-frames').click();
-                    break;
-                case 'k':
                 case ' ':
                     e.preventDefault();
                     $('.pause-button')[0].click();
@@ -94,10 +90,7 @@ class ControlPanel {
                 case 'c':
                     $('#drop-org').click();
                     break;
-                case 'v':
-                    $('#copy-dc-code').click();
-                    break;
-                case 'b': // toggle hud
+                case 'v': // toggle hud
                     if (this.no_hud) {
                         let control_panel_display = this.control_panel_active ? 'grid' : 'none';
                         let hot_control_display = !this.control_panel_active ? 'block' : 'none';
@@ -113,7 +106,7 @@ class ControlPanel {
                     }
                     this.no_hud = !this.no_hud;
                     break;
-                case 'n':
+                case 'b':
                     $('#clear-walls').click();
             }
         });
@@ -147,20 +140,7 @@ class ControlPanel {
             else {
                 $('#headless-notification').css('display', 'block');
             }
-            //disable skip frames checkbox
-            $('#skip-frames').prop('disabled', !WorldConfig.headless);
-            $('#skip-frames-number').prop('disabled', !WorldConfig.headless);
-            $('.skip-frames-label').css('color', WorldConfig.headless ? 'black' : 'gray');
             WorldConfig.headless = !WorldConfig.headless;
-        }.bind(this));
-
-        $('#skip-frames').click(function() {
-            WorldConfig.skip_frames = !WorldConfig.skip_frames;
-            $('#skip-frames').prop('checked', WorldConfig.skip_frames);
-        }.bind(this));
-
-        $('#skip-frames-number').change(function() {
-            this.engine.render_period = parseInt($('#skip-frames-number').val()) || 0;
         }.bind(this));
     }
 
@@ -248,6 +228,9 @@ class ControlPanel {
         $('#food-drop-rate').change(function() {
             Hyperparams.foodDropProb = $('#food-drop-rate').val();
         });
+        $('#extra-mover-cost').change(function() {
+            Hyperparams.extraMoverFoodCost = parseInt($('#extra-mover-cost').val());
+        });
 
         $('#evolved-mutation').change( function() {
             if (this.checked) {
@@ -311,6 +294,7 @@ class ControlPanel {
         $('#movers-produce').prop('checked', Hyperparams.moversCanProduce);
         $('#food-blocks').prop('checked', Hyperparams.foodBlocksReproduction);
         $('#food-drop-rate').val(Hyperparams.foodDropProb);
+        $('#extra-mover-cost').val(Hyperparams.extraMoverFoodCost);
         $('#look-range').val(Hyperparams.lookRange);
 
         if (!Hyperparams.useGlobalMutability) {
@@ -358,94 +342,6 @@ class ControlPanel {
             this.env_controller.resetView();
         }.bind(this));
 
-        $('#copy-dc-code').click( function(){
-            let org = this.engine.organism_editor.organism;
-            let anatomy = org.anatomy;
-            let cells = anatomy.cells;
-            let code = "";
-            let startx = 0;
-            let starty = 0;
-            let endx = 0;
-            let endy = 0;
-
-            for (var cell of cells) {
-                if(cell.loc_col < startx) {
-                    startx = cell.loc_col;
-                }
-                if(cell.loc_col > endx) {
-                    endx = cell.loc_col;
-                }
-                if(cell.loc_row < starty) {
-                    starty = cell.loc_row;
-                }
-                if(cell.loc_row > endy) {
-                    endy = cell.loc_row;
-                }
-            }
-            //iterate from top left to bottom right
-            for(var i = starty; i <= endy; i++) {
-                for(var j = startx; j <= endx; j++) {
-                    let cell = cells.find(c => c.loc_row == i && c.loc_col == j);
-                    if(cell == undefined) {
-                        code += CellStates.empty.dc_code;
-                    }else {
-                        if(cell.state.dc_code == ':eye:'){
-                            switch (cell.direction) {
-                                case 0://up
-                                    code += ':eyeu:';
-                                    break;
-                                case 1://right
-                                    code += ':eyer:';
-                                    break;
-                                case 2://down
-                                    code += ':eyed:';
-                                    break;
-                                case 3://left
-                                    code += ':eyel:';
-                                    break;
-                                default:
-                                    code += ':eye:';
-                                    break;
-                            }
-                        }else{
-                            code += cell.state.dc_code;
-                        }
-                    }
-                }
-
-                code += '\n';
-            }
-
-            code += "Cell Count: " + cells.length + "\n";
-            if(anatomy.is_mover) code += "Move Range: " + org.move_range + "\n";
-            code += "Mutation Rate: " + org.mutability + "\n";
-            if(anatomy.is_mover && anatomy.has_eyes){
-                let brain = org.brain;
-
-                let chase_types = [];
-                let retreat_types = [];
-                for(let cell_name in brain.decisions) {
-                    let decision = brain.decisions[cell_name];
-                    if (decision == 1) {
-                        retreat_types.push(cell_name)
-                    }
-                    else if (decision == 2) {
-                        chase_types.push(cell_name);
-                    }
-                }
-
-                if(chase_types.length > 0) {
-                    code += "Move Towards: " + chase_types.join(', ') + "\n";
-                }
-                if(retreat_types.length > 0) {
-                    code += "Move Away From: " + retreat_types.join(', ') + "\n";
-                }
-            }
-
-            console.log(code);
-            navigator.clipboard.writeText(code);
-        }.bind(this));
-
         var env = this.engine.env;
         $('#reset-env').click( function() {
             env.reset();
@@ -472,14 +368,6 @@ class ControlPanel {
         $('.reset-random').click( function() {
             this.engine.organism_editor.resetWithRandomOrgs(this.engine.env);
         }.bind(this));
-
-        $('.cell-legend-type-living').click(function() {
-            if(Hyperparams.cost[this.id] != null) {
-                let val = parseFloat(prompt('Enter the reproduce cost of ' + this.id + ' cell:', Hyperparams.cost[this.id].toFixed(2)));
-                
-                Hyperparams.cost[this.id] = isNaN(val) ? Hyperparams.cost[this.id] : Math.max(val, 0.001);
-            }
-        });
 
         window.onbeforeunload = function (e) {
             e = e || window.event;
@@ -554,11 +442,7 @@ class ControlPanel {
     }
 
     update(delta_time) {
-        if(WorldConfig.skip_frames && !WorldConfig.headless) {
-            $('#fps-actual').text("Actual FPS: " + Math.floor(this.engine.skipped_fps) + " (" + Math.floor(this.engine.actual_fps) + ")");
-        }else{
-            $('#fps-actual').text("Actual FPS: " + Math.floor(this.engine.actual_fps));
-        }
+        $('#fps-actual').text("Actual FPS: " + Math.floor(this.engine.actual_fps));
         $('#reset-count').text("Auto reset count: " + this.engine.env.reset_count);
         this.stats_panel.updateDetails();
         if (WorldConfig.headless)

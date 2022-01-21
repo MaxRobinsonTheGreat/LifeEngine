@@ -53,7 +53,7 @@ class Organism {
 
     // amount of food required before it can reproduce
     foodNeeded() {
-        return this.anatomy.getTotalCost();
+        return this.anatomy.is_mover ? this.anatomy.cells.length + Hyperparams.extraMoverFoodCost : this.anatomy.cells.length;
     }
 
     lifespan() {
@@ -296,11 +296,7 @@ class Organism {
         for (var cell of this.anatomy.cells) {
             var real_c = this.c + cell.rotatedCol(this.rotation);
             var real_r = this.r + cell.rotatedRow(this.rotation);
-            if(Hyperparams.cost[cell.state.name] > 0.001) {
-                this.env.changeCell(real_c, real_r, CellStates.food, {food_value: Hyperparams.cost[cell.state.name]});
-            }else{
-                this.env.changeCell(real_c, real_r, CellStates.empty, null);
-            }
+            this.env.changeCell(real_c, real_r, CellStates.food, null);
         }
         this.species.decreasePop();
         this.living = false;
