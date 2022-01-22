@@ -88,6 +88,20 @@ button:active{
     background-color: #595e77;
 }
 
+input,select {
+    border-radius: 5px;
+    border: 2px solid #9099c2;
+    padding: 2px;
+    background-color: white;
+    outline: none;
+}
+input {
+    max-width: 100px;
+}
+input:hover,input:active {
+    background-color: rgb(250,250,250);
+}
+
 .icon-links {
     font-size: 35px;
     position: fixed;
