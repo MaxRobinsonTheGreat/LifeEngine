@@ -181,12 +181,39 @@
 						<input type="number" id="num-random-orgs" min="1" value=100 step="1">
 					</div>
 					<div class='right-half'>
+						<h3>Wall Options</h3>
+						<button id='random-walls' title="Generates random walls.">Generate random walls</button>
 						<br>
-						<button id='random-walls' title="Generates random walls.">Generate random walls</button> <br>
 						<button id="clear-walls" title="Clear All Walls. Hotkey: B">Clear all walls</button>
 						<br>
 						<label for="clear-walls-reset" title='When on, walls will be cleared when the environment resets'>Clear walls on reset</label>
 						<input type="checkbox" id="clear-walls-reset">
+						<h3>Color Scheme</h3>
+						<button id='apply-color-scheme' title="Applies the color scheme.">Apply scheme</button>
+						<button id='reset-color-scheme' title="Resets the color scheme.">Reset scheme</button>
+						<button id='save-color-scheme' title="Saves and downloads the color scheme.">Save scheme</button>
+						<button id='load-color-scheme' title="Loads a color scheme.">Load scheme</button>
+						<br>
+						<label for="empty-color" title='Changes the empty cell color.'>Empty</label>
+						<input type="color" id="empty-color" value="#0E1318">
+						<label for="food-color" title='Changes the food cell color.'>Food</label>
+						<input type="color" id="food-color" value="#2F7AB7">
+						<label for="wall-color" title='Changes the wall cell color.'>Wall</label>
+						<input type="color" id="wall-color" value="#808080">
+						<label for="mouth-color" title='Changes the mouth cell color.'>Mouth</label>
+						<input type="color" id="mouth-color" value="#DEB14D">
+						<label for="producer-color" title='Changes the producer cell color.'>Producer</label>
+						<input type="color" id="producer-color" value="#15DE59">
+						<label for="mover-color" title='Changes the mover cell color.'>Mover</label>
+						<input type="color" id="mover-color" value="#60D4FF">
+						<label for="killer-color" title='Changes the killer cell color.'>Killer</label>
+						<input type="color" id="killer-color" value="#F82380">
+						<label for="armor-color" title='Changes the armor cell color.'>Armor</label>
+						<input type="color" id="armor-color" value="#7230DB">
+						<label for="eye-color" title='Changes the eye cell color.'>Eye</label>
+						<input type="color" id="eye-color" value="#B6C1EA">
+						<a id="download-csh" style="display: none;"></a>
+						<input id="upload-csh" style="display: none;" type="file">
 					</div>
 				</div>
 				<div id='hyperparameters' class='tab'>
