@@ -37,7 +37,6 @@
 			</div>
 
 			<div id='tab-container' class='control-set'>
-
 				<div class="tabnav">
 					<p class='tabnav-item open-tab' id='about'>About</p>
 					<p class='tabnav-item' id='editor'>Editor</p>
@@ -105,8 +104,9 @@
 							<h3>Organism Details</h3>
 							<p class='cell-count'>Cell count: </p>
 							<p id='move-range'>Move Range: </p>
-							<p id='mutation-rate'>Mutation Rate: </p>
-							<br>
+							<p>
+								<span id='mutation-rate'>Mutation Rate: </span><span id='mutation-probs'> (Add: 33, Change: 33, Remove: 33)</span>
+							</p>
 						
 							<div class='brain-details'>
 								<h4>Brain</h4>
@@ -125,6 +125,15 @@
 							<div id='mutation-rate-cont'>
 								<label for="mutation-rate-edit" title='Probability that offspring of this organism will mutate'>Mutation Rate:</label>
 								<input type="number" id="mutation-rate-edit" min="1" max="100" value=3 step="1">
+								<span> (</span>
+								<label for="mutation-add-edit" title='Probability that offspring of this organism will add a cell'>Add:</label>
+								<input type="number" id="mutation-add-edit" min="1" max="100" value=33 step="1">
+								<label for="mutation-change-edit" title='Probability that offspring of this organism will change a cell'>Change:</label>
+								<input type="number" id="mutation-change-edit" min="1" max="100" value=33 step="1">
+								<label for="mutation-remove-edit" title='Probability that offspring of this organism will remove a cell'>Remove:</label>
+								<input type="number" id="mutation-remove-edit" min="1" max="100" value=33 step="1">
+								<span> )</span>
+								
 							</div>
 							<!-- <br> -->
 							<div class='brain-details'>
@@ -221,14 +230,6 @@
 						<input type="checkbox" id="evolved-mutation" checked> </br>
 						<label class="global-mutation-in" for="global-mutation">Global mutation rate: </label>
 						<input class="global-mutation-in" type="number" id="global-mutation" min="1" max="100" value=5 step="1">
-						<h4 title='When an organism mutates, it can choose from one of the following mutation types.'>Mutation Type Probabilities</h4>
-						<label for="add-prob" title='A new cell will stem from an existing one'>Add Cell:</label>
-						<input class="mut-prob" type="number" id="add-prob" min="0" max="100" value=33>
-						<label for="change-prob" title='A currently existing cell will change its color.'>Change Cell:</label>
-						<input class="mut-prob" type="number" id="change-prob" min="0" max="100" value=33>
-						<label for="remove-prob" title='An existing cell will be removed.'>Remove Cell:</label>
-						<input class="mut-prob" type="number" id="remove-prob" min="0" max="100" value=33>
-						<br/>
 						<label for="movers-produce" title='When on, movers can produce food from producer cells. When off, producer cells are disabled on mover organisms.'>Movers can produce food</label>
 						<input type="checkbox" id="movers-produce">
 						<br/>
@@ -252,7 +253,7 @@
 						<select name="chart-option" id="chart-option">
 							<option value="population">Population</option>
 							<option value="species">Species</option>
-							<option value="mut-rate">Organism Structure</option>
+							<option value="org-structure">Organism Structure</option>
 							<option value="mut-rate">Mutation Rate</option>
 						</select>
 						<p id='chart-note'></p>

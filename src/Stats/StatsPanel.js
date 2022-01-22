@@ -52,7 +52,13 @@ class StatsPanel {
         $('#org-count').text("Total Population: " + org_count);
         $('#species-count').text("Number of Species: " + FossilRecord.extant_species.length);
         $('#largest-org').text("Largest Organism Ever: " + this.env.largest_cell_count + " cells");
-        $('#avg-mut').text("Average Mutation Rate: " + Math.round(this.env.averageMutability() * 100) / 100);
+        var mutation_info = "Average Mutation Rate: " + this.env.averageMutability().toFixed(2);
+
+        mutation_info += " (Add: " + this.env.avarageAddMutability().toFixed(2) ;
+        mutation_info += ", Change: " + this.env.avarageChangeMutability().toFixed(2);
+        mutation_info += ", Remove: " + this.env.avarageRemoveMutability().toFixed(2) + ")";
+
+        $('#avg-mut').text(mutation_info);
 
 
     }

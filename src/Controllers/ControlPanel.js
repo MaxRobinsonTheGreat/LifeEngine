@@ -246,22 +246,6 @@ class ControlPanel {
         $('#global-mutation').change( function() {
             Hyperparams.globalMutability = parseInt($('#global-mutation').val());
         });
-        $('.mut-prob').change( function() {
-            switch(this.id){
-                case "add-prob":
-                    Hyperparams.addProb = this.value;
-                    break;
-                case "change-prob":
-                    Hyperparams.changeProb = this.value;
-                    break;
-                case "remove-prob":
-                    Hyperparams.removeProb = this.value;
-                    break;
-            }
-            $('#add-prob').val(Math.floor(Hyperparams.addProb));
-            $('#change-prob').val(Math.floor(Hyperparams.changeProb));
-            $('#remove-prob').val(Math.floor(Hyperparams.removeProb));
-        });
         $('#movers-produce').change( function() {
             Hyperparams.moversCanProduce = this.checked;
         });
@@ -307,9 +291,6 @@ class ControlPanel {
         $('#rot-enabled').prop('checked', Hyperparams.rotationEnabled);
         $('#insta-kill').prop('checked', Hyperparams.instaKill);
         $('#evolved-mutation').prop('checked', !Hyperparams.useGlobalMutability);
-        $('#add-prob').val(Hyperparams.addProb);
-        $('#change-prob').val(Hyperparams.changeProb);
-        $('#remove-prob').val(Hyperparams.removeProb);
         $('#movers-produce').prop('checked', Hyperparams.moversCanProduce);
         $('#food-blocks').prop('checked', Hyperparams.foodBlocksReproduction);
         $('#food-drop-rate').val(Hyperparams.foodDropProb);
