@@ -228,9 +228,6 @@ class ControlPanel {
         $('#food-drop-rate').change(function() {
             Hyperparams.foodDropProb = $('#food-drop-rate').val();
         });
-        $('#extra-mover-cost').change(function() {
-            Hyperparams.extraMoverFoodCost = parseInt($('#extra-mover-cost').val());
-        });
 
         $('#evolved-mutation').change( function() {
             if (this.checked) {
@@ -313,7 +310,6 @@ class ControlPanel {
         $('#movers-produce').prop('checked', Hyperparams.moversCanProduce);
         $('#food-blocks').prop('checked', Hyperparams.foodBlocksReproduction);
         $('#food-drop-rate').val(Hyperparams.foodDropProb);
-        $('#extra-mover-cost').val(Hyperparams.extraMoverFoodCost);
         $('#look-range').val(Hyperparams.lookRange);
 
         if (!Hyperparams.useGlobalMutability) {
@@ -387,6 +383,22 @@ class ControlPanel {
         $('.reset-random').click( function() {
             this.engine.organism_editor.resetWithRandomOrgs(this.engine.env);
         }.bind(this));
+
+        $('.cell-legend-type-living').click(function() {
+            if(Hyperparams.cost[this.id] != null) {
+                let val = parseFloat(prompt('Enter the reproduce cost(food count) of ' + this.id + ' cell:', Hyperparams.cost[this.id].toFixed(2)));
+                
+                Hyperparams.cost[this.id] = isNaN(val) ? Hyperparams.cost[this.id] : Math.max(val, 0.001);
+
+                if(val != null) {//check and if not then add a p inside of .cell-legend-type-living with the cost of the cell or just set its text to the cost
+                    if($(this).find('p').length > 0) {
+                        $(this).find('p').text(Hyperparams.cost[this.id].toFixed(2));
+                    } else {
+                        $(this).append('<p>' + Hyperparams.cost[this.id].toFixed(2) + '</p>');
+                    }
+                }
+            }
+        });
 
         window.onbeforeunload = function (e) {
             e = e || window.event;

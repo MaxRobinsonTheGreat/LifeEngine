@@ -22,7 +22,7 @@ class MouthCell extends BodyCell{
             return;
         if (n_cell.state == CellStates.food){
             env.changeCell(n_cell.col, n_cell.row, CellStates.empty, null);
-            this.org.food_collected++;
+            this.org.food_collected += (n_cell.cell_owner && n_cell.cell_owner.food_value) ? n_cell.food_value : 1;
         }
     }
 }
