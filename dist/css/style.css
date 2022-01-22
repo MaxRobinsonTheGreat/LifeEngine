@@ -184,7 +184,7 @@ input:hover,input:active {
 #editor-panel{
     display: flex;
 }
-.edit-mode-btn {
+.edit-mode-btn, .copy-code {
     width: 30px;
     height: 30px;
     margin-top: 5px;
@@ -198,7 +198,7 @@ input:hover,input:active {
 #organism-options {
     display: none;
 }
-#drop-org {
+#copy-dc-code {
     bottom: 0;
 }
 #editor-env {

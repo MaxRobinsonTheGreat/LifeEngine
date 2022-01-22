@@ -5,7 +5,8 @@
 		<title>The Life Engine</title>
 		<link rel="icon" href="./img/icon.png">
 		<link rel="stylesheet" href="./css/style.css">
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/v4-shims.min.css">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 		<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 
@@ -67,8 +68,9 @@
 						<iframe id="video" src="https://www.youtube.com/embed/iSAKEnRfles"></iframe>
 					</div>
 					<div class='icon-links'>
-						<a href=https://github.com/MaxRobinsonTheGreat/EvolutionSimulatorV2 title='View the code'><i class="fa fa-github"></i></a>
-						<a href="https://twitter.com/max_romana"><i class="fa fa-twitter"></i></a>
+						<a href=https://github.com/MaxRobinsonTheGreat/EvolutionSimulatorV2 target="_blank" title='View the code'><i class="fa fa-github"></i></a>
+						<a href="https://discord.com/invite/ZsrAAByEnr" target="_blank" title='Join the growing community'><i class="fab fa-discord"></i></a>
+						<a href="https://twitter.com/max_romana" target="_blank"><i class="fa fa-twitter"></i></a>
 					</div>
 				</div>
 
@@ -78,6 +80,7 @@
 							<button class="edit-mode-btn select" id="select" title="Select organism from world. Hotkey: Z"><i class="fa fa-hand-pointer-o"></i></button>
 							<button class="edit-mode-btn edit" id="edit" title="Edit organism. Hotkey: X"><i class="fa fa-pencil"></i></button>
 							<button class="edit-mode-btn drop-org" id="drop-org" title="Drop organism in world. Hotkey: C"><i class="fa fa-plus"></i></button>
+							<button class="copy-code" id='copy-dc-code' title='Copy organism emoji code to clipboard Hotkey: V (Emergent Garden server)'><i class="fab fa-discord"></i></button>
 						</div>
 						<div id='editor-env'>
 							<canvas id='editor-canvas'></canvas>
@@ -120,7 +123,7 @@
 							<p class='cell-count'>Cell count: </p>
 							<div id='move-range-cont'>
 								<label for="move-range-edit" title='The number of cells to move before randomly changing direction. Overriden by brain decisions.'>Move Range:</label>
-								<input type="number" id="move-range-edit" min="1" max="100" value=3 step="1">
+								<input type="number" id="move-range-edit" min="1" max="100" value=4 step="1">
 							</div>
 							<div id='mutation-rate-cont'>
 								<label for="mutation-rate-edit" title='Probability that offspring of this organism will mutate'>Mutation Rate:</label>
@@ -183,7 +186,7 @@
 					<div class='right-half'>
 						<br>
 						<button id='random-walls' title="Generates random walls.">Generate random walls</button> <br>
-						<button id="clear-walls" title="Clear All Walls. Hotkey: B">Clear all walls</button>
+						<button id="clear-walls" title="Clear All Walls. Hotkey: N">Clear all walls</button>
 						<br>
 						<label for="clear-walls-reset" title='When on, walls will be cleared when the environment resets'>Clear walls on reset</label>
 						<input type="checkbox" id="clear-walls-reset">
