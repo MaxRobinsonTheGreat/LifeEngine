@@ -18,7 +18,6 @@ const FossilRecord = {
     },
 
     addSpecies: function(org, ancestor) {
-        // console.log("Adding Species")
         var new_species = new Species(org.anatomy, ancestor, this.env.total_ticks);
         this.extant_species.push(new_species);
         org.species = new_species;
@@ -26,7 +25,6 @@ const FossilRecord = {
     },
 
     addSpeciesObj: function(species) {
-        // console.log("Adding Species")
         this.extant_species.push(species);
         return species;
     },
@@ -38,6 +36,9 @@ const FossilRecord = {
             var s = this.extant_species[i];
             if (s == species) {
                 this.extant_species.splice(i, 1);
+                species.ancestor = undefined; // garbage collect dead species
+                // if (species.ancestor)
+                //     species.ancestor.ancestor = undefined;
                 if (species.cumulative_pop < this.min_pop) {
                     return false;
                 }

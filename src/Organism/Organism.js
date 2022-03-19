@@ -118,19 +118,21 @@ class Organism {
             }
         }
         Math.max(this.food_collected -= this.foodNeeded(), 0);
-
     }
 
     mutate() {
-        let mutated = false;
+        let added = false;
+        let changed = false;
+        let removed = false;
         if (this.calcRandomChance(Hyperparams.addProb)) {
+            // console.log('add')
             let branch = this.anatomy.getRandomCell();
             let state = CellStates.getRandomLivingType();//branch.state;
             let growth_direction = Neighbors.all[Math.floor(Math.random() * Neighbors.all.length)]
             let c = branch.loc_col+growth_direction[0];
             let r = branch.loc_row+growth_direction[1];
             if (this.anatomy.canAddCellAt(c, r)){
-                mutated = true;
+                added = true;
                 this.anatomy.addRandomizedCell(state, c, r);
             }
         }
@@ -138,15 +140,15 @@ class Organism {
             let cell = this.anatomy.getRandomCell();
             let state = CellStates.getRandomLivingType();
             this.anatomy.replaceCell(state, cell.loc_col, cell.loc_row);
-            mutated = true;
+            changed = true;
         }
         if (this.calcRandomChance(Hyperparams.removeProb)){
             if(this.anatomy.cells.length > 1) {
                 let cell = this.anatomy.getRandomCell();
-                mutated = this.anatomy.removeCell(cell.loc_col, cell.loc_row);
+                removed = this.anatomy.removeCell(cell.loc_col, cell.loc_row);
             }
         }
-        return mutated;
+        return added || changed || removed;
     }
 
     calcRandomChance(prob) {

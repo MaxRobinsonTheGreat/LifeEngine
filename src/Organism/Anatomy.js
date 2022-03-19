@@ -61,7 +61,7 @@ class Anatomy {
                 break;
             }
         }
-        this.checkTypeChange(cell.state);
+        this.checkTypeChange();
         return true;
     }
 
@@ -93,9 +93,7 @@ class Anatomy {
     }
 
     getNeighborsOfCell(col, row) {
-
         var neighbors = [];
-
         for (var x = -1; x <= 1; x++) {
             for (var y = -1; y <= 1; y++) {
 
@@ -106,6 +104,19 @@ class Anatomy {
         }
 
         return neighbors;
+    }
+
+    isEqual(anatomy) { // currently unused helper func. inefficient, avoid usage in prod.
+        if (this.cells.length !== anatomy.cells.length) return false;
+        for (let i in this.cells) {
+            let my_cell = this.cells[i];
+            let their_cell = anatomy.cells[i];
+            if (my_cell.loc_col !== their_cell.loc_col ||
+                my_cell.loc_row !== their_cell.loc_row ||
+                my_cell.state !== their_cell.state)
+                return false;
+        }
+        return true;
     }
 }
 

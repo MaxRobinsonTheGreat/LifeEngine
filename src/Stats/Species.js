@@ -1,9 +1,15 @@
 const CellStates = require("../Organism/Cell/CellStates");
+let FossilRecord = undefined; // workaround to a circular dependency problem
+const getFossilRecord = () => {
+    if (!FossilRecord)
+        FossilRecord = require("./FossilRecord");
+    return FossilRecord;
+}
 
 class Species {
     constructor(anatomy, ancestor, start_tick) {
         this.anatomy = anatomy;
-        // this.ancestor = ancestor; // garbage collect ancestors to avoid memory problems
+        this.ancestor = ancestor; // eventually need to garbage collect ancestors to avoid memory problems
         this.population = 1;
         this.cumulative_pop = 1;
         this.start_tick = start_tick;
@@ -33,8 +39,7 @@ class Species {
         this.population--;
         if (this.population <= 0) {
             this.extinct = true;
-            const FossilRecord = require("./FossilRecord");
-            FossilRecord.fossilize(this);
+            getFossilRecord().fossilize(this);
         }
     }
 
