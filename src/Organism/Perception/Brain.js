@@ -20,16 +20,18 @@ class Brain {
         this.observations = [];
 
         // corresponds to CellTypes
-        this.decisions = [];
-        this.decisions[CellStates.empty.name] = Decision.neutral;
+        this.decisions = {};
+        for (let cell of CellStates.all) {
+            this.decisions[cell.name] = Decision.neutral;
+        }
         this.decisions[CellStates.food.name] = Decision.chase;
-        this.decisions[CellStates.wall.name] = Decision.neutral;
-        this.decisions[CellStates.mouth.name] = Decision.neutral;
-        this.decisions[CellStates.producer.name] = Decision.neutral;
-        this.decisions[CellStates.mover.name] = Decision.neutral;
         this.decisions[CellStates.killer.name] = Decision.retreat;
-        this.decisions[CellStates.armor.name] = Decision.neutral;
-        this.decisions[CellStates.eye.name] = Decision.neutral;
+    }
+
+    copy(brain) {
+        for (let dec in brain.decisions) {
+            this.decisions[dec] = brain.decisions[dec];
+        }
     }
 
     randomizeDecisions(randomize_all=false) {
@@ -58,9 +60,7 @@ class Brain {
                 continue;
             }
             if (obs.distance < closest) {
-                // console.log(obs.cell.state)
                 decision = this.decisions[obs.cell.state.name];
-                // console.log(decision)
                 move_direction = obs.direction;
                 closest = obs.distance;
             }
@@ -80,6 +80,10 @@ class Brain {
     mutate() {
         this.decisions[CellStates.getRandomName()] = Decision.getRandom();
         this.decisions[CellStates.empty.name] = Decision.neutral; // if the empty cell has a decision it gets weird
+    }
+    
+    serialize() {
+        return {decisions: this.decisions};
     }
 }
 

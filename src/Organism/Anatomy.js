@@ -1,14 +1,19 @@
 const CellStates = require("./Cell/CellStates");
 const BodyCellFactory = require("./Cell/BodyCells/BodyCellFactory");
+const SerializeHelper = require("../Utils/SerializeHelper");
 
 class Anatomy {
     constructor(owner) {
         this.owner = owner;
+        this.birth_distance = 4;
+        this.clear();
+    }
+
+    clear() {
         this.cells = [];
         this.is_producer = false;
         this.is_mover = false;
         this.has_eyes = false;
-        this.birth_distance = 4;
     }
 
     canAddCellAt(c, r) {
@@ -117,6 +122,24 @@ class Anatomy {
                 return false;
         }
         return true;
+    }
+
+    serialize() {
+        let anatomy = SerializeHelper.copyNonObjects(this);
+        anatomy.cells = [];
+        for (let cell of this.cells) {
+            let newcell = SerializeHelper.copyNonObjects(cell);
+            newcell.state = {name: cell.state.name};
+            anatomy.cells.push(newcell)
+        }
+        return anatomy;
+    }
+
+    loadRaw(anatomy) {
+        this.clear();
+        for (let cell of anatomy.cells){
+            this.addInheritCell(cell);
+        }
     }
 }
 

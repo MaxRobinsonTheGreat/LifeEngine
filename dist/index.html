@@ -77,6 +77,9 @@
 							<button class="edit-mode-btn select" id="select" title="Select organism from world. Hotkey: Z"><i class="fa fa-hand-pointer-o"></i></button>
 							<button class="edit-mode-btn edit" id="edit" title="Edit organism. Hotkey: X"><i class="fa fa-pencil"></i></button>
 							<button class="edit-mode-btn drop-org" id="drop-org" title="Drop organism in world. Hotkey: C"><i class="fa fa-plus"></i></button>
+							<button id="save-org" title="Save Organism"><i class="fa fa-save"></i></button>
+							<button id="load-org" title="Load Organism"><i class="fa fa-upload"></i></button>
+							<input id="upload-org" style="display: none;" type="file">
 						</div>
 						<div id='editor-env'>
 							<canvas id='editor-canvas'></canvas>
@@ -237,7 +240,7 @@
 						<button id='save-controls' title="Save all Evolution Controls in a .json file">Save & Download</button>
 						<button id='load-controls' title="Load saved Evolution Controls with a .json file">Load</button>
 						<a id="download-el" style="display: none;"></a>
-						<input id="upload-el" style="display: none;" type="file">
+						<input id="upload-hyperparams" style="display: none;" type="file">
 					</div>
 				</div>
 				<div id='stats' class='tab'>

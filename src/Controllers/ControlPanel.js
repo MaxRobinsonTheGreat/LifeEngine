@@ -1,7 +1,6 @@
 const Hyperparams = require("../Hyperparameters");
 const Modes = require("./ControlModes");
 const StatsPanel = require("../Stats/StatsPanel");
-const RandomOrganismGenerator = require("../Organism/RandomOrganismGenerator")
 const WorldConfig = require("../WorldConfig");
 
 class ControlPanel {
@@ -279,9 +278,9 @@ class ControlPanel {
             downloadEl.click();
         });
         $('#load-controls').click(() => {
-            $('#upload-el').click();
+            $('#upload-hyperparams').click();
         });
-        $('#upload-el').change((e)=>{
+        $('#upload-hyperparams').change((e)=>{
             let files = e.target.files;
             if (!files.length) {return;};
             let reader = new FileReader();
@@ -290,7 +289,7 @@ class ControlPanel {
                 Hyperparams.loadJsonObj(result);
                 this.updateHyperparamUIValues();
                 // have to clear the value so change() will be triggered if the same file is uploaded again
-                $('#upload-el')[0].value = '';
+                $('#upload-hyperparams')[0].value = '';
             };
             reader.readAsText(files[0]);
         });
@@ -428,7 +427,6 @@ class ControlPanel {
             this.env_controller.org_to_clone = this.engine.organism_editor.getCopyOfOrg();
             this.env_controller.add_new_species = this.editor_controller.new_species;
             this.editor_controller.new_species = false;
-            // console.log(this.env_controller.add_new_species)
         }
     }
 

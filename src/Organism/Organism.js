@@ -5,6 +5,7 @@ const Directions = require("./Directions");
 const Anatomy = require("./Anatomy");
 const Brain = require("./Perception/Brain");
 const FossilRecord = require("../Stats/FossilRecord");
+const SerializeHelper = require("../Utils/SerializeHelper");
 
 class Organism {
     constructor(col, row, env, parent=null) {
@@ -38,10 +39,8 @@ class Organism {
             //deep copy parent cells
             this.anatomy.addInheritCell(c);
         }
-        if(parent.anatomy.is_mover) {
-            for (var i in parent.brain.decisions) {
-                this.brain.decisions[i] = parent.brain.decisions[i];
-            }
+        if(parent.anatomy.is_mover && parent.anatomy.has_eyes) {
+            this.brain.copy(parent.brain);
         }
     }
 
@@ -104,7 +103,6 @@ class Organism {
         var new_c = this.c + (direction_c*basemovement) + (direction_c*offset);
         var new_r = this.r + (direction_r*basemovement) + (direction_r*offset);
 
-        // console.log(org.isClear(new_c, new_r, org.rotation, true))
         if (org.isClear(new_c, new_r, org.rotation, true) && org.isStraightPath(new_c, new_r, this.c, this.r, this)){
             org.c = new_c;
             org.r = new_r;
@@ -125,7 +123,6 @@ class Organism {
         let changed = false;
         let removed = false;
         if (this.calcRandomChance(Hyperparams.addProb)) {
-            // console.log('add')
             let branch = this.anatomy.getRandomCell();
             let state = CellStates.getRandomLivingType();//branch.state;
             let growth_direction = Neighbors.all[Math.floor(Math.random() * Neighbors.all.length)]
@@ -319,6 +316,26 @@ class Organism {
         var real_c = c + local_cell.rotatedCol(rotation);
         var real_r = r + local_cell.rotatedRow(rotation);
         return this.env.grid_map.cellAt(real_c, real_r);
+    }
+
+    serialize() {
+        let org = SerializeHelper.copyNonObjects(this);
+        org.anatomy = this.anatomy.serialize();
+        if (this.brain)
+            org.brain = this.brain.serialize();
+        return org;
+    }
+
+    loadRaw(org) {
+        for (let key in org)
+            if (typeof org[key] !== 'object')
+                this[key] = org[key];
+        this.anatomy.loadRaw(org.anatomy)
+        console.log(org)
+        if (org.brain) {
+            console.log('load brain')
+            this.brain.copy(org.brain)
+        }
     }
 
 }
