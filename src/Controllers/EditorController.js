@@ -13,6 +13,7 @@ class EditorController extends CanvasController{
         this.new_species = false;
         this.defineCellTypeSelection();
         this.defineEditorDetails();
+        this.defineSaveLoad();
     }
 
     mouseMove() {
@@ -107,6 +108,43 @@ class EditorController extends CanvasController{
             this.env.organism.brain.decisions[obs] = decision;
             this.setBrainDetails();
         }.bind(this));
+    }
+
+    defineSaveLoad() {
+        $('#save-org').click(()=>{
+            let org = this.env.organism.serialize();
+            let data = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(org));
+            let downloadEl = document.getElementById('download-el');
+            downloadEl.setAttribute("href", data);
+            downloadEl.setAttribute("download", "organism.json");
+            downloadEl.click();
+        });
+        $('#load-org').click(() => {
+            $('#upload-org').click();
+        });
+        $('#upload-org').change((e)=>{
+            let files = e.target.files;
+            if (!files.length) {return;};
+            let reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    let org=JSON.parse(e.target.result);
+                    this.env.clear();
+                    this.env.organism.loadRaw(org);
+                    this.refreshDetailsPanel();
+                    this.env.organism.updateGrid();
+                    this.env.renderFull();
+                    if (this.mode === Modes.Clone)
+                        $('#drop-org').click();
+                    // have to clear the value so change() will be triggered if the same file is uploaded again
+                    $('#upload-org')[0].value = '';
+                } catch(except) {
+                    console.error(except)
+                    alert('Failed to load organism');
+                }
+            };
+            reader.readAsText(files[0]);
+        });
     }
 
     clearDetailsPanel() {

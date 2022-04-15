@@ -1,7 +1,6 @@
 const Hyperparams = require("../Hyperparameters");
 const Modes = require("./ControlModes");
 const StatsPanel = require("../Stats/StatsPanel");
-const RandomOrganismGenerator = require("../Organism/RandomOrganismGenerator")
 const WorldConfig = require("../WorldConfig");
 
 class ControlPanel {
@@ -48,6 +47,8 @@ class ControlPanel {
 
     defineHotkeys() {
         $('body').keydown( (e) => {
+            let focused = document.activeElement;
+            if (focused.tagName === "INPUT" && focused.type === "text") return;
             switch (e.key.toLowerCase()) {
                 // hot bar controls
                 case 'a':
@@ -206,6 +207,43 @@ class ControlPanel {
             this.env_controller.add_new_species = true;
             this.env_controller.dropOrganism(org, center[0], center[1])
         });
+        $('#save-env').click( () => {
+            let was_running = this.engine.running;
+            this.setPaused(true);
+            let env = this.engine.env.serialize();
+            let data = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(env));
+            let downloadEl = document.getElementById('download-el');
+            downloadEl.setAttribute("href", data);
+            downloadEl.setAttribute("download", $('#save-env-name').val()+".json");
+            downloadEl.click();
+            if (was_running)
+                this.setPaused(false);
+        });
+        $('#load-env').click(() => {
+            $('#upload-env').click();
+        });
+        $('#upload-env').change((e)=>{
+            let files = e.target.files;
+            if (!files.length) {return;};
+            let reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    let was_running = this.engine.running;
+                    this.setPaused(true);
+                    let env = JSON.parse(e.target.result);
+                    this.engine.env.loadRaw(env);
+                    if (was_running)
+                        this.setPaused(false);
+                    this.updateHyperparamUIValues();
+                    this.env_controller.resetView();
+                } catch(except) {
+                    console.error(except)
+                    alert('Failed to load world');
+                }
+                $('#upload-env')[0].value = '';
+            };
+            reader.readAsText(files[0]);
+        });
     }
 
     defineHyperparameterControls() {
@@ -279,9 +317,9 @@ class ControlPanel {
             downloadEl.click();
         });
         $('#load-controls').click(() => {
-            $('#upload-el').click();
+            $('#upload-hyperparams').click();
         });
-        $('#upload-el').change((e)=>{
+        $('#upload-hyperparams').change((e)=>{
             let files = e.target.files;
             if (!files.length) {return;};
             let reader = new FileReader();
@@ -290,7 +328,7 @@ class ControlPanel {
                 Hyperparams.loadJsonObj(result);
                 this.updateHyperparamUIValues();
                 // have to clear the value so change() will be triggered if the same file is uploaded again
-                $('#upload-el')[0].value = '';
+                $('#upload-hyperparams')[0].value = '';
             };
             reader.readAsText(files[0]);
         });
@@ -428,7 +466,6 @@ class ControlPanel {
             this.env_controller.org_to_clone = this.engine.organism_editor.getCopyOfOrg();
             this.env_controller.add_new_species = this.editor_controller.new_species;
             this.editor_controller.new_species = false;
-            // console.log(this.env_controller.add_new_species)
         }
     }
 

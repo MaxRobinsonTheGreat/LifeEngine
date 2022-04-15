@@ -18,7 +18,6 @@ class KillerCell extends BodyCell{
     }
 
     killNeighbor(n_cell) {
-        // console.log(n_cell)
         if(n_cell == null || n_cell.owner == null || n_cell.owner == this.org || !n_cell.owner.living || n_cell.state == CellStates.armor) 
             return;
         var is_hit = n_cell.state == CellStates.killer; // has to be calculated before death

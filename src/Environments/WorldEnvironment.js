@@ -7,6 +7,8 @@ const EnvironmentController = require('../Controllers/EnvironmentController');
 const Hyperparams = require('../Hyperparameters.js');
 const FossilRecord = require('../Stats/FossilRecord');
 const WorldConfig = require('../WorldConfig');
+const SerializeHelper = require('../Utils/SerializeHelper');
+const Species = require('../Stats/Species');
 
 class WorldEnvironment extends Environment{
     constructor(cell_size) {
@@ -163,6 +165,57 @@ class WorldEnvironment extends Environment{
         this.num_cols = Math.ceil(this.renderer.width / cell_size);
         this.num_rows = Math.ceil(this.renderer.height / cell_size);
         this.grid_map.resize(this.num_cols, this.num_rows, cell_size);
+    }
+
+    serialize() {
+        let env = SerializeHelper.copyNonObjects(this);
+        env.grid = this.grid_map.serialize();
+        env.organisms = [];
+        for (let org of this.organisms){
+            env.organisms.push(org.serialize());
+        }
+        env.fossil_record = FossilRecord.serialize();
+        env.controls = Hyperparams;
+        return env;
+    }
+
+    loadRaw(env) { // species name->stats map, evolution controls, 
+        this.organisms = [];
+        FossilRecord.clear_record();
+        this.resizeGridColRow(this.grid_map.cell_size, env.grid.cols, env.grid.rows)
+        this.grid_map.loadRaw(env.grid);
+
+        // create species map
+        let species = {};
+        for (let name in env.fossil_record.species) {
+            let s = new Species(null, null, 0);
+            SerializeHelper.overwriteNonObjects(env.fossil_record.species[name], s)
+            species[name] = s; // the species needs an anatomy obj still
+        }
+
+        for (let orgRaw of env.organisms) {
+            let org = new Organism(orgRaw.col, orgRaw.row, this);
+            org.loadRaw(orgRaw);
+            this.addOrganism(org);
+            let s = species[orgRaw.species_name];
+            if (!s){ // ideally, every organisms species should exists, but there is a bug somewhere
+                s = new Species(org.anatomy, null, env.total_ticks);
+                species[orgRaw.species_name] = s;
+            }
+            if (!s.anatomy) {
+                //if the species doesn't have anatomy we need to initialize it
+                s.anatomy = org.anatomy;
+                s.calcAnatomyDetails();
+            }
+            org.species = s;
+        }
+        for (let name in species)
+            FossilRecord.addSpeciesObj(species[name]);
+        FossilRecord.loadRaw(env.fossil_record);
+        SerializeHelper.overwriteNonObjects(env, this);
+        if ($('#override-controls').is(':checked'))
+            Hyperparams.loadJsonObj(env.controls)
+        this.renderer.renderFullGrid(this.grid_map.grid);
     }
 }
 

@@ -5,6 +5,7 @@ const Directions = require("./Directions");
 const Anatomy = require("./Anatomy");
 const Brain = require("./Perception/Brain");
 const FossilRecord = require("../Stats/FossilRecord");
+const SerializeHelper = require("../Utils/SerializeHelper");
 
 class Organism {
     constructor(col, row, env, parent=null) {
@@ -33,15 +34,12 @@ class Organism {
         this.move_range = parent.move_range;
         this.mutability = parent.mutability;
         this.species = parent.species;
-        // this.birth_distance = parent.birth_distance;
         for (var c of parent.anatomy.cells){
             //deep copy parent cells
             this.anatomy.addInheritCell(c);
         }
-        if(parent.anatomy.is_mover) {
-            for (var i in parent.brain.decisions) {
-                this.brain.decisions[i] = parent.brain.decisions[i];
-            }
+        if(parent.anatomy.is_mover && parent.anatomy.has_eyes) {
+            this.brain.copy(parent.brain);
         }
     }
 
@@ -104,7 +102,6 @@ class Organism {
         var new_c = this.c + (direction_c*basemovement) + (direction_c*offset);
         var new_r = this.r + (direction_r*basemovement) + (direction_r*offset);
 
-        // console.log(org.isClear(new_c, new_r, org.rotation, true))
         if (org.isClear(new_c, new_r, org.rotation, true) && org.isStraightPath(new_c, new_r, this.c, this.r, this)){
             org.c = new_c;
             org.r = new_r;
@@ -118,11 +115,12 @@ class Organism {
             }
         }
         Math.max(this.food_collected -= this.foodNeeded(), 0);
-
     }
 
     mutate() {
-        let mutated = false;
+        let added = false;
+        let changed = false;
+        let removed = false;
         if (this.calcRandomChance(Hyperparams.addProb)) {
             let branch = this.anatomy.getRandomCell();
             let state = CellStates.getRandomLivingType();//branch.state;
@@ -130,7 +128,7 @@ class Organism {
             let c = branch.loc_col+growth_direction[0];
             let r = branch.loc_row+growth_direction[1];
             if (this.anatomy.canAddCellAt(c, r)){
-                mutated = true;
+                added = true;
                 this.anatomy.addRandomizedCell(state, c, r);
             }
         }
@@ -138,15 +136,15 @@ class Organism {
             let cell = this.anatomy.getRandomCell();
             let state = CellStates.getRandomLivingType();
             this.anatomy.replaceCell(state, cell.loc_col, cell.loc_row);
-            mutated = true;
+            changed = true;
         }
         if (this.calcRandomChance(Hyperparams.removeProb)){
             if(this.anatomy.cells.length > 1) {
                 let cell = this.anatomy.getRandomCell();
-                mutated = this.anatomy.removeCell(cell.loc_col, cell.loc_row);
+                removed = this.anatomy.removeCell(cell.loc_col, cell.loc_row);
             }
         }
-        return mutated;
+        return added || changed || removed;
     }
 
     calcRandomChance(prob) {
@@ -317,6 +315,22 @@ class Organism {
         var real_c = c + local_cell.rotatedCol(rotation);
         var real_r = r + local_cell.rotatedRow(rotation);
         return this.env.grid_map.cellAt(real_c, real_r);
+    }
+
+    serialize() {
+        let org = SerializeHelper.copyNonObjects(this);
+        org.anatomy = this.anatomy.serialize();
+        if (this.anatomy.is_mover && this.anatomy.has_eyes)
+            org.brain = this.brain.serialize();
+        org.species_name = this.species.name;
+        return org;
+    }
+
+    loadRaw(org) {
+        SerializeHelper.overwriteNonObjects(org, this);
+        this.anatomy.loadRaw(org.anatomy)
+        if (org.brain)
+            this.brain.copy(org.brain)
     }
 
 }
