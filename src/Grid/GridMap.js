@@ -78,6 +78,34 @@ class GridMap {
             r = 0;
         return [c, r];
     }
+
+    serialize() {
+        // Rather than store every single cell, we will store non organism cells (food+walls)
+        // and assume everything else is empty. Organism cells will be set when the organism
+        // list is loaded. This reduces filesize and complexity.
+        let grid = {cols:this.cols, rows:this.rows};
+        grid.food = [];
+        grid.walls = [];
+        for (let col of this.grid) {
+            for (let cell of col) {
+                if (cell.state===CellStates.wall || cell.state===CellStates.food){
+                    let c = {c: cell.col, r: cell.row}; // no need to store state
+                    if (cell.state===CellStates.food)
+                        grid.food.push(c)
+                    else
+                        grid.walls.push(c)
+                }
+            }
+        }
+        return grid;
+    }
+
+    loadRaw(grid) {
+        for (let f of grid.food)
+            this.setCellType(f.c, f.r, CellStates.food);
+        for (let w of grid.walls)
+            this.setCellType(w.c, w.r, CellStates.wall);
+    }
 }
 
 module.exports = GridMap;

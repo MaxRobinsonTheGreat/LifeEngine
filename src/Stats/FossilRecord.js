@@ -1,4 +1,5 @@
 const CellStates = require("../Organism/Cell/CellStates");
+const SerializeHelper = require("../Utils/SerializeHelper");
 const Species = require("./Species");
 
 const FossilRecord = {
@@ -30,7 +31,6 @@ const FossilRecord = {
     },
 
     fossilize: function(species) {
-        // console.log("Extinction")
         species.end_tick = this.env.total_ticks;
         for (i in this.extant_species) {
             var s = this.extant_species[i];
@@ -44,16 +44,12 @@ const FossilRecord = {
                 }
                 // disabled for now, causes memory problems on long runs
                 // this.extinct_species.push(s);
-                
-                // console.log("Extant species:", this.extant_species.length)
-                // console.log("Extinct species:", this.extinct_species.length)
                 return true;
             }
         }
     },
 
     resurrect: function(species) {
-        // console.log("Resurrecting species")
         if (species.extinct) {
             for (i in this.extinct_species) {
                 var s = this.extinct_species[i];
@@ -68,12 +64,13 @@ const FossilRecord = {
 
     setData() {
         // all parallel arrays
-        this.tick_record = [0];
-        this.pop_counts = [0];
-        this.species_counts = [0];
-        this.av_mut_rates = [0];
-        this.av_cells = [0];
-        this.av_cell_counts = [this.calcCellCountAverages()];
+        this.tick_record = [];
+        this.pop_counts = [];
+        this.species_counts = [];
+        this.av_mut_rates = [];
+        this.av_cells = [];
+        this.av_cell_counts = [];
+        this.updateData();
     },
 
     updateData() {
@@ -122,11 +119,38 @@ const FossilRecord = {
         this.av_cell_counts.push(cell_counts);
     },
 
-    clear_record: function() {
+    clear_record() {
         this.extant_species = [];
         this.extinct_species = [];
         this.setData();
     },
+
+    serialize() {
+        this.updateData();
+        let record = SerializeHelper.copyNonObjects(this);
+        record.records = {
+            tick_record:this.tick_record,
+            pop_counts:this.pop_counts,
+            species_counts:this.species_counts,
+            av_mut_rates:this.av_mut_rates,
+            av_cells:this.av_cells,
+            av_cell_counts:this.av_cell_counts,
+        };
+        let species = {};
+        for (let s of this.extant_species) {
+            species[s.name] = SerializeHelper.copyNonObjects(s);
+            delete species[s.name].name; // the name will be used as the key, so remove it from the value
+        }
+        record.species = species;
+        return record;
+    },
+
+    loadRaw(record) {
+        SerializeHelper.overwriteNonObjects(record, this);
+        for (let key in record.records) {
+            this[key] = record.records[key];
+        }
+    }
 
 }
 

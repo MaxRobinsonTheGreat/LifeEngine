@@ -47,6 +47,8 @@ class ControlPanel {
 
     defineHotkeys() {
         $('body').keydown( (e) => {
+            let focused = document.activeElement;
+            if (focused.tagName === "INPUT" && focused.type === "text") return;
             switch (e.key.toLowerCase()) {
                 // hot bar controls
                 case 'a':
@@ -204,6 +206,43 @@ class ControlPanel {
             let org = this.editor_controller.env.getCopyOfOrg();
             this.env_controller.add_new_species = true;
             this.env_controller.dropOrganism(org, center[0], center[1])
+        });
+        $('#save-env').click( () => {
+            let was_running = this.engine.running;
+            this.setPaused(true);
+            let env = this.engine.env.serialize();
+            let data = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(env));
+            let downloadEl = document.getElementById('download-el');
+            downloadEl.setAttribute("href", data);
+            downloadEl.setAttribute("download", $('#save-env-name').val()+".json");
+            downloadEl.click();
+            if (was_running)
+                this.setPaused(false);
+        });
+        $('#load-env').click(() => {
+            $('#upload-env').click();
+        });
+        $('#upload-env').change((e)=>{
+            let files = e.target.files;
+            if (!files.length) {return;};
+            let reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    let was_running = this.engine.running;
+                    this.setPaused(true);
+                    let env = JSON.parse(e.target.result);
+                    this.engine.env.loadRaw(env);
+                    if (was_running)
+                        this.setPaused(false);
+                    this.updateHyperparamUIValues();
+                    this.env_controller.resetView();
+                } catch(except) {
+                    console.error(except)
+                    alert('Failed to load world');
+                }
+                $('#upload-env')[0].value = '';
+            };
+            reader.readAsText(files[0]);
         });
     }
 

@@ -34,7 +34,6 @@ class Organism {
         this.move_range = parent.move_range;
         this.mutability = parent.mutability;
         this.species = parent.species;
-        // this.birth_distance = parent.birth_distance;
         for (var c of parent.anatomy.cells){
             //deep copy parent cells
             this.anatomy.addInheritCell(c);
@@ -321,21 +320,17 @@ class Organism {
     serialize() {
         let org = SerializeHelper.copyNonObjects(this);
         org.anatomy = this.anatomy.serialize();
-        if (this.brain)
+        if (this.anatomy.is_mover && this.anatomy.has_eyes)
             org.brain = this.brain.serialize();
+        org.species_name = this.species.name;
         return org;
     }
 
     loadRaw(org) {
-        for (let key in org)
-            if (typeof org[key] !== 'object')
-                this[key] = org[key];
+        SerializeHelper.overwriteNonObjects(org, this);
         this.anatomy.loadRaw(org.anatomy)
-        console.log(org)
-        if (org.brain) {
-            console.log('load brain')
+        if (org.brain)
             this.brain.copy(org.brain)
-        }
     }
 
 }

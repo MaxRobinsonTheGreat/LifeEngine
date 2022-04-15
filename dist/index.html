@@ -20,7 +20,7 @@
 				<div class='vertical-buttons'>
 					<button class="reset-view" title="Reset View. Hotkey: A"><i class="fa fa-video-camera"></i></button>
 					<button class="edit-mode-btn drag-view" id="drag-view" title="Drag View. Hotkey: S"><i class="fa fa-arrows"></i></button>
-					<button class="edit-mode-btn wall-drop" id="wall-drop" title="Drop/Remove Wall. Hotkey: D"><i class="fa fa-square"></i></button>
+					<button class="edit-mode-btn wall-drop" id="wall-drop" title="Drop/Remove Wall. Hotkey: D"><i class="fa fa-th"></i></button>
 					<button class="edit-mode-btn food-drop selected" id="food-drop" title="Drop/Remove Food. Hotkey: F"><i class="fa fa-cutlery"></i></button>
 					<button class="edit-mode-btn click-kill" id="click-kill" title="Click to kill. Hotkey: G"><i class="fa fa-bolt"></i></button>
 				</div>
@@ -189,6 +189,15 @@
 						<br>
 						<label for="clear-walls-reset" title='When on, walls will be cleared when the environment resets'>Clear walls on reset</label>
 						<input type="checkbox" id="clear-walls-reset">
+						<br>
+						<button id='save-env' title="Download save file for entire world">Save World</button>
+						<label for="save-env-name" title='Save World as:'>Save As:</label>
+						<input type="text" id="save-env-name" value="world" style="text-align: center;">.json
+						<br>
+						<button id='load-env' title="Load world save file">Load World</button>
+						<label for="override-controls" title='Override the current evolution controls with those from the loaded world'>Override Evolution Controls</label>
+						<input type="checkbox" id="override-controls" checked>
+						<input id="upload-env" style="display: none;" type="file">
 					</div>
 				</div>
 				<div id='hyperparameters' class='tab'>
@@ -270,7 +279,7 @@
 		<div class='hot-controls'>
 			<button class="reset-view" title="Reset View. Hotkey: A"><i class="fa fa-video-camera"></i></button>
 			<button class="edit-mode-btn drag-view" id="drag-view" title="Drag View. Hotkey: S"><i class="fa fa-arrows"></i></button>
-			<button class="edit-mode-btn wall-drop" id="wall-drop" title="Drop/Remove Wall. Hotkey: D"><i class="fa fa-square"></i></button>
+			<button class="edit-mode-btn wall-drop" id="wall-drop" title="Drop/Remove Wall. Hotkey: D"><i class="fa fa-th"></i></button>
 			<button class="edit-mode-btn food-drop selected" id="food-drop" title="Drop/Remove Food. Hotkey: F"><i class="fa fa-cutlery"></i></button>
 			<button class="edit-mode-btn click-kill" id="click-kill" title="Click to kill. Hotkey: G"><i class="fa fa-bolt"></i></button>
 			<button class="headless" title="Toggle rendering. Hotkey: H"><i class="fa fa-eye-slash"></i></button>

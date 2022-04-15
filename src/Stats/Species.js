@@ -14,12 +14,13 @@ class Species {
         this.cumulative_pop = 1;
         this.start_tick = start_tick;
         this.end_tick = -1;
-        this.name = '_' + Math.random().toString(36).substr(2, 9);
+        this.name = Math.random().toString(36).substr(2, 10);
         this.extinct = false;
         this.calcAnatomyDetails();
     }
 
     calcAnatomyDetails() {
+        if (!this.anatomy) return;
         var cell_counts = {};
         for (let c of CellStates.living) {
             cell_counts[c.name] = 0;
