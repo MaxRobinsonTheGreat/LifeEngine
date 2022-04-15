@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.0.3 (current dev)
+
+### UI Enhancements:
+- Improved input box styling
+
+### Simulation Enhancements:
+- 
+
+### Bug Fixes:
+- charste changed to charset
+
+
+Thanks to contributors: 
+
 ## 1.0.2 (12/21/2021)
 
 ### UI Enhancements:
