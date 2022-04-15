@@ -195,13 +195,10 @@ class WorldEnvironment extends Environment{
 
         for (let orgRaw of env.organisms) {
             let org = new Organism(orgRaw.col, orgRaw.row, this);
-            if (!orgRaw.anatomy) console.log(orgRaw)
             org.loadRaw(orgRaw);
             this.addOrganism(org);
             let s = species[orgRaw.species_name];
-            if (!s){
-                console.log("Created:", orgRaw.species_name)
-                console.log(org.anatomy)
+            if (!s){ // ideally, every organisms species should exists, but there is a bug somewhere
                 s = new Species(org.anatomy, null, env.total_ticks);
                 species[orgRaw.species_name] = s;
             }
