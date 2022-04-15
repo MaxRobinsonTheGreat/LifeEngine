@@ -1,18 +1,20 @@
 # Changelog
 
-## 1.0.3 (current dev)
+## 1.0.3 (4/15/2022)
 
 ### UI Enhancements:
-- Improved input box styling
+- Improved styling
 
 ### Simulation Enhancements:
-- 
+- Added ability to save/load organisms
+- Added ability to save/load worlds
 
 ### Bug Fixes:
 - charste changed to charset
+- Fixed species tracking
 
 
-Thanks to contributors: 
+Thanks to contributors: @TerraMaster85
 
 ## 1.0.2 (12/21/2021)
 
