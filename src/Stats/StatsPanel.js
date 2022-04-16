@@ -50,7 +50,7 @@ class StatsPanel {
     updateDetails() {
         var org_count = this.env.organisms.length;
         $('#org-count').text("Total Population: " + org_count);
-        $('#species-count').text("Number of Species: " + FossilRecord.extant_species.length);
+        $('#species-count').text("Number of Species: " + FossilRecord.numExtantSpecies());
         $('#largest-org').text("Largest Organism Ever: " + this.env.largest_cell_count + " cells");
         $('#avg-mut').text("Average Mutation Rate: " + Math.round(this.env.averageMutability() * 100) / 100);
 

@@ -12,7 +12,6 @@ class EnvironmentController extends CanvasController{
         super(env, canvas);
         this.mode = Modes.FoodDrop;
         this.org_to_clone = null;
-        this.add_new_species = false;
         this.defineZoomControls();
         this.scale = 1;
     }
@@ -171,14 +170,14 @@ class EnvironmentController extends CanvasController{
         var new_org = new Organism(col, row, this.env, organism);
 
         if (new_org.isClear(col, row)) {
-            if (this.add_new_species){
+            let new_species = !FossilRecord.speciesIsExtant(new_org.species.name);
+            if (new_org.species.extinct) {
+                FossilRecord.resurrect(new_org.species);
+            }
+            else if (new_species) {
                 FossilRecord.addSpeciesObj(new_org.species);
                 new_org.species.start_tick = this.env.total_ticks;
-                this.add_new_species = false;
                 new_org.species.population = 0;
-            }
-            else if (this.org_to_clone.species.extinct){
-                FossilRecord.resurrect(this.org_to_clone.species);
             }
 
             this.env.addOrganism(new_org);
