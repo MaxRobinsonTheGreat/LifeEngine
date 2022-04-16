@@ -3,6 +3,7 @@ const Modes = require("./ControlModes");
 const CellStates = require("../Organism/Cell/CellStates");
 const Directions = require("../Organism/Directions");
 const Hyperparams = require("../Hyperparameters");
+const Species = require("../Stats/Species");
 
 class EditorController extends CanvasController{
     constructor(env, canvas) {
@@ -10,7 +11,6 @@ class EditorController extends CanvasController{
         this.mode = Modes.None;
         this.edit_cell_type = null;
         this.highlight_org = false;
-        this.new_species = false;
         this.defineCellTypeSelection();
         this.defineEditorDetails();
         this.defineSaveLoad();
@@ -46,7 +46,6 @@ class EditorController extends CanvasController{
         else if (this.right_click)
             this.env.removeCellFromOrg(this.mouse_c, this.mouse_r);
 
-        this.new_species = true;
         this.setBrainPanelVisibility();
         this.setMoveRangeVisibility();
         this.updateDetails();
@@ -134,6 +133,9 @@ class EditorController extends CanvasController{
                     this.refreshDetailsPanel();
                     this.env.organism.updateGrid();
                     this.env.renderFull();
+                    this.env.organism.species = new Species(this.env.organism.anatomy, null, 0);
+                    if (org.species_name)
+                        this.env.organism.species.name = org.species_name;
                     if (this.mode === Modes.Clone)
                         $('#drop-org').click();
                     // have to clear the value so change() will be triggered if the same file is uploaded again

@@ -36,10 +36,10 @@ class WorldEnvironment extends Environment{
                 to_remove.push(i);
             }
         }
+        this.removeOrganisms(to_remove);
         if (Hyperparams.foodDropProb > 0) {
             this.generateFood();
         }
-        this.removeOrganisms(to_remove);
         this.total_ticks ++;
         if (this.total_ticks % this.data_update_rate == 0) {
             FossilRecord.updateData();
@@ -122,6 +122,16 @@ class WorldEnvironment extends Environment{
             org.die();
         this.organisms = [];
     }
+    
+    clearDeadOrganisms() {
+        let to_remove = [];
+        for (let i in this.organisms) {
+            let org = this.organisms[i];
+            if (!org.living)
+                to_remove.push(i);
+        }
+        this.removeOrganisms(to_remove);
+    }
 
     generateFood() {
         var num_food = Math.max(Math.floor(this.grid_map.cols*this.grid_map.rows*Hyperparams.foodDropProb/50000), 1)
@@ -168,6 +178,7 @@ class WorldEnvironment extends Environment{
     }
 
     serialize() {
+        this.clearDeadOrganisms();
         let env = SerializeHelper.copyNonObjects(this);
         env.grid = this.grid_map.serialize();
         env.organisms = [];
@@ -198,7 +209,7 @@ class WorldEnvironment extends Environment{
             org.loadRaw(orgRaw);
             this.addOrganism(org);
             let s = species[orgRaw.species_name];
-            if (!s){ // ideally, every organisms species should exists, but there is a bug somewhere
+            if (!s){ // ideally, every organisms species should exists, but there is a bug that misses some species sometimes
                 s = new Species(org.anatomy, null, env.total_ticks);
                 species[orgRaw.species_name] = s;
             }

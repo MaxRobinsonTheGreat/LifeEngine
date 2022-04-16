@@ -204,7 +204,6 @@ class ControlPanel {
             if (!env.reset(true, false)) return;
             let center = env.grid_map.getCenter();
             let org = this.editor_controller.env.getCopyOfOrg();
-            this.env_controller.add_new_species = true;
             this.env_controller.dropOrganism(org, center[0], center[1])
         });
         $('#save-env').click( () => {
@@ -464,8 +463,6 @@ class ControlPanel {
 
         if (mode == Modes.Clone) {
             this.env_controller.org_to_clone = this.engine.organism_editor.getCopyOfOrg();
-            this.env_controller.add_new_species = this.editor_controller.new_species;
-            this.editor_controller.new_species = false;
         }
     }
 

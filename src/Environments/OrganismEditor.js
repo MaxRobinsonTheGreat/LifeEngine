@@ -72,7 +72,6 @@ class OrganismEditor extends Environment{
         this.organism = new Organism(center[0], center[1], this, orig_org);
         this.organism.updateGrid();
         this.controller.updateDetails();
-        this.controller.new_species = false;
     }
     
     getCopyOfOrg() {
@@ -109,7 +108,6 @@ class OrganismEditor extends Environment{
             newOrganism.species = new Species(newOrganism.anatomy, null, 0);
             var col = Math.floor(size + (Math.random() * (env.grid_map.cols-(size*2)) ) );
             var row = Math.floor(size + (Math.random() * (env.grid_map.rows-(size*2)) ) );
-            env.controller.add_new_species = true;
             env.controller.dropOrganism(newOrganism, col, row);
         }
     }
