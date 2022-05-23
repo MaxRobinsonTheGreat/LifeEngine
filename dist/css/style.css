@@ -262,12 +262,6 @@ input:hover,input:active {
     /* display: none; */
 }
 
-body {
-	margin: 0;
-	padidng: 0;
-	background-color: #333333;
-}
-
 #headless-notification {
     display: grid;
     place-content: center;
