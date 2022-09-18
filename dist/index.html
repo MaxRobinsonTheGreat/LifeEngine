@@ -5,9 +5,8 @@
 		<title>The Life Engine</title>
 		<link rel="icon" href="./img/icon.png">
 		<link rel="stylesheet" href="./css/style.css">
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
 		<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
-
 	</head>
 	<body>
 		<script src="./js/bundle.js"></script>
@@ -22,7 +21,7 @@
 					<button class="edit-mode-btn drag-view" id="drag-view" title="Drag View. Hotkey: S"><i class="fa fa-arrows"></i></button>
 					<button class="edit-mode-btn wall-drop" id="wall-drop" title="Drop/Remove Wall. Hotkey: D"><i class="fa fa-th"></i></button>
 					<button class="edit-mode-btn food-drop selected" id="food-drop" title="Drop/Remove Food. Hotkey: F"><i class="fa fa-cutlery"></i></button>
-					<button class="edit-mode-btn click-kill" id="click-kill" title="Click to kill. Hotkey: G"><i class="fa fa-bolt"></i></button>
+					<button class="edit-mode-btn click-kill" id="click-kill" title="Click to kill. Hotkey: G"><i class="fa fa-skull"></i></button>
 				</div>
 				<img src="./img/title.png" alt="Life Engine">
 				<h3>Simulation Speed</h3>
@@ -66,20 +65,21 @@
 						<iframe id="video" src="https://www.youtube.com/embed/iSAKEnRfles"></iframe>
 					</div>
 					<div class='icon-links'>
-						<a href=https://github.com/MaxRobinsonTheGreat/EvolutionSimulatorV2 title='View the code'><i class="fa fa-github"></i></a>
-						<a href="https://twitter.com/max_romana"><i class="fa fa-twitter"></i></a>
+						<a href=https://github.com/MaxRobinsonTheGreat/EvolutionSimulatorV2 title='View the code'><i class="fa-brands fa-github"></i></a>
+						<a href="https://discord.gg/ZsrAAByEnr" title='Join the community'><i class="fa-brands fa-discord"></i></a>
+						<a href=" https://www.patreon.com/emergentgarden" title='Support the project'><i class="fa-brands fa-patreon"></i></a>
+
 					</div>
 				</div>
 
 				<div id='editor' class='tab'>
 					<div class='left-half' id='editor-panel'>
 						<div class='editor-buttons'>
-							<button class="edit-mode-btn select" id="select" title="Select organism from world. Hotkey: Z"><i class="fa fa-hand-pointer-o"></i></button>
-							<button class="edit-mode-btn edit" id="edit" title="Edit organism. Hotkey: X"><i class="fa fa-pencil"></i></button>
+							<button class="edit-mode-btn select" id="select" title="Select organism from world. Hotkey: Z"><i class="fa-regular fa-hand-pointer"></i></button>
+							<button class="edit-mode-btn edit" id="edit" title="Edit organism. Hotkey: X"><i class="fa fa-pen-to-square"></i></button>
 							<button class="edit-mode-btn drop-org" id="drop-org" title="Drop organism in world. Hotkey: C"><i class="fa fa-plus"></i></button>
 							<button id="save-org" title="Save Organism"><i class="fa fa-save"></i></button>
 							<button id="load-org" title="Load Organism"><i class="fa fa-upload"></i></button>
-							<input id="upload-org" style="display: none;" type="file">
 						</div>
 						<div id='editor-env'>
 							<canvas id='editor-canvas'></canvas>
@@ -197,7 +197,6 @@
 						<button id='load-env' title="Load world save file">Load World</button>
 						<label for="override-controls" title='Override the current evolution controls with those from the loaded world'>Override Evolution Controls</label>
 						<input type="checkbox" id="override-controls" checked>
-						<input id="upload-env" style="display: none;" type="file">
 					</div>
 				</div>
 				<div id='hyperparameters' class='tab'>
@@ -218,11 +217,15 @@
 						<label for="look-range" title='How far an eye cell can see (in number of cells)'>Look range:</label>
 						<input type="number" id="look-range" min="1" max="50" value=20 step="1">
 						<br>
+						<label for="see-through-self" title='Allows eyes to see through an organisms own cells'>See through self:</label>
+						<input type="checkbox" id="see-through-self">
+						<br>
 						<label for="food-drop-rate" title='Rate at which food is automatically generated and dropped in the world'>Auto food drop rate:</label>
 						<input type="number" id="food-drop-rate" value=0 max="1000">
 						<br>
 						<label for="extra-mover-cost" title='Additional food cost for movers to reproduce'>Extra mover reproduction cost:</label>
 						<input type="number" id="extra-mover-cost" value=0 max="1000" step="1">
+
 						
 					</div>
 					<div class='right-half'>
@@ -231,7 +234,7 @@
 						<label for="evolved-mutation" title='When on, each organism has its own mutation rate that can increase or decrease. When off, all organisms have the same mutation rate.'>Use evolved mutation rate</label>
 						<input type="checkbox" id="evolved-mutation" checked> </br>
 						<label class="global-mutation-in" for="global-mutation">Global mutation rate: </label>
-						<input class="global-mutation-in" type="number" id="global-mutation" min="1" max="100" value=5 step="1">
+						<input class="global-mutation-in" type="number" id="global-mutation" min="0" max="100" value=5 step="1">
 						<h4 title='When an organism mutates, it can choose from one of the following mutation types.'>Mutation Type Probabilities</h4>
 						<label for="add-prob" title='A new cell will stem from an existing one'>Add Cell:</label>
 						<input class="mut-prob" type="number" id="add-prob" min="0" max="100" value=33>
@@ -267,21 +270,35 @@
 							<option value="mut-rate">Mutation Rate</option>
 						</select>
 						<p id='chart-note'></p>
-
 					</div>
 					<div class='right-half'>
 						<div id="chartContainer"></div>
 					</div>
-					
 				</div>
 			</div>
+		</div>
+		<div class='load-panel'>
+			<div class="load-panel-title">
+				<button id='close-load-btn'><i class="fa fa-times"></i></button>
+				<h2 id="load-title">Community Creations</h2>
+			</div><br>
+			Worlds<br>
+			<select id="worlds-load-dropdown"></select>
+			<button id='load-env-btn'>Load</button><br>
+			Organisms<br>
+			<select id="organisms-load-dropdown"></select>
+			<button id='load-org-btn'>Load</button><br><br>
+			<input id="upload-json" style="display: none;" type="file">
+		</div>
+		<div class='community-section'>
+			<button id="community-creations-btn" title="See worlds and organisms made by the community">Community Creations <i class="fa fa-users"></i></button>
 		</div>
 		<div class='hot-controls'>
 			<button class="reset-view" title="Reset View. Hotkey: A"><i class="fa fa-video-camera"></i></button>
 			<button class="edit-mode-btn drag-view" id="drag-view" title="Drag View. Hotkey: S"><i class="fa fa-arrows"></i></button>
 			<button class="edit-mode-btn wall-drop" id="wall-drop" title="Drop/Remove Wall. Hotkey: D"><i class="fa fa-th"></i></button>
 			<button class="edit-mode-btn food-drop selected" id="food-drop" title="Drop/Remove Food. Hotkey: F"><i class="fa fa-cutlery"></i></button>
-			<button class="edit-mode-btn click-kill" id="click-kill" title="Click to kill. Hotkey: G"><i class="fa fa-bolt"></i></button>
+			<button class="edit-mode-btn click-kill" id="click-kill" title="Click to kill. Hotkey: G"><i class="fa fa-skull"></i></button>
 			<button class="headless" title="Toggle rendering. Hotkey: H"><i class="fa fa-eye-slash"></i></button>
 			<button class='pause-button' title="Play/Pause. Hotkey: Spacebar"><i class="fa fa-pause"></i></button>
 		</div>

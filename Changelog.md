@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.0.4 (9/17/2022)
+
+### UI Enhancements:
+- Added "Community Creations" button
+- Updated icons
+- Standardized Colors
+
+### Simulation Enhancements:
+- Added ability to load premade organisms and worlds from backend
+- Added SeeThroughSelf param that allows eyes to see through their own cells
+
+### Bug Fixes:
+- Mutation rate now properly saves and loads with world
+
+
 ## 1.0.3 (4/15/2022)
 
 ### UI Enhancements:

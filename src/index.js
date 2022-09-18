@@ -5,8 +5,7 @@ import Engine from './Engine';
 $('document').ready(function(){
     let isMobile = mobileCheck();
     if (isMobile) {
-        alert("Though the simulation still works on mobile, most features are disabled. Try it on desktop for the full experience!");
-        $('.control-panel').css('display', 'none');
+        alert("Welcome to the Life Engine! Be aware the website is not built for mobile, so try on desktop for the best experience!");
     }
     var engine = new Engine();
     engine.start(60);
