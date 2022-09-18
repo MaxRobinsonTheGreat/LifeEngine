@@ -1,2 +1,5 @@
 node_modules/*
 dist/js/bundle.js
+devuser/
+.vscode/
+work_recordings/
