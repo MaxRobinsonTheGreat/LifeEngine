@@ -3,6 +3,8 @@ This is the readme for my evolution simulator, The Life Engine.
 FOR FEATURE REQUESTS, USE THE DISCUSSIONS TAB. FOR BUG REPORTS, USE THE ISSUES TAB. :)
 
 # The Life Engine
+[Play here!](https://thelifeengine.net/)
+
 The life engine is a cellular automaton designed to simulate the long term processes of biological evolution. It allows organisms to eat, reproduce, mutate, and adapt.
 Unlike genetic algorithms, the life engine does not manually select the most "fit" organism for some given task, but rather allows true natural selection to 
 run its course. Organisms that survive, successfully produce offspring, and out-compete their neighbors naturally propogate througout the environment.
@@ -10,7 +12,26 @@ run its course. Organisms that survive, successfully produce offspring, and out-
 This is the second version of the [original evolution simulator](https://github.com/MaxRobinsonTheGreat/EvolutionSimulator), which I started in high school.
 
 
-# Rules
+# How to Run and Modify the Code
+ - [Install node and npm](https://nodejs.org/en/download/)
+ - Clone this repository
+ - In terminal/powershell, go to the repository and run `npm install`
+ - Run `npm run build` (or `npm run build-watch` for a better developer experience)
+   - If you get a `Can't resolve jquery` error message run `npm install --save jquery`
+ - Open `dist/index.html` in your browser. The simulation should start running.
+
+To load custom creations (found in `/dist/assets`), you must have a simple web server that serves all files in the dist directory. I do this with python:
+ - [Install python](https://www.python.org/downloads/)
+ - run `python -m http.server --directory dist` from the repository root
+ - Open `http://localhost:8000/` in your browser
+
+### Npm build commands
+- Production mode (minified): `npm run build`
+- Watch mode (dev mode that auto-builds when you save a file): `npm run build-watch`
+- Dev mode (better error messages): `npm run build-dev` 
+
+
+# How the Simulation Works
 ## The Environment
 The environment is a simple grid system made up of cells, which at every tick have a certain type. The environment is populated by organisms, which are structures of multiple cells.
 
@@ -56,11 +77,3 @@ Organims can also rotate around a central pivot cell. This cell can never be rem
 
 ## Eyes and Brains
 Any organism can evolve eyes, but when an organism has both eyes and mover cells it is given a brain. The eye, unlike other cells, has a direction, which is denoted by the direction of the slit in the cell. It "looks" forward in this direction and "sees" the first non-empty cell within a certain range. It checks the type of the cell and informs the brain, which then decideds how to move. The brain can either ignore (keep moving in whatever direction), chase (move towards the observed cell), or retreat (move in the opposite direction of the observed cell). The brain maps different observed cell types to different actions. For instance, the brain will chase when it sees food and retreat when it sees a killer cell. These behaviors can mutate over time. 
-
-
-## Building
-If you want to change the source code and then play, use any of the following commands to build the project:
-To build minified: `npm run build`
-To build in dev mode: `npm run build-dev`
-To build in dev/watch mode: `npm run build-watch`
-You can then open `dist/index.html` in your browser.

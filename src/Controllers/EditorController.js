@@ -4,6 +4,7 @@ const CellStates = require("../Organism/Cell/CellStates");
 const Directions = require("../Organism/Directions");
 const Hyperparams = require("../Hyperparameters");
 const Species = require("../Stats/Species");
+const LoadController = require("./LoadController");
 
 class EditorController extends CanvasController{
     constructor(env, canvas) {
@@ -119,34 +120,23 @@ class EditorController extends CanvasController{
             downloadEl.click();
         });
         $('#load-org').click(() => {
-            $('#upload-org').click();
+            LoadController.loadJson((org)=>{
+                this.loadOrg(org);
+            });
         });
-        $('#upload-org').change((e)=>{
-            let files = e.target.files;
-            if (!files.length) {return;};
-            let reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    let org=JSON.parse(e.target.result);
-                    this.env.clear();
-                    this.env.organism.loadRaw(org);
-                    this.refreshDetailsPanel();
-                    this.env.organism.updateGrid();
-                    this.env.renderFull();
-                    this.env.organism.species = new Species(this.env.organism.anatomy, null, 0);
-                    if (org.species_name)
-                        this.env.organism.species.name = org.species_name;
-                    if (this.mode === Modes.Clone)
-                        $('#drop-org').click();
-                    // have to clear the value so change() will be triggered if the same file is uploaded again
-                    $('#upload-org')[0].value = '';
-                } catch(except) {
-                    console.error(except)
-                    alert('Failed to load organism');
-                }
-            };
-            reader.readAsText(files[0]);
-        });
+    }
+
+    loadOrg(org) {
+        this.env.clear();
+        this.env.organism.loadRaw(org);
+        this.refreshDetailsPanel();
+        this.env.organism.updateGrid();
+        this.env.renderFull();
+        this.env.organism.species = new Species(this.env.organism.anatomy, null, 0);
+        if (org.species_name)
+            this.env.organism.species.name = org.species_name;
+        if (this.mode === Modes.Clone)
+            $('#drop-org').click();
     }
 
     clearDetailsPanel() {
