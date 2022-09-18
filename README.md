@@ -17,6 +17,7 @@ This is the second version of the [original evolution simulator](https://github.
  - Clone this repository
  - In terminal/powershell, go to the repository and run `npm install`
  - Run `npm run build` (or `npm run build-watch` for a better developer experience)
+   - If you get a `Can't resolve jquery` error message run `npm install --save jquery`
  - Open `dist/index.html` in your browser. The simulation should start running.
 
 To load custom creations (found in `/dist/assets`), you must have a simple web server that serves all files in the dist directory. I do this with python:
