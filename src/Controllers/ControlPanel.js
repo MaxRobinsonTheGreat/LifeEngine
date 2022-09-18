@@ -2,6 +2,7 @@ const Hyperparams = require("../Hyperparameters");
 const Modes = require("./ControlModes");
 const StatsPanel = require("../Stats/StatsPanel");
 const WorldConfig = require("../WorldConfig");
+const LoadController = require("./LoadController");
 
 class ControlPanel {
     constructor(engine) {
@@ -24,10 +25,11 @@ class ControlPanel {
         this.opacity_change_rate = -0.8;
         this.paused=false;
         this.setHyperparamDefaults();
+        LoadController.control_panel = this;
     }
 
     defineMinMaxControls(){
-        this.control_panel_active = true;
+        this.control_panel_active = false;
         this.no_hud = false;
         $('#minimize').click ( () => {
             $('.control-panel').css('display', 'none');
@@ -100,10 +102,13 @@ class ControlPanel {
                         };
                         $('.control-panel').css('display', control_panel_display);
                         $('.hot-controls').css('display', hot_control_display);
+                        $('.community-section').css('display', 'block');
                     }
                     else {
                         $('.control-panel').css('display', 'none');
                         $('.hot-controls').css('display', 'none');
+                        $('.community-section').css('display', 'none');
+                        LoadController.close();
                     }
                     this.no_hud = !this.no_hud;
                     break;
@@ -219,7 +224,9 @@ class ControlPanel {
                 this.setPaused(false);
         });
         $('#load-env').click(() => {
-            $('#upload-env').click();
+            LoadController.loadJson((env)=>{
+                this.loadEnv(env);
+            });
         });
         $('#upload-env').change((e)=>{
             let files = e.target.files;
@@ -227,14 +234,8 @@ class ControlPanel {
             let reader = new FileReader();
             reader.onload = (e) => {
                 try {
-                    let was_running = this.engine.running;
-                    this.setPaused(true);
                     let env = JSON.parse(e.target.result);
-                    this.engine.env.loadRaw(env);
-                    if (was_running)
-                        this.setPaused(false);
-                    this.updateHyperparamUIValues();
-                    this.env_controller.resetView();
+                    this.loadEnv(env);
                 } catch(except) {
                     console.error(except)
                     alert('Failed to load world');
@@ -243,6 +244,20 @@ class ControlPanel {
             };
             reader.readAsText(files[0]);
         });
+    }
+
+    loadEnv(env) {
+        if (this.tab_id == 'stats')
+            this.stats_panel.stopAutoRender();
+        let was_running = this.engine.running;
+        this.setPaused(true);
+        this.engine.env.loadRaw(env);
+        if (was_running)
+            this.setPaused(false);
+        this.updateHyperparamUIValues();
+        this.env_controller.resetView();
+        if (this.tab_id == 'stats')
+            this.stats_panel.startAutoRender();
     }
 
     defineHyperparameterControls() {
@@ -261,6 +276,9 @@ class ControlPanel {
         });
         $('#look-range').change(function() {
             Hyperparams.lookRange = $('#look-range').val();
+        });
+        $('#see-through-self').change(function() {
+            Hyperparams.seeThroughSelf = this.checked;
         });
         $('#food-drop-rate').change(function() {
             Hyperparams.foodDropProb = $('#food-drop-rate').val();
@@ -352,6 +370,8 @@ class ControlPanel {
         $('#food-drop-rate').val(Hyperparams.foodDropProb);
         $('#extra-mover-cost').val(Hyperparams.extraMoverFoodCost);
         $('#look-range').val(Hyperparams.lookRange);
+        $('#see-through-self').prop('checked', Hyperparams.seeThroughSelf);
+        $('#global-mutation').val(Hyperparams.globalMutability);
 
         if (!Hyperparams.useGlobalMutability) {
             $('.global-mutation-in').css('display', 'none');
@@ -436,9 +456,7 @@ class ControlPanel {
     }
 
     setPaused(paused) {
-
         if (paused) {
-
             $('.pause-button').find("i").removeClass("fa-pause");
             $('.pause-button').find("i").addClass("fa-play");
             if (this.engine.running) 

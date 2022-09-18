@@ -22,6 +22,7 @@ const Hyperparams = {
         this.instaKill = false;
 
         this.lookRange = 20;
+        this.seeThroughSelf = false;
 
         this.foodDropProb = 0;
 
