@@ -280,15 +280,28 @@
 		<div class='load-panel'>
 			<div class="load-panel-title">
 				<button id='close-load-btn'><i class="fa fa-times"></i></button>
-				<h2 id="load-title">Community Creations</h2>
+				<h1>Community Creations</h1>
 			</div><br>
-			Worlds<br>
-			<select id="worlds-load-dropdown"></select>
-			<button id='load-env-btn'>Load</button><br>
-			Organisms<br>
-			<select id="organisms-load-dropdown"></select>
-			<button id='load-org-btn'>Load</button><br><br>
-			<input id="upload-json" style="display: none;" type="file">
+			<div class="all-list-container">
+				<div class="list-title-container">
+					<h2>Worlds</h2>
+					<div id="worlds-list-container" class="list-container">
+						<ul id="worlds-list"></ul>
+					</div>
+				</div>
+				<div class="list-title-container">
+					<h2>Organisms</h2>
+					<div id="organisms-list-container" class="list-container">
+						<ul id="organisms-list"></ul>
+					</div>
+				</div>
+				<div class="list-title-container">
+					<h2>Mods</h2>
+					<div id="mods-list-container" class="list-container">
+						<ul id="mods-list"></ul>
+					</div>
+				</div>
+			</div>
 		</div>
 		<div class='community-section'>
 			<button id="community-creations-btn" title="See worlds and organisms made by the community">Community Creations <i class="fa fa-users"></i></button>

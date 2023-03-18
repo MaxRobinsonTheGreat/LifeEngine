@@ -308,10 +308,11 @@ input:hover,input:active {
 }
 
 .load-panel {
-    width: 300px;
+    width: 800px;
     background-color: var(--panel-bg);
     position: fixed;
     display: none;
+    text-align: center;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
@@ -322,6 +323,32 @@ input:hover,input:active {
     box-shadow: 0 0 0 10px var(--border);
 
     padding: 10px;
+}
+
+.list-title-container {
+    flex: 1;
+}
+.list-container {
+    overflow-y: scroll;
+    max-height: 300px;
+}
+
+.list-item {
+    cursor: pointer;
+    padding: 5px;
+    border-bottom: 1px solid #ccc;
+    background-color: var(--btn);
+}
+.list-item:hover {
+    background-color: var(--btn-hover);
+}
+.list-item:active {
+    background-color: var(--btn-click);
+}
+
+.all-list-container {
+    display: flex;
+    width: 100%;
 }
 
 #close-load-btn { 

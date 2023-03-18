@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.0.5 (tbd)
+
+### UI Enhancements:
+- Improved "Community Creations" list panel
+- Added Mod list to Community Creations
+
+### Simulation Enhancements:
+- Added links to community mods
+
+
 ## 1.0.4 (9/17/2022)
 
 ### UI Enhancements:
