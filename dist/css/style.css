@@ -10,7 +10,7 @@
 }
 
 body{
-    background: var(--border);
+    background: var(--tab);
     margin: 0;
     padding: 0;
     height: 100%;
@@ -172,7 +172,8 @@ input:hover,input:active {
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: 1;
     display: none;
-    padding: 10px
+    padding: 10px;
+    overflow-y: auto;
 }
 
 .tab#about {
@@ -329,8 +330,9 @@ input:hover,input:active {
     flex: 1;
 }
 .list-container {
-    overflow-y: scroll;
-    max-height: 300px;
+    overflow-y: auto;
+    max-height: 200px;
+    margin-right: 5px;
 }
 
 .list-item {
