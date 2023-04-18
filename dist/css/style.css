@@ -163,6 +163,10 @@ input:hover,input:active {
     background-color: var(--btn-hover);
     color: black;
 }
+.tabnav p:active {
+    background-color: var(--btn-click);
+    color: white;
+}
 .open-tab {
     background-color: var(--tab-active);
     color: black;

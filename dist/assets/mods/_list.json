@@ -2,5 +2,13 @@
     {
         "name": "Life Engine Extended",
         "value": "https://lifeengineextended.github.io/"
+    },
+    {
+        "name": "Camo/Healer Cells",
+        "value": "https://lifeenginelocal.netlify.app/"
+    },
+    {
+        "name": "Neural Networks",
+        "value": "https://bboettcher3.github.io/LifeEngine/"
     }
 ]
