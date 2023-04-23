@@ -11,7 +11,6 @@ const LoadController = {
         });
         let panel = this;
         $(".load-panel").on('click', '.list-item', async function() {
-            console.log('howdy')
             let list_name = $(this).closest(".list-container").attr('id');
 			let value = $(this).find('.hidden-value').text();
             if (list_name === 'worlds-list-container') {
@@ -61,12 +60,13 @@ const LoadController = {
         let id = `#${name}-list`
         $(id).empty();
         for (let item of list) {
-            $(id).append(
-                `<li class="list-item">
-                ${item.name}
-                <div class="hidden-value" hidden>${item.value}</div>
-                </li>`
-            );
+            let html = `<li class="list-item">
+                        ${item.name}`;
+            if (item.subname) 
+                html += `<br>(${item.subname})`;
+            html +=`<div class="hidden-value" hidden>${item.value}</div>
+                    </li>`;
+            $(id).append(html);
         }
     },
 

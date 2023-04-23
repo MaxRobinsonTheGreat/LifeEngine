@@ -178,6 +178,7 @@ input:hover,input:active {
     display: none;
     padding: 10px;
     overflow-y: auto;
+    height: 100%;
 }
 
 .tab#about {
@@ -196,7 +197,6 @@ input:hover,input:active {
     display: none;
 }
 
-
 #editor-panel{
     display: flex;
 }
@@ -211,6 +211,10 @@ input:hover,input:active {
 #clear-walls {
     margin-top: 5px;
 }
+#brush-size-container {
+    display: flex;
+    align-items: center;
+}
 #organism-options {
     display: none;
 }
@@ -223,7 +227,21 @@ input:hover,input:active {
     image-rendering: pixelated;
     image-rendering: crisp-edges;
     height: 195px;
-    width: 195px; 
+    width: 195px;
+    display: block;
+}
+#unnatural-org-warning {
+    color: red;
+    text-align: center;
+    font-size: 22px;
+    border-radius: 10px;
+    margin: 2px;
+    border: 2px solid red;
+}
+#unnatural-org-warning:hover {
+    color: darkred;
+    border: 2px solid darkred;
+
 }
 #cell-selections {
     display: none;

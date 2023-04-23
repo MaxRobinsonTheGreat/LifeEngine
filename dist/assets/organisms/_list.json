@@ -30,5 +30,17 @@
     {
         "name": "Napoleon",
         "value": "Napoleon"
+    },
+    {
+        "name": "NED",
+        "value": "NED"
+    },
+    {
+        "name": "Spinner",
+        "value": "spinner"
+    },
+    {
+        "name": "Sword",
+        "value": "sword"
     }
 ]

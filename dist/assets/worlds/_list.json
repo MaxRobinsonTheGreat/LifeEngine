@@ -34,5 +34,33 @@
     {
         "name": "Life Engine of Nurgle",
         "value": "Life_Engine_of_Nurgle"
+    },
+    {
+        "name": "Zoo",
+        "value": "zoo"
+    },
+    {
+        "name": "Chains",
+        "value": "Chains"
+    },
+    {
+        "name": "Symbiotic Colony",
+        "value": "SymbioticColony"
+    },
+    {
+        "name": "Sand Grid",
+        "value": "Sand_Grid"
+    },
+    {
+        "name": "Epic",
+        "value": "Epic"
+    },
+    {
+        "name": "Ostracod Slide",
+        "value": "Ostracod_Slide"
+    },
+    {
+        "name": "Altruistic Arthurs",
+        "value": "ArthursWorld"
     }
 ]
