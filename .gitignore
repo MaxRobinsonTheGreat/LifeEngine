@@ -1,3 +1,2 @@
-node_modules/*
-dist/js/bundle.js
-./package-lock.json
+node_modules/
+dist/js/
