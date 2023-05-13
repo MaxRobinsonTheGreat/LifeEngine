@@ -18,18 +18,18 @@ This is the second version of the [original evolution simulator](https://github.
  - Open a terminal or powershell comand prompt, go to the repository and run `npm install`
  - Run `npm run build` (or `npm run build-watch` for a better developer experience)
    - If you get a `Can't resolve jquery` error message run `npm install --save jquery`
- - Open `dist/index.html` in your browser. The simulation should start running.
+- Run `npm start` to serve files. Alternatively, `npm run start-dev` disables cache.
 
-To load custom creations (found in `/dist/assets`), you must have a simple web server that serves all files in the dist directory. I do this with python:
- - [Install python](https://www.python.org/downloads/)
- - run `python -m http.server --directory dist` from the repository root
- - Open `http://localhost:8000/` in your browser
+### Commands
 
 ### Npm build commands
 - Production mode (minified): `npm run build`
 - Watch mode (dev mode that auto-builds when you save a file): `npm run build-watch`
-- Dev mode (better error messages): `npm run build-dev` 
+- Dev mode (better error messages): `npm run build-dev`
 
+### Npm start commands
+- Simple HTTP server: `npm start`
+- With disabled cache (convenient for development): `npm run start-dev`
 
 # How the Simulation Works
 ## The Environment
