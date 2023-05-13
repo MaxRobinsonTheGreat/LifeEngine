@@ -455,8 +455,13 @@ class ControlPanel {
         }.bind(this));
 
         window.onbeforeunload = function (e) {
-            e = e || window.event;
-            let return_str = 'this will cause a confirmation on page close'
+            if (process.env.NODE_ENV === "development") {
+                console.log("[dev] no page close confirmation");
+                return;
+            }
+            e = e ?? window.event;
+
+            const return_str = "this will cause a confirmation on page close";
             if (e) {
                 e.returnValue = return_str;
             }
