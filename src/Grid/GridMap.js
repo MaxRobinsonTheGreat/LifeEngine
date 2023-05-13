@@ -16,7 +16,7 @@ class GridMap {
             for(var r=0; r<rows; r++) {
                 var cell = new Cell(CellStates.empty, c, r, c*cell_size, r*cell_size);
                 row.push(cell);
-            }            
+            }
             this.grid.push(row);
         }
     }
@@ -33,32 +33,19 @@ class GridMap {
     }
 
     cellAt(col, row) {
-        if (!this.isValidLoc(col, row)) {
-            return null;
-        }
-        return this.grid[col][row];
+        return this.grid[col]?.[row] ?? null;
     }
 
     setCellType(col, row, state) {
-        if (!this.isValidLoc(col, row)) {
-            return;
-        }
-        this.grid[col][row].setType(state);
+        const cell = this.grid[col]?.[row];
+        if (cell) cell.setType(state);
     }
 
     setCellOwner(col, row, cell_owner) {
-        if (!this.isValidLoc(col, row)) {
-            return;
-        }
-        this.grid[col][row].cell_owner = cell_owner;
-        if (cell_owner != null)
-            this.grid[col][row].owner = cell_owner.org;
-        else 
-            this.grid[col][row].owner = null;
-    }
-
-    isValidLoc(col, row){
-        return col<this.cols && row<this.rows && col>=0 && row>=0;
+        const cell = this.grid[col]?.[row];
+        if (!cell) return;
+        cell.cell_owner = cell_owner;
+        cell.owner = cell_owner?.org ?? null;
     }
 
     getCenter(){
