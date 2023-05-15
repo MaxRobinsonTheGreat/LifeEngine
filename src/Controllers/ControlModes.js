@@ -7,6 +7,6 @@ const Modes = {
     Edit: 5,
     Clone: 6,
     Drag: 7,
-}
+};
 
-module.exports = Modes;
+export default Modes;

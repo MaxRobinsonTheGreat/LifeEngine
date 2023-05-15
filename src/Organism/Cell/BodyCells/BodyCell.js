@@ -1,15 +1,17 @@
-const CellStates = require("../CellStates");
-const Directions = require("../../Directions");
+import Directions from '../../Directions';
 
 // A body cell defines the relative location of the cell in it's parent organism. It also defines their functional behavior.
-class BodyCell{
-    constructor(state, org, loc_col, loc_row){
+class BodyCell {
+    constructor(state, org, loc_col, loc_row) {
         this.state = state;
         this.org = org;
         this.loc_col = loc_col;
         this.loc_row = loc_row;
 
-        var distance = Math.max(Math.abs(loc_row)*2 + 2, Math.abs(loc_col)*2 + 2);
+        var distance = Math.max(
+            Math.abs(loc_row) * 2 + 2,
+            Math.abs(loc_col) * 2 + 2,
+        );
         if (this.org.anatomy.birth_distance < distance) {
             this.org.anatomy.birth_distance = distance;
         }
@@ -20,24 +22,23 @@ class BodyCell{
         this.loc_col = parent.loc_col;
         this.loc_row = parent.loc_row;
     }
-    
+
     initRandom() {
         // initialize values randomly
     }
 
     initDefault() {
-        // initialize to default values 
+        // initialize to default values
     }
 
     performFunction(env) {
         // default behavior: none
     }
 
-
     getRealCol() {
         return this.org.c + this.rotatedCol(this.org.rotation);
     }
-    
+
     getRealRow() {
         return this.org.r + this.rotatedRow(this.org.rotation);
     }
@@ -48,8 +49,8 @@ class BodyCell{
         return this.org.env.grid_map.cellAt(real_c, real_r);
     }
 
-    rotatedCol(dir){
-        switch(dir){
+    rotatedCol(dir) {
+        switch (dir) {
             case Directions.up:
                 return this.loc_col;
             case Directions.down:
@@ -61,8 +62,8 @@ class BodyCell{
         }
     }
 
-    rotatedRow(dir){
-        switch(dir){
+    rotatedRow(dir) {
+        switch (dir) {
             case Directions.up:
                 return this.loc_row;
             case Directions.down:
@@ -75,4 +76,4 @@ class BodyCell{
     }
 }
 
-module.exports = BodyCell;
+export default BodyCell;

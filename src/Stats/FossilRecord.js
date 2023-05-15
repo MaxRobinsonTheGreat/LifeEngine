@@ -1,9 +1,10 @@
-const CellStates = require("../Organism/Cell/CellStates");
-const SerializeHelper = require("../Utils/SerializeHelper");
-const Species = require("./Species");
+import CellStates from '../Organism/Cell/CellStates';
+import SerializeHelper from '../Utils/SerializeHelper';
+import Species from './Species';
 
-const FossilRecord = {
-    init: function(){
+class FossilRecord {
+    constructor(env) {
+        this.env = env;
         this.extant_species = {};
         this.extinct_species = {};
 
@@ -11,34 +12,52 @@ const FossilRecord = {
         this.min_discard = 10;
 
         this.record_size_limit = 500; // store this many data points
-    },
 
-    setEnv: function(env) {
-        this.env = env;
         this.setData();
-    },
+    }
 
-    addSpecies: function(org, ancestor) {
-        var new_species = new Species(org.anatomy, ancestor, this.env.total_ticks);
+    addSpecies(org, ancestor) {
+        var new_species = new Species(
+            org.anatomy,
+            ancestor,
+            this.env.total_ticks,
+        );
         this.extant_species[new_species.name] = new_species;
         org.species = new_species;
         return new_species;
-    },
+    }
 
-    addSpeciesObj: function(species) {
+    addSpeciesObj(species) {
         if (this.extant_species[species.name]) {
             console.warn('Tried to add already existing species. Add failed.');
             return;
         }
         this.extant_species[species.name] = species;
         return species;
-    },
+    }
 
-    numExtantSpecies() {return Object.values(this.extant_species).length},
-    numExtinctSpecies() {return Object.values(this.extinct_species).length},
-    speciesIsExtant(species_name) {return !!this.extant_species[species_name]},
+    decreasePopulation(species) {
+        species.population--;
 
-    fossilize: function(species) {
+        if (species.population <= 0) {
+            species.extinct = true;
+            this.fossilize(species);
+        }
+    }
+
+    numExtantSpecies() {
+        return Object.values(this.extant_species).length;
+    }
+
+    numExtinctSpecies() {
+        return Object.values(this.extinct_species).length;
+    }
+
+    speciesIsExtant(species_name) {
+        return !!this.extant_species[species_name];
+    }
+
+    fossilize(species) {
         if (!this.extant_species[species.name]) {
             console.warn('Tried to fossilize non existing species.');
             return false;
@@ -51,15 +70,15 @@ const FossilRecord = {
             return true;
         }
         return false;
-    },
+    }
 
-    resurrect: function(species) {
+    resurrect(species) {
         if (species.extinct) {
             species.extinct = false;
             this.extant_species[species.name] = species;
             delete this.extinct_species[species.name];
         }
-    },
+    }
 
     setData() {
         // all parallel arrays
@@ -70,7 +89,7 @@ const FossilRecord = {
         this.av_cells = [];
         this.av_cell_counts = [];
         this.updateData();
-    },
+    }
 
     updateData() {
         var tick = this.env.total_ticks;
@@ -87,7 +106,7 @@ const FossilRecord = {
             this.av_cells.shift();
             this.av_cell_counts.shift();
         }
-    },
+    }
 
     calcCellCountAverages() {
         var total_org = 0;
@@ -95,16 +114,20 @@ const FossilRecord = {
         for (let c of CellStates.living) {
             cell_counts[c.name] = 0;
         }
-        var first=true;
+        var first = true;
         for (let s of Object.values(this.extant_species)) {
-            if (!first && this.numExtantSpecies() > 10 && s.cumulative_pop < this.min_discard){
+            if (
+                !first &&
+                this.numExtantSpecies() > 10 &&
+                s.cumulative_pop < this.min_discard
+            ) {
                 continue;
             }
             for (let name in s.cell_counts) {
                 cell_counts[name] += s.cell_counts[name] * s.population;
             }
             total_org += s.population;
-            first=false;
+            first = false;
         }
         if (total_org == 0) {
             this.av_cells.push(0);
@@ -119,24 +142,25 @@ const FossilRecord = {
         }
         this.av_cells.push(total_cells / total_org);
         this.av_cell_counts.push(cell_counts);
-    },
+    }
 
     clear_record() {
-        this.extant_species = [];
-        this.extinct_species = [];
+        // bug fix
+        this.extant_species = {};
+        this.extinct_species = {};
         this.setData();
-    },
+    }
 
     serialize() {
         this.updateData();
         let record = SerializeHelper.copyNonObjects(this);
         record.records = {
-            tick_record:this.tick_record,
-            pop_counts:this.pop_counts,
-            species_counts:this.species_counts,
-            av_mut_rates:this.av_mut_rates,
-            av_cells:this.av_cells,
-            av_cell_counts:this.av_cell_counts,
+            tick_record: this.tick_record,
+            pop_counts: this.pop_counts,
+            species_counts: this.species_counts,
+            av_mut_rates: this.av_mut_rates,
+            av_cells: this.av_cells,
+            av_cell_counts: this.av_cell_counts,
         };
         let species = {};
         for (let s of Object.values(this.extant_species)) {
@@ -145,7 +169,7 @@ const FossilRecord = {
         }
         record.species = species;
         return record;
-    },
+    }
 
     loadRaw(record) {
         SerializeHelper.overwriteNonObjects(record, this);
@@ -153,9 +177,6 @@ const FossilRecord = {
             this[key] = record.records[key];
         }
     }
-
 }
 
-FossilRecord.init();
-
-module.exports = FossilRecord;
+export default FossilRecord;

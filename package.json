@@ -1,30 +1,42 @@
 {
-  "name": "EvolutionSimulatorV2",
-  "version": "1.0.0",
-  "description": "Version 2 of the evolution simulator",
-  "private": true,
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --mode=production",
-    "build-dev": "webpack --mode=development",
-    "build-watch": "webpack --watch --mode=development"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/MaxRobinsonTheGreat/EvolutionSimulatorV2.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/MaxRobinsonTheGreat/EvolutionSimulatorV2/issues"
-  },
-  "homepage": "https://github.com/MaxRobinsonTheGreat/EvolutionSimulatorV2#readme",
-  "devDependencies": {
-    "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.12"
-  },
-  "dependencies": {
-    "jquery": "^3.6.1"
-  }
+    "name": "evolution-simulator-v2",
+    "version": "1.0.0",
+    "description": "Version 2 of the evolution simulator",
+    "private": true,
+    "scripts": {
+        "test": "jest --silent=false",
+        "test-coverage": "jest --collect-coverage",
+        "build": "webpack --mode=production",
+        "build-dev": "webpack --mode=development",
+        "build-watch": "webpack --watch --mode=development",
+        "serve": "http-server ./dist"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/MaxRobinsonTheGreat/EvolutionSimulatorV2.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/MaxRobinsonTheGreat/EvolutionSimulatorV2/issues"
+    },
+    "homepage": "https://github.com/MaxRobinsonTheGreat/EvolutionSimulatorV2#readme",
+    "devDependencies": {
+        "@babel/preset-env": "^7.21.5",
+        "@babel/preset-typescript": "^7.21.5",
+        "@types/jest": "^29.5.1",
+        "@types/jquery": "^3.5.16",
+        "canvas": "^2.11.2",
+        "http-server": "^14.1.1",
+        "jest": "^29.5.0",
+        "jest-environment-jsdom": "^29.5.0",
+        "ts-loader": "^9.4.2",
+        "ts-node": "^10.9.1",
+        "webpack": "^5.82.1",
+        "webpack-cli": "^5.1.1"
+    },
+    "dependencies": {
+        "jquery": "^3.6.1"
+    }
 }

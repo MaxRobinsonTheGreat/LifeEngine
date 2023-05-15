@@ -1,10 +1,4 @@
-const CellStates = require("../Organism/Cell/CellStates");
-let FossilRecord = undefined; // workaround to a circular dependency problem
-const getFossilRecord = () => {
-    if (!FossilRecord)
-        FossilRecord = require("./FossilRecord");
-    return FossilRecord;
-}
+import CellStates from '../Organism/Cell/CellStates';
 
 class Species {
     constructor(anatomy, ancestor, start_tick) {
@@ -14,7 +8,7 @@ class Species {
         this.cumulative_pop = 1;
         this.start_tick = start_tick;
         this.end_tick = -1;
-        this.name = Math.random().toString(36).substr(2, 10);
+        this.name = Math.random().toString(36).substring(2, 10); // modernize
         this.extinct = false;
         this.calcAnatomyDetails();
     }
@@ -26,9 +20,9 @@ class Species {
             cell_counts[c.name] = 0;
         }
         for (let cell of this.anatomy.cells) {
-            cell_counts[cell.state.name]+=1;
+            cell_counts[cell.state.name] += 1;
         }
-        this.cell_counts=cell_counts;
+        this.cell_counts = cell_counts;
     }
 
     addPop() {
@@ -36,17 +30,9 @@ class Species {
         this.cumulative_pop++;
     }
 
-    decreasePop() {
-        this.population--;
-        if (this.population <= 0) {
-            this.extinct = true;
-            getFossilRecord().fossilize(this);
-        }
-    }
-
     lifespan() {
         return this.end_tick - this.start_tick;
     }
 }
 
-module.exports = Species;
+export default Species;

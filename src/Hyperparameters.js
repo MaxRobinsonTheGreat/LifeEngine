@@ -1,7 +1,7 @@
-const Neighbors = require("./Grid/Neighbors");
+import Neighbors from './Grid/Neighbors';
 
 const Hyperparams = {
-    setDefaults: function() {
+    setDefaults: function () {
         this.lifespanMultiplier = 100;
         this.foodProdProb = 5;
         this.killableNeighbors = Neighbors.adjacent;
@@ -13,7 +13,7 @@ const Hyperparams = {
         this.addProb = 33;
         this.changeProb = 33;
         this.removeProb = 33;
-        
+
         this.rotationEnabled = true;
 
         this.foodBlocksReproduction = true;
@@ -33,9 +33,9 @@ const Hyperparams = {
         for (let key in obj) {
             this[key] = obj[key];
         }
-    }
-}
+    },
+};
 
 Hyperparams.setDefaults();
 
-module.exports = Hyperparams;
+export default Hyperparams;

@@ -1,11 +1,11 @@
-const CellStates = require("../CellStates");
-const BodyCell = require("./BodyCell");
-const Hyperparams = require("../../../Hyperparameters");
-const Directions = require("../../Directions");
-const Observation = require("../../Perception/Observation")
+import CellStates from '../CellStates';
+import BodyCell from './BodyCell';
+import Hyperparams from '../../../Hyperparameters';
+import Directions from '../../Directions';
+import Observation from '../../Perception/Observation';
 
-class EyeCell extends BodyCell{
-    constructor(org, loc_col, loc_row){
+class EyeCell extends BodyCell {
+    constructor(org, loc_col, loc_row) {
         super(CellStates.eye, org, loc_col, loc_row);
         this.org.anatomy.has_eyes = true;
     }
@@ -15,7 +15,7 @@ class EyeCell extends BodyCell{
         super.initInherit(parent);
         this.direction = parent.direction;
     }
-    
+
     initRandom() {
         // initialize values randomly
         this.direction = Directions.getRandomDirection();
@@ -28,8 +28,7 @@ class EyeCell extends BodyCell{
 
     getAbsoluteDirection() {
         var dir = this.org.rotation + this.direction;
-        if (dir > 3)
-            dir -= 4;
+        if (dir > 3) dir -= 4;
         return dir;
     }
 
@@ -43,7 +42,7 @@ class EyeCell extends BodyCell{
         var direction = this.getAbsoluteDirection();
         var addCol = 0;
         var addRow = 0;
-        switch(direction) {
+        switch (direction) {
             case Directions.up:
                 addRow = -1;
                 break;
@@ -62,9 +61,9 @@ class EyeCell extends BodyCell{
         var col = start_col;
         var row = start_row;
         var cell = null;
-        for (var i=0; i<Hyperparams.lookRange; i++){
-            col+=addCol;
-            row+=addRow;
+        for (var i = 0; i < Hyperparams.lookRange; i++) {
+            col += addCol;
+            row += addRow;
             cell = env.grid_map.cellAt(col, row);
             if (cell == null) {
                 break;
@@ -73,7 +72,8 @@ class EyeCell extends BodyCell{
                 continue;
             }
             if (cell.state !== CellStates.empty) {
-                var distance = Math.abs(start_col-col) + Math.abs(start_row-row);
+                var distance =
+                    Math.abs(start_col - col) + Math.abs(start_row - row);
                 return new Observation(cell, distance, direction);
             }
         }
@@ -81,4 +81,4 @@ class EyeCell extends BodyCell{
     }
 }
 
-module.exports = EyeCell;
+export default EyeCell;

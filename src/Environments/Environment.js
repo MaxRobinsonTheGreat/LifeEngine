@@ -1,11 +1,9 @@
-
 //An evironment has a grid_map, controller, and renderer
-class Environment{
-    constructor() {
-    }
+class Environment {
+    constructor() {}
 
-    update(){
-        alert("Environment.update() must be overriden");
+    update() {
+        alert('Environment.update() must be overriden');
     }
 
     changeCell(c, r, state, owner) {
@@ -14,5 +12,4 @@ class Environment{
     }
 }
 
-
-module.exports = Environment;
+export default Environment;

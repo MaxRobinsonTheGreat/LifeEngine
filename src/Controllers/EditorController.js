@@ -1,12 +1,12 @@
-const CanvasController = require("./CanvasController");
-const Modes = require("./ControlModes");
-const CellStates = require("../Organism/Cell/CellStates");
-const Directions = require("../Organism/Directions");
-const Hyperparams = require("../Hyperparameters");
-const Species = require("../Stats/Species");
-const LoadController = require("./LoadController");
+import CanvasController from './CanvasController';
+import Modes from './ControlModes';
+import CellStates from '../Organism/Cell/CellStates';
+import Directions from '../Organism/Directions';
+import Hyperparams from '../Hyperparameters';
+import LoadController from './LoadController';
+import Species from '../Stats/Species';
 
-class EditorController extends CanvasController{
+class EditorController extends CanvasController {
     constructor(env, canvas) {
         super(env, canvas);
         this.mode = Modes.None;
@@ -18,33 +18,39 @@ class EditorController extends CanvasController{
     }
 
     mouseMove() {
-        if (this.right_click || this.left_click)
-            this.editOrganism();
+        if (this.right_click || this.left_click) this.editOrganism();
     }
 
     mouseDown() {
         this.editOrganism();
     }
 
-    mouseUp(){}
+    mouseUp() {}
 
-    getCurLocalCell(){
-        return this.env.organism.anatomy.getLocalCell(this.mouse_c-this.env.organism.c, this.mouse_r-this.env.organism.r);
+    getCurLocalCell() {
+        return this.env.organism.anatomy.getLocalCell(
+            this.mouse_c - this.env.organism.c,
+            this.mouse_r - this.env.organism.r,
+        );
     }
 
     editOrganism() {
-        if (this.edit_cell_type == null || this.mode != Modes.Edit)
-            return;
-        if (this.left_click){
-            if(this.edit_cell_type == CellStates.eye && this.cur_cell.state == CellStates.eye) {
+        if (this.edit_cell_type == null || this.mode != Modes.Edit) return;
+        if (this.left_click) {
+            if (
+                this.edit_cell_type == CellStates.eye &&
+                this.cur_cell.state == CellStates.eye
+            ) {
                 var loc_cell = this.getCurLocalCell();
                 loc_cell.direction = Directions.rotateRight(loc_cell.direction);
                 this.env.renderFull();
-            }
-            else
-                this.env.addCellToOrg(this.mouse_c, this.mouse_r, this.edit_cell_type);
-        }
-        else if (this.right_click)
+            } else
+                this.env.addCellToOrg(
+                    this.mouse_c,
+                    this.mouse_r,
+                    this.edit_cell_type,
+                );
+        } else if (this.right_click)
             this.env.removeCellFromOrg(this.mouse_c, this.mouse_r);
 
         this.setBrainPanelVisibility();
@@ -53,35 +59,37 @@ class EditorController extends CanvasController{
     }
 
     updateDetails() {
-        $('.cell-count').text("Cell count: "+this.env.organism.anatomy.cells.length);
+        $('.cell-count').text(
+            'Cell count: ' + this.env.organism.anatomy.cells.length,
+        );
     }
 
     defineCellTypeSelection() {
         var self = this;
-        $('.cell-type').click( function() {
-            switch(this.id){
-                case "mouth":
+        $('.cell-type').click(function () {
+            switch (this.id) {
+                case 'mouth':
                     self.edit_cell_type = CellStates.mouth;
                     break;
-                case "producer":
+                case 'producer':
                     self.edit_cell_type = CellStates.producer;
                     break;
-                case "mover":
+                case 'mover':
                     self.edit_cell_type = CellStates.mover;
                     break;
-                case "killer":
+                case 'killer':
                     self.edit_cell_type = CellStates.killer;
                     break;
-                case "armor":
+                case 'armor':
                     self.edit_cell_type = CellStates.armor;
                     break;
-                case "eye":
+                case 'eye':
                     self.edit_cell_type = CellStates.eye;
                     break;
             }
-            $(".cell-type" ).css( "border-color", "black" );
-            var selected = '#'+this.id+'.cell-type';
-            $(selected).css("border-color", "yellow");
+            $('.cell-type').css('border-color', 'black');
+            var selected = '#' + this.id + '.cell-type';
+            $(selected).css('border-color', 'yellow');
         });
     }
 
@@ -89,38 +97,52 @@ class EditorController extends CanvasController{
         this.details_html = $('#organism-details');
         this.edit_details_html = $('#edit-organism-details');
 
-        this.decision_names = ["ignore", "move away", "move towards"];
+        this.decision_names = ['ignore', 'move away', 'move towards'];
 
-        $('#move-range-edit').change ( function() {
-            this.env.organism.move_range = parseInt($('#move-range-edit').val());
-        }.bind(this));
-		
-        $('#mutation-rate-edit').change ( function() {
-            this.env.organism.mutability = parseInt($('#mutation-rate-edit').val());
-        }.bind(this));
-        $('#observation-type-edit').change ( function() {
-            this.setBrainEditorValues($('#observation-type-edit').val());
-            this.setBrainDetails();
-        }.bind(this));
-        $('#reaction-edit').change ( function() {
-            var obs = $('#observation-type-edit').val();
-            var decision = parseInt($('#reaction-edit').val());
-            this.env.organism.brain.decisions[obs] = decision;
-            this.setBrainDetails();
-        }.bind(this));
+        $('#move-range-edit').change(
+            function () {
+                this.env.organism.move_range = parseInt(
+                    $('#move-range-edit').val(),
+                );
+            }.bind(this),
+        );
+
+        $('#mutation-rate-edit').change(
+            function () {
+                this.env.organism.mutability = parseInt(
+                    $('#mutation-rate-edit').val(),
+                );
+            }.bind(this),
+        );
+        $('#observation-type-edit').change(
+            function () {
+                this.setBrainEditorValues($('#observation-type-edit').val());
+                this.setBrainDetails();
+            }.bind(this),
+        );
+        $('#reaction-edit').change(
+            function () {
+                var obs = $('#observation-type-edit').val();
+                var decision = parseInt($('#reaction-edit').val());
+                this.env.organism.brain.decisions[obs] = decision;
+                this.setBrainDetails();
+            }.bind(this),
+        );
     }
 
     defineSaveLoad() {
-        $('#save-org').click(()=>{
+        $('#save-org').click(() => {
             let org = this.env.organism.serialize();
-            let data = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(org));
+            let data =
+                'data:text/json;charset=utf-8,' +
+                encodeURIComponent(JSON.stringify(org));
             let downloadEl = document.getElementById('download-el');
-            downloadEl.setAttribute("href", data);
-            downloadEl.setAttribute("download", "organism.json");
+            downloadEl.setAttribute('href', data);
+            downloadEl.setAttribute('download', 'organism.json');
             downloadEl.click();
         });
         $('#load-org').click(() => {
-            LoadController.loadJson((org)=>{
+            LoadController.loadJson(org => {
                 this.loadOrg(org);
             });
         });
@@ -132,11 +154,13 @@ class EditorController extends CanvasController{
         this.refreshDetailsPanel();
         this.env.organism.updateGrid();
         this.env.renderFull();
-        this.env.organism.species = new Species(this.env.organism.anatomy, null, 0);
-        if (org.species_name)
-            this.env.organism.species.name = org.species_name;
-        if (this.mode === Modes.Clone)
-            $('#drop-org').click();
+        this.env.organism.species = new Species(
+            this.env.organism.anatomy,
+            null,
+            0,
+        );
+        if (org.species_name) this.env.organism.species.name = org.species_name;
+        if (this.mode === Modes.Clone) $('#drop-org').click();
     }
 
     clearDetailsPanel() {
@@ -146,24 +170,21 @@ class EditorController extends CanvasController{
     }
 
     refreshDetailsPanel() {
-        if (this.mode === Modes.Edit)
-            this.setEditorPanel();
-        else
-            this.setDetailsPanel();
+        if (this.mode === Modes.Edit) this.setEditorPanel();
+        else this.setDetailsPanel();
     }
 
     setDetailsPanel() {
         this.clearDetailsPanel();
         var org = this.env.organism;
-        
-        $('.cell-count').text("Cell count: "+org.anatomy.cells.length);
-        $('#move-range').text("Move Range: "+org.move_range);
-        $('#mutation-rate').text("Mutation Rate: "+org.mutability);
-       
-		if (Hyperparams.useGlobalMutability) {
+
+        $('.cell-count').text('Cell count: ' + org.anatomy.cells.length);
+        $('#move-range').text('Move Range: ' + org.move_range);
+        $('#mutation-rate').text('Mutation Rate: ' + org.mutability);
+
+        if (Hyperparams.useGlobalMutability) {
             $('#mutation-rate').css('display', 'none');
-        }
-        else {
+        } else {
             $('#mutation-rate').css('display', 'block');
         }
 
@@ -171,7 +192,6 @@ class EditorController extends CanvasController{
 
         if (this.setBrainPanelVisibility()) {
             this.setBrainDetails();
-
         }
         $('#organism-details').css('display', 'block');
     }
@@ -180,20 +200,19 @@ class EditorController extends CanvasController{
         this.clearDetailsPanel();
         var org = this.env.organism;
 
-        $('.cell-count').text("Cell count: "+org.anatomy.cells.length);
-        if (this.setMoveRangeVisibility()){
+        $('.cell-count').text('Cell count: ' + org.anatomy.cells.length);
+        if (this.setMoveRangeVisibility()) {
             $('#move-range-edit').val(org.move_range);
         }
 
-		$('#mutation-rate-edit').val(org.mutability);
+        $('#mutation-rate-edit').val(org.mutability);
         if (Hyperparams.useGlobalMutability) {
-			$('#mutation-rate-cont').css('display', 'none');
-        }
-        else {
+            $('#mutation-rate-cont').css('display', 'none');
+        } else {
             $('#mutation-rate-cont').css('display', 'block');
         }
-        
-        if (this.setBrainPanelVisibility()){
+
+        if (this.setBrainPanelVisibility()) {
             this.setBrainEditorValues($('#observation-type-edit').val());
         }
 
@@ -214,17 +233,16 @@ class EditorController extends CanvasController{
     setBrainDetails() {
         var chase_types = [];
         var retreat_types = [];
-        for(var cell_name in this.env.organism.brain.decisions) {
+        for (var cell_name in this.env.organism.brain.decisions) {
             var decision = this.env.organism.brain.decisions[cell_name];
             if (decision == 1) {
-                retreat_types.push(cell_name)
-            }
-            else if (decision == 2) {
+                retreat_types.push(cell_name);
+            } else if (decision == 2) {
                 chase_types.push(cell_name);
             }
         }
-        $('.chase-types').text("Move Towards: " + chase_types);
-        $('.retreat-types').text("Move Away From: " + retreat_types);
+        $('.chase-types').text('Move Towards: ' + chase_types);
+        $('.retreat-types').text('Move Away From: ' + retreat_types);
     }
 
     setMoveRangeVisibility() {
@@ -251,4 +269,4 @@ class EditorController extends CanvasController{
     }
 }
 
-module.exports = EditorController;
+export default EditorController;
