@@ -1,34 +1,46 @@
 [
     {
         "name": "Purple Flower",
-        "file": "purple_flower"
+        "value": "purple_flower"
     },
     {
         "name": "Rosa Finalis",
-        "file": "RosaFinalis"
+        "value": "RosaFinalis"
     },
     {
         "name": "Quadratus Anxius",
-        "file": "The_Anxious_Square"
+        "value": "The_Anxious_Square"
     },
     {
         "name": "Hunter",
-        "file": "hunter"
+        "value": "hunter"
     },
     {
         "name": "Small Bush Killer",
-        "file": "smallbushkiller"
+        "value": "smallbushkiller"
     },
     {
         "name": "Fly Catcher",
-        "file": "flycatcher"
+        "value": "flycatcher"
     },
     {
         "name": "Heart Locket",
-        "file": "HeartLocket"
+        "value": "HeartLocket"
     },
     {
         "name": "Napoleon",
-        "file": "Napoleon"
+        "value": "Napoleon"
+    },
+    {
+        "name": "NED",
+        "value": "NED"
+    },
+    {
+        "name": "Spinner",
+        "value": "spinner"
+    },
+    {
+        "name": "Sword",
+        "value": "sword"
     }
 ]

@@ -456,6 +456,10 @@ class ControlPanel {
             env.reset(true, false);
             this.stats_panel.reset();
         });
+
+        $('#brush-slider').on('input change', function () {
+            WorldConfig.brush_size = this.value;
+        });
         $('#random-walls').click(
             function () {
                 this.env_controller.randomizeWalls();
@@ -468,7 +472,7 @@ class ControlPanel {
         );
         $('#clear-editor').click(
             function () {
-                this.engine.organism_editor.clear();
+                this.engine.organism_editor.setDefaultOrg();
                 this.editor_controller.setEditorPanel();
             }.bind(this),
         );

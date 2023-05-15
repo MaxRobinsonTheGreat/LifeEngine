@@ -10,7 +10,7 @@
 }
 
 body{
-    background: var(--border);
+    background: var(--tab);
     margin: 0;
     padding: 0;
     height: 100%;
@@ -163,6 +163,10 @@ input:hover,input:active {
     background-color: var(--btn-hover);
     color: black;
 }
+.tabnav p:active {
+    background-color: var(--btn-click);
+    color: white;
+}
 .open-tab {
     background-color: var(--tab-active);
     color: black;
@@ -172,7 +176,9 @@ input:hover,input:active {
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: 1;
     display: none;
-    padding: 10px
+    padding: 10px;
+    overflow-y: auto;
+    height: 100%;
 }
 
 .tab#about {
@@ -191,7 +197,6 @@ input:hover,input:active {
     display: none;
 }
 
-
 #editor-panel{
     display: flex;
 }
@@ -206,6 +211,10 @@ input:hover,input:active {
 #clear-walls {
     margin-top: 5px;
 }
+#brush-size-container {
+    display: flex;
+    align-items: center;
+}
 #organism-options {
     display: none;
 }
@@ -218,7 +227,21 @@ input:hover,input:active {
     image-rendering: pixelated;
     image-rendering: crisp-edges;
     height: 195px;
-    width: 195px; 
+    width: 195px;
+    display: block;
+}
+#unnatural-org-warning {
+    color: red;
+    text-align: center;
+    font-size: 22px;
+    border-radius: 10px;
+    margin: 2px;
+    border: 2px solid red;
+}
+#unnatural-org-warning:hover {
+    color: darkred;
+    border: 2px solid darkred;
+
 }
 #cell-selections {
     display: none;
@@ -308,10 +331,11 @@ input:hover,input:active {
 }
 
 .load-panel {
-    width: 300px;
+    width: 800px;
     background-color: var(--panel-bg);
     position: fixed;
     display: none;
+    text-align: center;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
@@ -322,6 +346,33 @@ input:hover,input:active {
     box-shadow: 0 0 0 10px var(--border);
 
     padding: 10px;
+}
+
+.list-title-container {
+    flex: 1;
+}
+.list-container {
+    overflow-y: auto;
+    max-height: 200px;
+    margin-right: 5px;
+}
+
+.list-item {
+    cursor: pointer;
+    padding: 5px;
+    border-bottom: 1px solid #ccc;
+    background-color: var(--btn);
+}
+.list-item:hover {
+    background-color: var(--btn-hover);
+}
+.list-item:active {
+    background-color: var(--btn-click);
+}
+
+.all-list-container {
+    display: flex;
+    width: 100%;
 }
 
 #close-load-btn { 

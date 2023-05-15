@@ -32,6 +32,10 @@
 				<p id='fps-actual'></p>
 				<button id='reset-env' title='Restarts simulation with default organism.'>Reset</button>
 				<button id='clear-env' title="Removes all organisms.">Clear</button>
+				<div id="brush-size-container">
+					<label id="brush-slider-label" for="brush-slider" title='Size of the brush for food, walls, and killing'><i class="fa fa-brush"></i> Brush Size </label>
+					<input id="brush-slider" type="range" min="0" max="15" value="2">
+				</div>
 			</div>
 
 			<div id='tab-container' class='control-set'>
@@ -80,6 +84,7 @@
 							<button class="edit-mode-btn drop-org" id="drop-org" title="Drop organism in world. Hotkey: C"><i class="fa fa-plus"></i></button>
 							<button id="save-org" title="Save Organism"><i class="fa fa-save"></i></button>
 							<button id="load-org" title="Load Organism"><i class="fa fa-upload"></i></button>
+							<b id="unnatural-org-warning" title="Unnatural Organism: It has overlapping cells or genetic changes that cannot evolve naturally"><i class="fa fa-biohazard"></i></i></b>
 						</div>
 						<div id='editor-env'>
 							<canvas id='editor-canvas'></canvas>
@@ -211,7 +216,7 @@
 						<label for="rot-enabled" title='Organisms rotate when born and while moving.'>Rotation Enabled</label>
 						<input type="checkbox" id="rot-enabled" checked>
 						<br>
-						<label for="insta-kill" title='When on, killer cells immediatly kill organisms they touch. When off, organisms have as much health as they have cells and only take 1 damage from killer cells.'>One touch kill</label>
+						<label for="insta-kill" title='When on, killer cells immediately kill organisms they touch. When off, organisms have as much health as they have cells and only take 1 damage from killer cells.'>One touch kill</label>
 						<input type="checkbox" id="insta-kill">
 						<br>
 						<label for="look-range" title='How far an eye cell can see (in number of cells)'>Look range:</label>
@@ -280,14 +285,28 @@
 		<div class='load-panel'>
 			<div class="load-panel-title">
 				<button id='close-load-btn'><i class="fa fa-times"></i></button>
-				<h2 id="load-title">Community Creations</h2>
+				<h1>Community Creations</h1>
 			</div><br>
-			Worlds<br>
-			<select id="worlds-load-dropdown"></select>
-			<button id='load-env-btn'>Load</button><br>
-			Organisms<br>
-			<select id="organisms-load-dropdown"></select>
-			<button id='load-org-btn'>Load</button><br><br>
+			<div class="all-list-container">
+				<div class="list-title-container">
+					<h2>🌍Worlds</h2>
+					<div id="worlds-list-container" class="list-container">
+						<ul id="worlds-list"></ul>
+					</div>
+				</div>
+				<div class="list-title-container">
+					<h2>🦠Organisms</h2>
+					<div id="organisms-list-container" class="list-container">
+						<ul id="organisms-list"></ul>
+					</div>
+				</div>
+				<div class="list-title-container">
+					<h2>🔧Mods</h2>
+					<div id="mods-list-container" class="list-container">
+						<ul id="mods-list"></ul>
+					</div>
+				</div>
+			</div>
 			<input id="upload-json" style="display: none;" type="file">
 		</div>
 		<div class='community-section'>

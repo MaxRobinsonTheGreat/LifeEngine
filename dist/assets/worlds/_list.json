@@ -1,38 +1,66 @@
 [
     {
         "name": "Colony",
-        "file": "colony"
+        "value": "colony"
     },
     {
         "name": "Ephemeral World",
-        "file": "ephemeral"
+        "value": "ephemeral"
     },
     {
         "name": "Trailblazer",
-        "file": "Trailblazer3"
+        "value": "Trailblazer3"
     },
     {
         "name": "Scarcity",
-        "file": "scarcity"
+        "value": "scarcity"
     },
     {
         "name": "High Def Sweepers",
-        "file": "world_HighDefSweepers_start"
+        "value": "world_HighDefSweepers_start"
     },
     {
         "name": "Shrub Swamp",
-        "file": "shrubland"
+        "value": "shrubland"
     },
     {
         "name": "Computer (unprogrammed)",
-        "file": "computer_unprogrammed"
+        "value": "computer_unprogrammed"
     },
     {
         "name": "Computer (fibonacci)",
-        "file": "compV2_fixed_labeled_fibofancy"
+        "value": "compV2_fixed_labeled_fibofancy"
     },
     {
         "name": "Life Engine of Nurgle",
-        "file": "Life_Engine_of_Nurgle"
+        "value": "Life_Engine_of_Nurgle"
+    },
+    {
+        "name": "Zoo",
+        "value": "zoo"
+    },
+    {
+        "name": "Chains",
+        "value": "Chains"
+    },
+    {
+        "name": "Symbiotic Colony",
+        "value": "SymbioticColony"
+    },
+    {
+        "name": "Sand Grid",
+        "value": "Sand_Grid"
+    },
+    {
+        "name": "Epic",
+        "value": "Epic"
+    },
+    {
+        "name": "Ostracod Slide",
+        "value": "Ostracod_Slide"
+    },
+    {
+        "name": "Altruistic Arthurs",
+        "value": "ArthursWorld"
     }
 ]

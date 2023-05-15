@@ -121,6 +121,7 @@ class EnvironmentController extends CanvasController {
                             cell.row,
                             CellStates.food,
                             false,
+                            CellStates.wall,
                         );
                     } else if (right_click) {
                         this.dropCellType(
@@ -128,6 +129,7 @@ class EnvironmentController extends CanvasController {
                             cell.row,
                             CellStates.empty,
                             false,
+                            CellStates.wall,
                         );
                     }
                     break;
@@ -145,9 +147,11 @@ class EnvironmentController extends CanvasController {
                             cell.row,
                             CellStates.empty,
                             false,
+                            CellStates.food,
                         );
                     }
                     break;
+
                 case Modes.ClickKill:
                     this.killNearOrganisms();
                     break;
@@ -171,26 +175,24 @@ class EnvironmentController extends CanvasController {
                     }
                     break;
                 case Modes.Drag:
-                    var cur_top = parseInt($('#env-canvas').css('top'), 10);
-                    var cur_left = parseInt($('#env-canvas').css('left'), 10);
-                    var new_top =
-                        cur_top + (this.mouse_y - this.start_y) * this.scale;
-                    var new_left =
-                        cur_left + (this.mouse_x - this.start_x) * this.scale;
-                    $('#env-canvas').css('top', new_top + 'px');
-                    $('#env-canvas').css('left', new_left + 'px');
+                    this.dragScreen();
+
                     break;
             }
         } else if (this.middle_click) {
             //drag on middle click
-            var cur_top = parseInt($('#env-canvas').css('top'), 10);
-            var cur_left = parseInt($('#env-canvas').css('left'), 10);
-            var new_top = cur_top + (this.mouse_y - this.start_y) * this.scale;
-            var new_left =
-                cur_left + (this.mouse_x - this.start_x) * this.scale;
-            $('#env-canvas').css('top', new_top + 'px');
-            $('#env-canvas').css('left', new_left + 'px');
+
+            this.dragScreen();
         }
+    }
+
+    dragScreen() {
+        var cur_top = parseInt($('#env-canvas').css('top'), 10);
+        var cur_left = parseInt($('#env-canvas').css('left'), 10);
+        var new_top = cur_top + (this.mouse_y - this.start_y) * this.scale;
+        var new_left = cur_left + (this.mouse_x - this.start_x) * this.scale;
+        $('#env-canvas').css('top', new_top + 'px');
+        $('#env-canvas').css('left', new_left + 'px');
     }
 
     dropOrganism(organism, col, row) {
@@ -216,10 +218,11 @@ class EnvironmentController extends CanvasController {
         return false;
     }
 
-    dropCellType(col, row, state, killBlocking = false) {
-        for (var loc of Neighbors.allSelf) {
+    dropCellType(col, row, state, killBlocking = false, ignoreState = null) {
+        for (var loc of Neighbors.inRange(WorldConfig.brush_size)) {
             var c = col + loc[0];
             var r = row + loc[1];
+
             var cell = this.env.grid_map.cellAt(c, r);
             if (cell == null) continue;
             if (killBlocking && cell.owner != null) {
@@ -227,22 +230,31 @@ class EnvironmentController extends CanvasController {
             } else if (cell.owner != null) {
                 continue;
             }
+            if (ignoreState != null && cell.state == ignoreState) continue;
             this.env.changeCell(c, r, state, null);
         }
     }
 
     findNearOrganism() {
-        for (var loc of Neighbors.all) {
-            var c = this.cur_cell.col + loc[0];
-            var r = this.cur_cell.row + loc[1];
-            var cell = this.env.grid_map.cellAt(c, r);
-            if (cell != null && cell.owner != null) return cell.owner;
+        let closest = null;
+        let closest_dist = 100;
+        for (let loc of Neighbors.inRange(WorldConfig.brush_size)) {
+            let c = this.cur_cell.col + loc[0];
+            let r = this.cur_cell.row + loc[1];
+            let cell = this.env.grid_map.cellAt(c, r);
+            let dist = Math.abs(loc[0]) + Math.abs(loc[1]);
+            if (cell != null && cell.owner != null) {
+                if (closest === null || dist < closest_dist) {
+                    closest = cell.owner;
+                    closest_dist = dist;
+                }
+            }
         }
-        return null;
+        return closest;
     }
 
     killNearOrganisms() {
-        for (var loc of Neighbors.allSelf) {
+        for (var loc of Neighbors.inRange(WorldConfig.brush_size)) {
             var c = this.cur_cell.col + loc[0];
             var r = this.cur_cell.row + loc[1];
             var cell = this.env.grid_map.cellAt(c, r);

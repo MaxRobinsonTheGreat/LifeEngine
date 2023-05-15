@@ -50,6 +50,15 @@ const Neighbors = {
         [-1, 1],
         [1, -1],
     ],
+    inRange: function (range) {
+        var neighbors = [];
+        for (var i = -range; i <= range; i++) {
+            for (var j = -range; j <= range; j++) {
+                neighbors.push([i, j]);
+            }
+        }
+        return neighbors;
+    },
 };
 
 export default Neighbors;

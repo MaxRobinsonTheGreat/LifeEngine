@@ -62,6 +62,11 @@ class EditorController extends CanvasController {
         $('.cell-count').text(
             'Cell count: ' + this.env.organism.anatomy.cells.length,
         );
+        if (this.env.organism.isNatural()) {
+            $('#unnatural-org-warning').css('display', 'none');
+        } else {
+            $('#unnatural-org-warning').css('display', 'block');
+        }
     }
 
     defineCellTypeSelection() {
@@ -178,7 +183,7 @@ class EditorController extends CanvasController {
         this.clearDetailsPanel();
         var org = this.env.organism;
 
-        $('.cell-count').text('Cell count: ' + org.anatomy.cells.length);
+        this.updateDetails();
         $('#move-range').text('Move Range: ' + org.move_range);
         $('#mutation-rate').text('Mutation Rate: ' + org.mutability);
 
