@@ -1,21 +1,21 @@
-const Hyperparams = require("../../Hyperparameters");
-const Directions = require("../Directions");
-const CellStates = require("../Cell/CellStates");
+import Hyperparams from '../../Hyperparameters';
+import Directions from '../Directions';
+import CellStates from '../Cell/CellStates';
 
 const Decision = {
     neutral: 0,
     retreat: 1,
     chase: 2,
-    getRandom: function(){
+    getRandom: function () {
         return Math.floor(Math.random() * 3);
     },
-    getRandomNonNeutral: function() {
-        return Math.floor(Math.random() * 2)+1;
-    }
-}
+    getRandomNonNeutral: function () {
+        return Math.floor(Math.random() * 2) + 1;
+    },
+};
 
 class Brain {
-    constructor(owner){
+    constructor(owner) {
         this.owner = owner;
         this.observations = [];
 
@@ -34,7 +34,7 @@ class Brain {
         }
     }
 
-    randomizeDecisions(randomize_all=false) {
+    randomizeDecisions(randomize_all = false) {
         // randomize the non obvious decisions
         if (randomize_all) {
             this.decisions[CellStates.food.name] = Decision.getRandom();
@@ -69,9 +69,10 @@ class Brain {
         if (decision == Decision.chase) {
             this.owner.changeDirection(move_direction);
             return true;
-        }
-        else if (decision == Decision.retreat) {
-            this.owner.changeDirection(Directions.getOppositeDirection(move_direction));
+        } else if (decision == Decision.retreat) {
+            this.owner.changeDirection(
+                Directions.getOppositeDirection(move_direction),
+            );
             return true;
         }
         return false;
@@ -81,12 +82,12 @@ class Brain {
         this.decisions[CellStates.getRandomName()] = Decision.getRandom();
         this.decisions[CellStates.empty.name] = Decision.neutral; // if the empty cell has a decision it gets weird
     }
-    
+
     serialize() {
-        return {decisions: this.decisions};
+        return { decisions: this.decisions };
     }
 }
 
 Brain.Decision = Decision;
 
-module.exports = Brain;
+export default Brain;

@@ -1,10 +1,10 @@
-const CellStates = require("../CellStates");
-const BodyCell = require("./BodyCell");
+import CellStates from '../CellStates';
+import BodyCell from './BodyCell';
 
-class ArmorCell extends BodyCell{
-    constructor(org, loc_col, loc_row){
+class ArmorCell extends BodyCell {
+    constructor(org, loc_col, loc_row) {
         super(CellStates.armor, org, loc_col, loc_row);
     }
 }
 
-module.exports = ArmorCell;
+export default ArmorCell;

@@ -4,6 +4,6 @@ const WorldConfig = {
     auto_reset: true,
     auto_pause: false,
     brush_size: 2,
-}
+};
 
-module.exports = WorldConfig;
+export default WorldConfig;
