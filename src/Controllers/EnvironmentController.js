@@ -198,13 +198,13 @@ class EnvironmentController extends CanvasController {
         var new_org = new Organism(col, row, this.env, organism);
 
         if (new_org.isClear(col, row)) {
-            let new_species = !env.fossilRecord.speciesIsExtant(
+            let new_species = !this.env.fossilRecord.speciesIsExtant(
                 new_org.species.name,
             );
             if (new_org.species.extinct) {
-                env.fossilRecord.resurrect(new_org.species);
+                this.env.fossilRecord.resurrect(new_org.species);
             } else if (new_species) {
-                env.fossilRecord.addSpeciesObj(new_org.species);
+                this.env.fossilRecord.addSpeciesObj(new_org.species);
                 new_org.species.start_tick = this.env.total_ticks;
                 new_org.species.population = 0;
             }

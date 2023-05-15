@@ -1,7 +1,3 @@
-// const CellTypes = require("../Organism/Cell/CellTypes");
-import CellStates from '../Organism/Cell/CellStates';
-import Directions from '../Organism/Directions';
-
 // Renderer controls access to a canvas. There is one renderer for each canvas
 class Renderer {
     constructor(canvas_id, container_id, cell_size) {

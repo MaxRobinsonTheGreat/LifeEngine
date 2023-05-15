@@ -8,7 +8,7 @@ import EnvironmentController from '../Controllers/EnvironmentController';
 import Hyperparams from '../Hyperparameters.js';
 import WorldConfig from '../WorldConfig';
 import SerializeHelper from '../Utils/SerializeHelper';
-const Species = require('../Stats/Species').default.default;
+import Species from '../Stats/Species';
 
 class WorldEnvironment extends Environment {
     constructor(cell_size) {
