@@ -4,7 +4,6 @@ import Engine from './Engine';
 import jQuery from 'jquery';
 
 jQuery(function () {
-    // fix deprecated
     let isMobile = mobileCheck();
     if (isMobile) {
         alert(

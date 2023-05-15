@@ -2,7 +2,6 @@ import jquery from 'jquery';
 
 const LoadController = {
     init() {
-        // don't use deprecated click() method
         $('#close-load-btn').on('click', () => {
             this.close();
         });

@@ -8,7 +8,7 @@ class Species {
         this.cumulative_pop = 1;
         this.start_tick = start_tick;
         this.end_tick = -1;
-        this.name = Math.random().toString(36).substring(2, 10); // modernize
+        this.name = Math.random().toString(36).substring(2, 10);
         this.extinct = false;
         this.calcAnatomyDetails();
     }

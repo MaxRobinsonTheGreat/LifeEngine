@@ -145,7 +145,6 @@ class FossilRecord {
     }
 
     clear_record() {
-        // bug fix
         this.extant_species = {};
         this.extinct_species = {};
         this.setData();
