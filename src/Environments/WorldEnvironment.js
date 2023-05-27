@@ -93,6 +93,10 @@ class WorldEnvironment extends Environment{
             this.largest_cell_count = organism.anatomy.cells.length;
     }
 
+    canAddOrganism() {
+        return this.organisms.length < Hyperparams.maxOrganisms || Hyperparams.maxOrganisms < 0;
+    }
+
     averageMutability() {
         if (this.organisms.length < 1)
             return 0;
@@ -195,6 +199,9 @@ class WorldEnvironment extends Environment{
         FossilRecord.clear_record();
         this.resizeGridColRow(this.grid_map.cell_size, env.grid.cols, env.grid.rows)
         this.grid_map.loadRaw(env.grid);
+        for (let wall of env.grid.walls) {
+            this.walls.push(this.grid_map.cellAt(wall.c, wall.r));
+        }
 
         // create species map
         let species = {};
@@ -218,6 +225,7 @@ class WorldEnvironment extends Environment{
                 s.anatomy = org.anatomy;
                 s.calcAnatomyDetails();
             }
+            s.name = orgRaw.species_name;
             org.species = s;
         }
         for (let name in species)

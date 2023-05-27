@@ -53,6 +53,7 @@ class EditorController extends CanvasController{
     }
 
     updateDetails() {
+        $('.species-name').text("Species name: "+this.env.organism.species.name);
         $('.cell-count').text("Cell count: "+this.env.organism.anatomy.cells.length);
         if (this.env.organism.isNatural()){
             $('#unnatural-org-warning').css('display', 'none');

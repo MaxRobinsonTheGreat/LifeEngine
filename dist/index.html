@@ -110,6 +110,7 @@
 					<div class='right-half'>
 						<div id='organism-details' style="display:none;">
 							<h3>Organism Details</h3>
+							<p class='species-name'>Species Name: </p>
 							<p class='cell-count'>Cell count: </p>
 							<p id='move-range'>Move Range: </p>
 							<p id='mutation-rate'>Mutation Rate: </p>
@@ -234,12 +235,15 @@
 						
 					</div>
 					<div class='right-half'>
-						<button id='reset-rules'>Reset all controls</button>
-						<h4>Mutation Rate</h4>
+						<button id='reset-rules'>Reset all controls</button><br>
+						<label for="org-limit" title='Maximum number of organisms (-1 is unlimited)'>Maximum Organisms:</label>
+						<input type="number" id="org-limit" min="-1" value=-1 step="1"><br>
 						<label for="evolved-mutation" title='When on, each organism has its own mutation rate that can increase or decrease. When off, all organisms have the same mutation rate.'>Use evolved mutation rate</label>
-						<input type="checkbox" id="evolved-mutation" checked> </br>
-						<label class="global-mutation-in" for="global-mutation">Global mutation rate: </label>
-						<input class="global-mutation-in" type="number" id="global-mutation" min="0" max="100" value=5 step="1">
+						<input type="checkbox" id="evolved-mutation" checked>
+						<div class="global-mutation-container">
+							<label class="global-mutation-in" for="global-mutation">Global mutation rate: </label>
+							<input class="global-mutation-in" type="number" id="global-mutation" min="0" max="100" value=5 step="1">
+						</div>
 						<h4 title='When an organism mutates, it can choose from one of the following mutation types.'>Mutation Type Probabilities</h4>
 						<label for="add-prob" title='A new cell will stem from an existing one'>Add Cell:</label>
 						<input class="mut-prob" type="number" id="add-prob" min="0" max="100" value=33>

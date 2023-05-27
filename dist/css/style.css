@@ -193,7 +193,7 @@ input:hover,input:active {
     grid-column: 2;
 }
 
-.global-mutation-in {
+.global-mutation-container {
     display: none;
 }
 

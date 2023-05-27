@@ -102,7 +102,10 @@ class Organism {
         var new_c = this.c + (direction_c*basemovement) + (direction_c*offset);
         var new_r = this.r + (direction_r*basemovement) + (direction_r*offset);
 
-        if (org.isClear(new_c, new_r, org.rotation, true) && org.isStraightPath(new_c, new_r, this.c, this.r, this)){
+        if (org.isClear(new_c, new_r, org.rotation, true) && 
+            org.isStraightPath(new_c, new_r, this.c, this.r, this) && 
+            this.env.canAddOrganism())
+        {
             org.c = new_c;
             org.r = new_r;
             this.env.addOrganism(org);
