@@ -251,7 +251,7 @@ class Organism {
     harm() {
         this.damage++;
         if (this.damage >= this.maxHealth() || Hyperparams.instaKill) {
-            if(this.die) this.die();
+            this.die();
         }
     }
 
@@ -278,7 +278,7 @@ class Organism {
         if(this.damage<0) this.damage = 0;
         this.lifetime++;
         if (this.lifetime > this.lifespan()) {
-            if(this.die) this.die();
+            ithis.die();
             return this.living;
         }
         if (this.food_collected >= this.foodNeeded()) {
