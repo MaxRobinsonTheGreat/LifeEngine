@@ -278,7 +278,7 @@ class Organism {
         if(this.damage<0) this.damage = 0;
         this.lifetime++;
         if (this.lifetime > this.lifespan()) {
-            ithis.die();
+            this.die();
             return this.living;
         }
         if (this.food_collected >= this.foodNeeded()) {
