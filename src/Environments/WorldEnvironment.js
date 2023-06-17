@@ -197,7 +197,8 @@ class WorldEnvironment extends Environment{
     loadRaw(env) { // species name->stats map, evolution controls, 
         this.organisms = [];
         FossilRecord.clear_record();
-        this.resizeGridColRow(this.grid_map.cell_size, env.grid.cols, env.grid.rows)
+        let cell_size = env.grid.cell_size ? env.grid.cell_size : this.grid_map.cell_size;
+        this.resizeGridColRow(cell_size, env.grid.cols, env.grid.rows)
         this.grid_map.loadRaw(env.grid);
         for (let wall of env.grid.walls) {
             this.walls.push(this.grid_map.cellAt(wall.c, wall.r));

@@ -1,0 +1,144 @@
+{
+  "c": 9,
+  "r": 9,
+  "lifetime": [],
+  "food_collected": 12313,
+  "living": true,
+  "direction": 2,
+  "rotation": 0,
+  "can_rotate": false,
+  "move_count": -1,
+  "move_range": -1,
+  "ignore_brain_for": 5,
+  "mutability": 14,
+  "damage": 0,
+  "anatomy": {
+    "birth_distance": 4,
+    "is_producer": true,
+    "is_mover": true,
+    "has_eyes": true,
+    "cells": [
+      {
+        "loc_col": 0,
+        "loc_row": 0,
+        "state": {
+          "name": "producer"
+        }
+      },
+	  
+      {
+        "loc_col": 0,
+        "loc_row": 0,
+        "state": {
+          "name": "producer"
+        }
+      },
+      {
+        "loc_col": 0,
+        "loc_row": 0,
+        "state": {
+          "name": "producer"
+        }
+      },
+      {
+        "loc_col": 0,
+        "loc_row": 0,
+        "state": {
+          "name": "producer"
+        }
+      },
+      {
+        "loc_col": 0,
+        "loc_row": 0,
+        "state": {
+          "name": "producer"
+        }
+      },
+      {
+        "loc_col": 0,
+        "loc_row": 0,
+        "state": {
+          "name": "producer"
+        }
+      },
+      {
+        "loc_col": 0,
+        "loc_row": 0,
+        "state": {
+          "name": "producer"
+        }
+      },
+      {
+        "loc_col": 0,
+        "loc_row": 0,
+        "state": {
+          "name": "producer"
+        }
+      },
+      {
+        "loc_col": 0,
+        "loc_row": 0,
+        "state": {
+          "name": "producer"
+        }
+      },
+      {
+        "loc_col": 0,
+        "loc_row": 0,
+        "state": {
+          "name": "producer"
+        }
+      },
+	  {
+        "loc_col": 0,
+        "loc_row": 0,
+        "direction": 2,
+        "state": {
+          "name": "eye"
+        }
+      },
+	  {
+        "loc_col": 0,
+        "loc_row": 0,
+        "state": {
+          "name": "mouth"
+        }
+      },
+      {
+        "loc_col": 0,
+        "loc_row": 0,
+        "state": {
+          "name": "killer"
+        }
+      },
+      {
+        "loc_col": 0,
+        "loc_row": 0,
+        "state": {
+          "name": "mover"
+        }
+      },
+      {
+        "loc_col": 0,
+        "loc_row": 0,
+        "state": {
+          "name": "armor"
+        }
+      }
+    ]
+  },
+  "brain": {
+    "decisions": {
+      "empty": 2,
+      "food": 2,
+      "wall": 0,
+      "mouth": 2,
+      "producer": 2,
+      "mover": 2,
+      "killer": 2,
+      "armor": 1,
+      "eye": 0
+    }
+  },
+  "species_name": "Microquasar"
+}

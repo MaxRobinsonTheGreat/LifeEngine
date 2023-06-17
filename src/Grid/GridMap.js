@@ -83,7 +83,7 @@ class GridMap {
         // Rather than store every single cell, we will store non organism cells (food+walls)
         // and assume everything else is empty. Organism cells will be set when the organism
         // list is loaded. This reduces filesize and complexity.
-        let grid = {cols:this.cols, rows:this.rows};
+        let grid = {cell_size:this.cell_size, cols:this.cols, rows:this.rows};
         grid.food = [];
         grid.walls = [];
         for (let col of this.grid) {
