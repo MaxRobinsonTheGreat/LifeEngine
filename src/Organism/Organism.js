@@ -19,6 +19,7 @@ class Organism {
         this.direction = Directions.down; // direction of movement
         this.rotation = Directions.up; // direction of rotation
         this.can_rotate = Hyperparams.rotationEnabled;
+        this.efficiency = 1;
         this.move_count = 0;
         this.move_range = 4;
         this.ignore_brain_for = 0;
@@ -31,6 +32,7 @@ class Organism {
     }
 
     inherit(parent) {
+        this.efficiency = parent.efficiency;
         this.move_range = parent.move_range;
         this.mutability = parent.mutability;
         this.species = parent.species;
@@ -45,7 +47,11 @@ class Organism {
 
     // amount of food required before it can reproduce
     foodNeeded() {
-        return this.anatomy.is_mover ? this.anatomy.cells.length + Hyperparams.extraMoverFoodCost : this.anatomy.cells.length;
+        var required_food = this.anatomy.cells.length;
+        if (this.anatomy.is_mover) {
+          required_food += Hyperparams.extraMoverFoodCost;
+        }
+        return Math.ceil((1 / this.efficiency) * required_food);
     }
 
     lifespan() {

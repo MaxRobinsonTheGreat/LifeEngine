@@ -94,6 +94,10 @@ class EditorController extends CanvasController{
         $('#move-range-edit').change ( function() {
             this.env.organism.move_range = parseInt($('#move-range-edit').val());
         }.bind(this));
+
+        $('#efficiency-edit').change ( function() {
+            this.env.organism.efficiency = parseFloat($('#efficiency-edit').val());
+        }.bind(this));
 		
         $('#mutation-rate-edit').change ( function() {
             this.env.organism.mutability = parseInt($('#mutation-rate-edit').val());
@@ -159,6 +163,7 @@ class EditorController extends CanvasController{
         $('.cell-count').text("Cell count: "+org.anatomy.cells.length);
         $('#move-range').text("Move Range: "+org.move_range);
         $('#mutation-rate').text("Mutation Rate: "+org.mutability);
+        $('#efficiency').text("Efficiency: "+org.efficiency);
        
 		if (Hyperparams.useGlobalMutability) {
             $('#mutation-rate').css('display', 'none');
@@ -184,6 +189,10 @@ class EditorController extends CanvasController{
         if (this.setMoveRangeVisibility()){
             $('#move-range-edit').val(org.move_range);
         }
+        $('#efficiency-edit').val(org.efficiency);
+        $('#efficiency-cont').css('display', 'block');
+        $('#efficiency').css('display', 'block');
+
 
 		$('#mutation-rate-edit').val(org.mutability);
         if (Hyperparams.useGlobalMutability) {
