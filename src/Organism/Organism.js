@@ -102,7 +102,10 @@ class Organism {
         var new_c = this.c + (direction_c*basemovement) + (direction_c*offset);
         var new_r = this.r + (direction_r*basemovement) + (direction_r*offset);
 
-        if (org.isClear(new_c, new_r, org.rotation, true) && org.isStraightPath(new_c, new_r, this.c, this.r, this)){
+        if (org.isClear(new_c, new_r, org.rotation, true) && 
+            org.isStraightPath(new_c, new_r, this.c, this.r, this) && 
+            this.env.canAddOrganism())
+        {
             org.c = new_c;
             org.r = new_r;
             this.env.addOrganism(org);
@@ -307,7 +310,6 @@ class Organism {
                 }
             }
         }
-
         return this.living;
     }
 
@@ -315,6 +317,26 @@ class Organism {
         var real_c = c + local_cell.rotatedCol(rotation);
         var real_r = r + local_cell.rotatedRow(rotation);
         return this.env.grid_map.cellAt(real_c, real_r);
+    }
+
+    isNatural() {
+        let found_center = false;
+        if (this.anatomy.cells.length === 0) {
+            return false;
+        }
+        for (let i=0; i<this.anatomy.cells.length; i++) {
+            let cell = this.anatomy.cells[i];
+            for (let j=i+1; j<this.anatomy.cells.length; j++) {
+                let toCompare = this.anatomy.cells[j];
+                if (cell.loc_col === toCompare.loc_col && cell.loc_row === toCompare.loc_row) {
+                    return false;
+                }
+            }
+            if (cell.loc_col === 0 && cell.loc_row === 0) {
+                found_center = true;
+            }
+        }
+        return found_center;
     }
 
     serialize() {

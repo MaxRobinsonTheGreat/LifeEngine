@@ -21,10 +21,13 @@
   },
   "homepage": "https://github.com/MaxRobinsonTheGreat/EvolutionSimulatorV2#readme",
   "devDependencies": {
-    "webpack": "^4.43.0",
+    "webpack": "^5.89.0",
     "webpack-cli": "^3.3.12"
   },
   "dependencies": {
-    "jquery": "^3.6.1"
+    "glob-parent": "^6.0.2",
+    "jquery": "^3.6.1",
+    "npm": "^10.2.1",
+    "watchpack": "^2.4.0"
   }
 }

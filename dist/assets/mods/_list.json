@@ -1,0 +1,17 @@
+[
+    {
+        "name": "Life Engine Extended",
+        "value": "https://lifeengineextended.github.io/",
+        "subname" : "SpaceEye"
+    },
+    {
+        "name": "Camo/Healer Cells",
+        "value": "https://lifeenginelocal.netlify.app/",
+        "subname" : "Xiko"
+    },
+    {
+        "name": "Neural Networks",
+        "value": "https://bboettcher3.github.io/LifeEngine/",
+        "subname" : "bradyb"
+    }
+]

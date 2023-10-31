@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.0.5 (4/23/2023)
+
+### UI Enhancements:
+- Improved "Community Creations" list panel
+- Added Mod list to Community Creations
+- Added brush size slider
+- Added unnatural organism warning
+
+### Simulation Enhancements:
+- Added links to community mods
+- Added more worlds and organisms to community creations
+
 ## 1.0.4 (9/17/2022)
 
 ### UI Enhancements:

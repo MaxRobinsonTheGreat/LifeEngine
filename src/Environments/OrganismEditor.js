@@ -15,7 +15,7 @@ class OrganismEditor extends Environment{
         this.renderer = new Renderer('editor-canvas', 'editor-env', cell_size);
         this.controller = new EditorController(this, this.renderer.canvas);
         this.grid_map = new GridMap(15, 15, cell_size);
-        this.clear();
+        this.setDefaultOrg();
     }
 
     update() {
@@ -81,6 +81,10 @@ class OrganismEditor extends Environment{
 
     clear() {
         this.grid_map.fillGrid(CellStates.empty);
+    }
+
+    setDefaultOrg() {
+        this.clear();
         var center = this.grid_map.getCenter();
         this.organism = new Organism(center[0], center[1], this, null);
         this.organism.anatomy.addDefaultCell(CellStates.mouth, 0, 0);

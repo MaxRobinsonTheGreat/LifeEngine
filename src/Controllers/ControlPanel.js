@@ -122,7 +122,7 @@ class ControlPanel {
         this.slider = document.getElementById("slider");
         this.slider.oninput = function() {
             const max_fps = 300;
-            this.fps = this.slider.value;
+            this.fps = parseInt(this.slider.value);
             if (this.fps>=max_fps) this.fps = 1000;
             if (this.engine.running) {
                 this.changeEngineSpeed(this.fps);
@@ -180,6 +180,8 @@ class ControlPanel {
         });
 
         $('#resize').click(function() {
+            if (!confirm('The current environment will be lost. Proceed?'))
+                return;
             var cell_size = $('#cell-size').val();
             var fill_window = $('#fill-window').is(":checked");
             if (fill_window) {
@@ -190,7 +192,7 @@ class ControlPanel {
                 var rows = $('#row-input').val();
                 this.engine.env.resizeGridColRow(cell_size, cols, rows);
             }
-            this.engine.env.reset();
+            this.engine.env.reset(false);
             this.stats_panel.reset();
             
         }.bind(this));
@@ -286,14 +288,17 @@ class ControlPanel {
         $('#extra-mover-cost').change(function() {
             Hyperparams.extraMoverFoodCost = parseInt($('#extra-mover-cost').val());
         });
+        $('#org-limit').change(function() {
+            Hyperparams.maxOrganisms = parseInt($('#org-limit').val());
+        });
 
         $('#evolved-mutation').change( function() {
             if (this.checked) {
-                $('.global-mutation-in').css('display', 'none');
+                $('.global-mutation-container').css('display', 'none');
                 $('#avg-mut').css('display', 'block');
             }
             else {
-                $('.global-mutation-in').css('display', 'block');
+                $('.global-mutation-container').css('display', 'block');
                 $('#avg-mut').css('display', 'none');
             }
             Hyperparams.useGlobalMutability = !this.checked;
@@ -369,16 +374,17 @@ class ControlPanel {
         $('#food-blocks').prop('checked', Hyperparams.foodBlocksReproduction);
         $('#food-drop-rate').val(Hyperparams.foodDropProb);
         $('#extra-mover-cost').val(Hyperparams.extraMoverFoodCost);
+        $('#org-limit').val(Hyperparams.maxOrganisms);
         $('#look-range').val(Hyperparams.lookRange);
         $('#see-through-self').prop('checked', Hyperparams.seeThroughSelf);
         $('#global-mutation').val(Hyperparams.globalMutability);
 
         if (!Hyperparams.useGlobalMutability) {
-            $('.global-mutation-in').css('display', 'none');
+            $('.global-mutation-container').css('display', 'none');
             $('#avg-mut').css('display', 'block');
         }
         else {
-            $('.global-mutation-in').css('display', 'block');
+            $('.global-mutation-container').css('display', 'block');
             $('#avg-mut').css('display', 'none');
         }
     }
@@ -427,6 +433,9 @@ class ControlPanel {
             env.reset(true, false);
             this.stats_panel.reset();
         });
+        $('#brush-slider').on('input change', function () {
+            WorldConfig.brush_size = this.value;
+        });
         $('#random-walls').click( function() {
             this.env_controller.randomizeWalls();
         }.bind(this));
@@ -434,7 +443,7 @@ class ControlPanel {
             this.engine.env.clearWalls();
         }.bind(this));
         $('#clear-editor').click( function() {
-            this.engine.organism_editor.clear();
+            this.engine.organism_editor.setDefaultOrg();
             this.editor_controller.setEditorPanel();
         }.bind(this));
         $('#generate-random').click( function() {

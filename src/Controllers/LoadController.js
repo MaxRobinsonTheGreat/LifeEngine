@@ -9,31 +9,44 @@ const LoadController = {
         $('#community-creations-btn').click(()=>{
             this.open();
         });
+        let panel = this;
+        $(".load-panel").on('click', '.list-item', async function() {
+            let list_name = $(this).closest(".list-container").attr('id');
+			let value = $(this).find('.hidden-value').text();
+            if (list_name === 'worlds-list-container') {
+                const base = `./assets/worlds/`;
+                let resp = await fetch(base+value+'.json');
+                let json = await resp.json();
+                panel.control_panel.loadEnv(json);
+                panel.close();
+            }
+            else if (list_name === 'organisms-list-container') {
+                const base = `./assets/organisms/`;
+                let resp = await fetch(base+value+'.json');
+                let json = await resp.json();
+                panel.control_panel.editor_controller.loadOrg(json);
+                panel.close();
+                $('#maximize').click();
+                $('#editor').click();
+            }
+            else if (list_name === 'mods-list-container') { 
+                window.open(value, '_blank');
+            }
+        });
+
         $('#load-env-btn').click(async ()=>{
-            let file = $('#worlds-load-dropdown').val();
-            const base = `./assets/worlds/`;
-            let resp = await fetch(base+file+'.json');
-            let json = await resp.json();
-            this.control_panel.loadEnv(json);
-            this.close();
+
         });
         $('#load-org-btn').click(async ()=>{
-            let file = $('#organisms-load-dropdown').val();
-            const base = `./assets/organisms/`;
-            let resp = await fetch(base+file+'.json');
-            let json = await resp.json();
-            this.control_panel.editor_controller.loadOrg(json);
-            this.close();
-            $('#maximize').click();
-            $('#editor').click();
+
         });
         
-        
-        this.loadDropdown('worlds');
-        this.loadDropdown('organisms');
+        this.loadList('worlds');
+        this.loadList('organisms');
+        this.loadList('mods');
     },
 
-    async loadDropdown(name) {
+    async loadList(name) {
         const base = `./assets/${name}/`;
 
         let list = [];
@@ -44,14 +57,16 @@ const LoadController = {
             console.error('Failed to load list: ', e);
         }
         
-        let id = `#${name}-load-dropdown`
+        let id = `#${name}-list`
         $(id).empty();
-        for (let opt of list) {
-            $(id).append(
-                `<option value="${opt.file}">
-                ${opt.name}
-                </option>`
-            );
+        for (let item of list) {
+            let html = `<li class="list-item">
+                        ${item.name}`;
+            if (item.subname) 
+                html += `<br>(${item.subname})`;
+            html +=`<div class="hidden-value" hidden>${item.value}</div>
+                    </li>`;
+            $(id).append(html);
         }
     },
 

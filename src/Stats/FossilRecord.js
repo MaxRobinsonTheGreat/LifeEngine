@@ -121,6 +121,18 @@ const FossilRecord = {
         this.av_cell_counts.push(cell_counts);
     },
 
+    getMostPopulousSpecies(){
+        var max_pop = 0;
+        var max_species = undefined;
+        for (let s of Object.values(this.extant_species)) {
+            if (s.population > max_pop) {
+                max_pop = s.population;
+                max_species = s;
+            }
+        }
+        return max_species;
+    },
+
     clear_record() {
         this.extant_species = [];
         this.extinct_species = [];
