@@ -14,8 +14,8 @@ This is the second version of the [original evolution simulator](https://github.
 
 # How to Run and Modify the Code
  - [Install node and npm](https://nodejs.org/en/download/)
- - Clone this repository
- - In terminal/powershell, go to the repository and run `npm install`
+ - Download or clone this repository
+ - Open a terminal or powershell comand prompt, go to the repository and run `npm install`
  - Run `npm run build` (or `npm run build-watch` for a better developer experience)
    - If you get a `Can't resolve jquery` error message run `npm install --save jquery`
  - Open `dist/index.html` in your browser. The simulation should start running.
