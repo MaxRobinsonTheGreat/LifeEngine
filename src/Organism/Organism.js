@@ -277,6 +277,8 @@ class Organism {
     }
 
     update() {
+        if(this.lifetime<0) this.lifetime = 0;
+        if(this.damage<0) this.damage = 0;
         this.lifetime++;
         if (this.lifetime > this.lifespan()) {
             this.die();
