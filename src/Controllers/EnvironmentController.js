@@ -64,17 +64,12 @@ class EnvironmentController extends CanvasController{
         let resolution = 20;
         Perlin.seed();
 
-        let num_rows = this.env.grid_map.rows
-        let num_cols = this.env.grid_map.cols
-        // let num_rows = this.env.num_rows
-        // let num_cols = this.env.num_cols
-
-        for (let r = 0; r < num_rows; r++) {
-            for (let c = 0; c < num_cols; c++) {
-                let xval = c/num_cols*(resolution/this.env.renderer.cell_size*(num_cols/num_rows));
-                let yval = r/num_rows*(resolution/this.env.renderer.cell_size*(num_rows/num_cols));
+        for (let r = 0; r < this.env.num_rows; r++) {
+            for (let c = 0; c < this.env.num_cols; c++) {
+                let xval = c/this.env.num_cols*(resolution/this.env.renderer.cell_size*(this.env.num_cols/this.env.num_rows));
+                let yval = r/this.env.num_rows*(resolution/this.env.renderer.cell_size*(this.env.num_rows/this.env.num_cols));
                 let noise = Perlin.get(xval, yval);
-                avg_noise += noise/(num_rows*num_cols);
+                avg_noise += noise/(this.env.num_rows*this.env.num_cols);
                 if (noise > noise_threshold && noise < noise_threshold + thickness/resolution) {
                     let cell = this.env.grid_map.cellAt(c, r);
                     if (cell != null) {
