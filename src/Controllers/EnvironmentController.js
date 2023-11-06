@@ -23,10 +23,13 @@ class EnvironmentController extends CanvasController{
           el.onwheel = function zoom(event) {
             event.preventDefault();
 
-            var sign = -Math.sign(event.deltaY);
-
-            // Restrict scale
-            scale = Math.min(50, this.scale+(sign*zoom_speed*this.scale));
+            var sign = Math.sign(event.deltaY);
+          
+            // Update the scale by multiplying it with the zoom speed raised to the power of the scroll direction (positive or negative)
+            scale *= Math.pow(zoom_speed, sign);
+          
+            // Make sure the scale doesn't go below a minimum value or above a maximum value
+            scale = Math.min(64, Math.max(Math.pow(2, -10), scale));
 
             var cur_top = parseInt($('#env-canvas').css('top'));
             var cur_left = parseInt($('#env-canvas').css('left'));
