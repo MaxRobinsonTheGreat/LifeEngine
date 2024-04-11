@@ -27,7 +27,7 @@
   "dependencies": {
     "glob-parent": "^6.0.2",
     "jquery": "^3.6.1",
-    "npm": "^10.2.1",
+    "npm": "^10.5.2",
     "watchpack": "^2.4.0"
   }
 }
