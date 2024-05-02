@@ -7,7 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --mode=production",
     "build-dev": "webpack --mode=development",
-    "build-watch": "webpack --watch --mode=development"
+    "build-watch": "webpack --watch --mode=development",
+    "start": "http-server dist",
+    "start-dev": "http-server -c-1 dist"
   },
   "repository": {
     "type": "git",
@@ -21,8 +23,9 @@
   },
   "homepage": "https://github.com/MaxRobinsonTheGreat/EvolutionSimulatorV2#readme",
   "devDependencies": {
+    "http-server": "^14.1.1",
     "webpack": "^5.89.0",
-    "webpack-cli": "^3.3.12"
+    "webpack-cli": "^5.0.2"
   },
   "dependencies": {
     "glob-parent": "^6.0.2",
