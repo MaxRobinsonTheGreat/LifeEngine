@@ -34,6 +34,16 @@ const FossilRecord = {
         return species;
     },
 
+    changeSpeciesName: function(species, new_name) {
+        if (this.extant_species[new_name]) {
+            console.warn('Tried to change species name to an existing species name. Change failed.');
+            return;
+        }
+        delete this.extant_species[species.name];
+        species.name = new_name;
+        this.extant_species[new_name] = species;
+    },
+
     numExtantSpecies() {return Object.values(this.extant_species).length},
     numExtinctSpecies() {return Object.values(this.extinct_species).length},
     speciesIsExtant(species_name) {return !!this.extant_species[species_name]},

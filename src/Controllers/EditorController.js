@@ -5,6 +5,7 @@ const Directions = require("../Organism/Directions");
 const Hyperparams = require("../Hyperparameters");
 const Species = require("../Stats/Species");
 const LoadController = require("./LoadController");
+const FossilRecord = require("../Stats/FossilRecord");
 
 class EditorController extends CanvasController{
     constructor(env, canvas) {
@@ -98,6 +99,13 @@ class EditorController extends CanvasController{
 
         this.decision_names = ["ignore", "move away", "move towards"];
 
+        $('#species-name-edit').on('focusout', function() {
+            const new_name = $('#species-name-edit').val();
+            if (new_name === '' || new_name === this.env.organism.species.name)
+                return;
+            FossilRecord.changeSpeciesName(this.env.organism.species, new_name);
+        }.bind(this));
+
         $('#move-range-edit').change ( function() {
             this.env.organism.move_range = parseInt($('#move-range-edit').val());
         }.bind(this));
@@ -123,7 +131,8 @@ class EditorController extends CanvasController{
             let data = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(org));
             let downloadEl = document.getElementById('download-el');
             downloadEl.setAttribute("href", data);
-            downloadEl.setAttribute("download", "organism.json");
+            const name = this.env.organism.species.name ? this.env.organism.species.name : "organism";
+            downloadEl.setAttribute("download", name+".json");
             downloadEl.click();
         });
         $('#load-org').click(() => {
@@ -188,6 +197,7 @@ class EditorController extends CanvasController{
         this.clearDetailsPanel();
         var org = this.env.organism;
 
+        $('#species-name-edit').val(org.species.name);
         $('.cell-count').text("Cell count: "+org.anatomy.cells.length);
         if (this.setMoveRangeVisibility()){
             $('#move-range-edit').val(org.move_range);

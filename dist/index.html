@@ -84,6 +84,7 @@
 							<button class="edit-mode-btn drop-org" id="drop-org" title="Drop organism in world. Hotkey: C"><i class="fa fa-plus"></i></button>
 							<button id="save-org" title="Save Organism"><i class="fa fa-save"></i></button>
 							<button id="load-org" title="Load Organism"><i class="fa fa-upload"></i></button>
+							<button id="reset-with-editor-org" title="Reset Environment with this Organism"><i class="fa fa-seedling"></i></button>
 							<b id="unnatural-org-warning" title="Unnatural Organism: It has overlapping cells or genetic changes that cannot evolve naturally"><i class="fa fa-biohazard"></i></i></b>
 						</div>
 						<div id='editor-env'>
@@ -125,6 +126,10 @@
 
 						<div id='edit-organism-details' style="display:none;">
 							<h3>Edit Organism</h3>
+							<div id='species-name-cont'>
+								<label for="species-name-edit">Species Name:</label>
+								<input type="text" id="species-name-edit">
+							</div>
 							<p class='cell-count'>Cell count: </p>
 							<div id='move-range-cont'>
 								<label for="move-range-edit" title='The number of cells to move before randomly changing direction. Overriden by brain decisions.'>Move Range:</label>
@@ -159,8 +164,6 @@
 								<p class='retreat-types'>Move Away From: killer</p>
 							</div>
 						</div>
-						
-						<button id='reset-with-editor-org' title='Reset the environment with the organism in the editor'>Reset with Editor Organism</button>
 					</div>
 				</div>
 				<div id='world-controls' class='tab'>
