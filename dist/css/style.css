@@ -203,7 +203,6 @@ input:hover,input:active {
 .edit-mode-btn {
     width: 30px;
     height: 30px;
-    margin-top: 5px;
 }
 .edit-mode-btn.selected {
     background-color: var(--btn-hover);
@@ -233,9 +232,8 @@ input:hover,input:active {
 #unnatural-org-warning {
     color: red;
     text-align: center;
-    font-size: 22px;
+    font-size: 15px;
     border-radius: 10px;
-    margin: 2px;
     border: 2px solid red;
 }
 #unnatural-org-warning:hover {
@@ -324,10 +322,6 @@ input:hover,input:active {
     margin: auto;
     margin-bottom: 0;
     padding-bottom: 0;
-}
-
-#reset-with-editor-org {
-    margin-top: 5px;
 }
 
 .load-panel {

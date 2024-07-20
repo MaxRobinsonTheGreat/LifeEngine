@@ -18,15 +18,18 @@ class EnvironmentController extends CanvasController{
 
     defineZoomControls() {
           var scale = 1;
-          var zoom_speed = 0.5;
+          var zoom_speed = 0.7;
           const el = document.querySelector('#env-canvas');
           el.onwheel = function zoom(event) {
             event.preventDefault();
 
-            var sign = -Math.sign(event.deltaY);
-
-            // Restrict scale
-            scale = Math.max(0.5, this.scale+(sign*zoom_speed));
+            var sign = Math.sign(event.deltaY);
+          
+            scale *= Math.pow(zoom_speed, sign);
+          
+            const MAX = 32;
+            const MIN = Math.pow(2, -3);
+            scale = Math.min(MAX, Math.max(MIN, scale));
 
             var cur_top = parseInt($('#env-canvas').css('top'));
             var cur_left = parseInt($('#env-canvas').css('left'));
@@ -154,8 +157,8 @@ class EnvironmentController extends CanvasController{
     }
 
     dragScreen() {
-        var cur_top = parseInt($('#env-canvas').css('top'), 10);
-        var cur_left = parseInt($('#env-canvas').css('left'), 10);
+        var cur_top = parseInt($('#env-canvas').css('top'));
+        var cur_left = parseInt($('#env-canvas').css('left'));
         var new_top = cur_top + ((this.mouse_y - this.start_y)*this.scale);
         var new_left = cur_left + ((this.mouse_x - this.start_x)*this.scale);
         $('#env-canvas').css('top', new_top+'px');

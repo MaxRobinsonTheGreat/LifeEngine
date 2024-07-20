@@ -22,7 +22,7 @@
   "homepage": "https://github.com/MaxRobinsonTheGreat/EvolutionSimulatorV2#readme",
   "devDependencies": {
     "webpack": "^5.89.0",
-    "webpack-cli": "^3.3.12"
+    "webpack-cli": "^5.1.4"
   },
   "dependencies": {
     "glob-parent": "^6.0.2",

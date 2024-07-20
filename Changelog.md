@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.6 (ongoing)
+
+### UI Enhancements:
+- Added ability to change species name via UI
+
+### Simulation Enhancements:
+- 
+
 ## 1.0.5 (4/23/2023)
 
 ### UI Enhancements:
