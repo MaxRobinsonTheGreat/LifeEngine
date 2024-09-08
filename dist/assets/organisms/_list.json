@@ -1,5 +1,21 @@
 [
     {
+        "name": "Ball",
+        "value": "Ball"
+    },
+    {
+        "name": "Bob",
+        "value": "Bob"
+    },
+    {
+        "name": "DNA Trap",
+        "value": "dna_plant"
+    },
+    {
+        "name": "Tropical Fish",
+        "value": "TropicalFish"
+    },
+    {
         "name": "Microquasar☣️",
         "value": "microquasar"
     },

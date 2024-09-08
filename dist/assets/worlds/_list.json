@@ -1,7 +1,19 @@
 [
     {
-        "name": "☣️Unnatural Battle Royale⚔️",
-        "value": "battleground"
+        "name": "Survival of the Fittest",
+        "value": "SurvivalOfFittest"
+    },
+    {
+        "name": "Computer Zoo",
+        "value": "ComputerZoo"
+    },
+    {
+        "name": "Bob Breeder",
+        "value": "BobBreeder"
+    },
+    {
+        "name": "Huggers",
+        "value": "huggers"
     },
     {
         "name": "Colony",
@@ -66,5 +78,9 @@
     {
         "name": "Altruistic Arthurs",
         "value": "ArthursWorld"
+    },
+    {
+        "name": "☣️Unnatural Battle Royale⚔️",
+        "value": "battleground"
     }
 ]
