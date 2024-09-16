@@ -296,13 +296,22 @@ input:hover,input:active {
 }
 
 #headless-notification {
-    display: none;
+    display: grid;
+    place-content: center;
     position: fixed;
-    color: white;
+	top: 1rem;
+    width: 100%;
     font-size: 200px;
-    left: 0;
-    top: 0;
-    padding-left: 10px;
+    animation: blink infinite alternate 0.5s;
+	transition: visibility 0.5s, opacity 0.5s;
+}
+#headless-notification.hide {
+	opacity: 0;
+    visibility: collapse;
+}
+@keyframes blink {
+    from { color: hsl(0, 0%, 80%); }
+    to { color: hsl(0, 0%, 40%); }
 }
 
 #minimize {

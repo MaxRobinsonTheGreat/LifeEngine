@@ -21,8 +21,6 @@ class ControlPanel {
         this.env_controller.setControlPanel(this);
         this.editor_controller.setControlPanel(this);
         this.stats_panel = new StatsPanel(this.engine.env);
-        this.headless_opacity = 1;
-        this.opacity_change_rate = -0.8;
         this.paused=false;
         this.setHyperparamDefaults();
         LoadController.control_panel = this;
@@ -137,15 +135,10 @@ class ControlPanel {
         }.bind(this));
 
         $('.headless').click(function() {
-            $('.headless').find("i").toggleClass("fa fa-eye");
-            $('.headless').find("i").toggleClass("fa fa-eye-slash");
-            if (WorldConfig.headless){
-                $('#headless-notification').css('display', 'none');
-                this.engine.env.renderFull();
-            }
-            else {
-                $('#headless-notification').css('display', 'block');
-            }
+            $('.headless').find("i").toggleClass("fa-eye fa-eye-slash");
+            $('#headless-notification').toggleClass('hide');
+            if (WorldConfig.headless) this.engine.env.renderFull();
+            
             WorldConfig.headless = !WorldConfig.headless;
         }.bind(this));
     }
@@ -504,30 +497,10 @@ class ControlPanel {
         this.fps = this.engine.fps;
     }
 
-    updateHeadlessIcon(delta_time) {
-        if (!this.engine.running)
-            return;
-        const min_opacity = 0.4;
-        var op = this.headless_opacity + (this.opacity_change_rate*delta_time/1000);
-        if (op <= min_opacity){
-            op=min_opacity;
-            this.opacity_change_rate = -this.opacity_change_rate;
-        }
-        else if (op >= 1){
-            op=1;
-            this.opacity_change_rate = -this.opacity_change_rate;
-        }
-        this.headless_opacity = op;
-        $('#headless-notification').css('opacity',(op*100)+'%');
-    }
-
-    update(delta_time) {
+    update() {
         $('#fps-actual').text("Actual FPS: " + Math.floor(this.engine.actual_fps));
         $('#reset-count').text("Auto reset count: " + this.engine.env.reset_count);
         this.stats_panel.updateDetails();
-        if (WorldConfig.headless)
-            this.updateHeadlessIcon(delta_time);
-
     }
 
 }
