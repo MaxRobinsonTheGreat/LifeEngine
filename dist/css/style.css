@@ -379,3 +379,7 @@ input:hover,input:active {
 #load-panel-title * {
     display: inline;
 }
+
+#skip-frames-number{
+    width: 30px;
+}
