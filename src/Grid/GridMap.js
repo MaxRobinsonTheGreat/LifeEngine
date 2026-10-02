@@ -7,15 +7,23 @@ class GridMap {
     }
 
     resize(cols, rows, cell_size) {
+        cols = parseInt(cols);
+        rows = parseInt(rows);
         this.grid = [];
+        // column-major flat view of the same cell objects: flat[col*rows + row]
+        this.flat = new Array(cols * rows);
+        // State id of every cell, kept in sync by GridCell.setType. Hot paths read
+        // this instead of dereferencing cell objects (far fewer cache misses).
+        this.state_ids = new Uint8Array(cols * rows);
         this.cols = cols;
         this.rows = rows;
         this.cell_size = cell_size;
         for(var c=0; c<cols; c++) {
             var row = [];
             for(var r=0; r<rows; r++) {
-                var cell = new Cell(CellStates.empty, c, r, c*cell_size, r*cell_size);
+                var cell = new Cell(CellStates.empty, c, r, c*cell_size, r*cell_size, this.state_ids, c*rows + r);
                 row.push(cell);
+                this.flat[c*rows + r] = cell;
             }            
             this.grid.push(row);
         }
@@ -33,10 +41,11 @@ class GridMap {
     }
 
     cellAt(col, row) {
-        if (!this.isValidLoc(col, row)) {
+        // unsigned compare rejects negatives and out-of-range values in one test
+        if ((col >>> 0) >= this.cols || (row >>> 0) >= this.rows) {
             return null;
         }
-        return this.grid[col][row];
+        return this.flat[col * this.rows + row];
     }
 
     setCellType(col, row, state) {
@@ -55,6 +64,13 @@ class GridMap {
             this.grid[col][row].owner = cell_owner.org;
         else 
             this.grid[col][row].owner = null;
+    }
+
+    // flat index of (col, row), or -1 if out of bounds
+    indexOf(col, row) {
+        if ((col >>> 0) >= this.cols || (row >>> 0) >= this.rows)
+            return -1;
+        return col * this.rows + row;
     }
 
     isValidLoc(col, row){

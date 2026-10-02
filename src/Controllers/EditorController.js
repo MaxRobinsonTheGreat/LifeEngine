@@ -67,26 +67,8 @@ class EditorController extends CanvasController{
     defineCellTypeSelection() {
         var self = this;
         $('.cell-type').click( function() {
-            switch(this.id){
-                case "mouth":
-                    self.edit_cell_type = CellStates.mouth;
-                    break;
-                case "producer":
-                    self.edit_cell_type = CellStates.producer;
-                    break;
-                case "mover":
-                    self.edit_cell_type = CellStates.mover;
-                    break;
-                case "killer":
-                    self.edit_cell_type = CellStates.killer;
-                    break;
-                case "armor":
-                    self.edit_cell_type = CellStates.armor;
-                    break;
-                case "eye":
-                    self.edit_cell_type = CellStates.eye;
-                    break;
-            }
+            if (CellStates[this.id])
+                self.edit_cell_type = CellStates[this.id];
             $(".cell-type" ).css( "border-color", "black" );
             var selected = '#'+this.id+'.cell-type';
             $(selected).css("border-color", "yellow");
@@ -103,7 +85,8 @@ class EditorController extends CanvasController{
             const new_name = $('#species-name-edit').val();
             if (new_name === '' || new_name === this.env.organism.species.name)
                 return;
-            FossilRecord.changeSpeciesName(this.env.organism.species, new_name);
+            // renames the species in the world too, if it exists there
+            this.control_panel.engine.env.renameSpecies(this.env.organism.species, new_name);
         }.bind(this));
 
         $('#move-range-edit').change ( function() {

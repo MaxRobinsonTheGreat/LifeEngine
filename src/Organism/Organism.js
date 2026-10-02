@@ -161,11 +161,7 @@ class Organism {
         var new_c = this.c + direction_c;
         var new_r = this.r + direction_r;
         if (this.isClear(new_c, new_r)) {
-            for (var cell of this.anatomy.cells) {
-                var real_c = this.c + cell.rotatedCol(this.rotation);
-                var real_r = this.r + cell.rotatedRow(this.rotation);
-                this.env.changeCell(real_c, real_r, CellStates.empty, null);
-            }
+            this.fillBody(CellStates.empty);
             this.c = new_c;
             this.r = new_r;
             this.updateGrid();
@@ -182,11 +178,7 @@ class Organism {
         }
         var new_rotation = Directions.getRandomDirection();
         if(this.isClear(this.c, this.r, new_rotation)){
-            for (var cell of this.anatomy.cells) {
-                var real_c = this.c + cell.rotatedCol(this.rotation);
-                var real_r = this.r + cell.rotatedRow(this.rotation);
-                this.env.changeCell(real_c, real_r, CellStates.empty, null);
-            }
+            this.fillBody(CellStates.empty);
             this.rotation = new_rotation;
             this.direction = Directions.getRandomDirection();
             this.updateGrid();
@@ -238,14 +230,19 @@ class Organism {
     }
 
     isClear(col, row, rotation=this.rotation) {
-        for(var loccell of this.anatomy.cells) {
-            var cell = this.getRealCell(loccell, col, row, rotation);
-            if (cell==null) {
+        var offsets = this.anatomy.getRotatedOffsets(rotation);
+        var grid_map = this.env.grid_map;
+        var state_ids = grid_map.state_ids;
+        var empty_id = CellStates.empty.id;
+        var food_id = CellStates.food.id;
+        var food_passable = !Hyperparams.foodBlocksReproduction;
+        for (var i = 0; i < offsets.length; i += 2) {
+            var idx = grid_map.indexOf(col + offsets[i], row + offsets[i+1]);
+            if (idx === -1)
                 return false;
-            }
-            if (cell.owner==this || cell.state==CellStates.empty || (!Hyperparams.foodBlocksReproduction && cell.state==CellStates.food)){
+            var id = state_ids[idx];
+            if (id === empty_id || (food_passable && id === food_id) || grid_map.flat[idx].owner == this)
                 continue;
-            }
             return false;
         }
         return true;
@@ -259,20 +256,27 @@ class Organism {
     }
 
     die() {
-        for (var cell of this.anatomy.cells) {
-            var real_c = this.c + cell.rotatedCol(this.rotation);
-            var real_r = this.r + cell.rotatedRow(this.rotation);
-            this.env.changeCell(real_c, real_r, CellStates.food, null);
-        }
+        if (!this.living)
+            return; // dying twice would decrement the species population twice
+        // poisonous bodies leave nothing behind
+        this.fillBody(this.anatomy.has_poison ? CellStates.empty : CellStates.food);
         this.species.decreasePop();
         this.living = false;
     }
 
+    // set every grid cell covered by the body to `state` with no owner
+    fillBody(state) {
+        var offsets = this.anatomy.getRotatedOffsets(this.rotation);
+        for (var i = 0; i < offsets.length; i += 2)
+            this.env.changeCell(this.c + offsets[i], this.r + offsets[i+1], state, null);
+    }
+
     updateGrid() {
-        for (var cell of this.anatomy.cells) {
-            var real_c = this.c + cell.rotatedCol(this.rotation);
-            var real_r = this.r + cell.rotatedRow(this.rotation);
-            this.env.changeCell(real_c, real_r, cell.state, cell);
+        var cells = this.anatomy.cells;
+        var offsets = this.anatomy.getRotatedOffsets(this.rotation);
+        for (var i = 0; i < cells.length; i++) {
+            var cell = cells[i];
+            this.env.changeCell(this.c + offsets[2*i], this.r + offsets[2*i+1], cell.state, cell);
         }
     }
 
@@ -285,8 +289,10 @@ class Organism {
         if (this.food_collected >= this.foodNeeded()) {
             this.reproduce();
         }
-        for (var cell of this.anatomy.cells) {
-            cell.performFunction();
+        this.brain.clearObservations();
+        var active = this.anatomy.getActiveCells();
+        for (var i = 0; i < active.length; i++) {
+            active[i].performFunction();
             if (!this.living)
                 return this.living
         }
@@ -301,6 +307,8 @@ class Organism {
                 this.ignore_brain_for --;
             }
             var moved = this.attemptMove();
+            if (moved && this.anatomy.has_booster)
+                this.attemptMove(); // boosters move a second cell
             if ((this.move_count > this.move_range && !changed_dir) || !moved){
                 var rotated = this.attemptRotate();
                 if (!rotated) {
@@ -345,6 +353,18 @@ class Organism {
         if (this.anatomy.is_mover && this.anatomy.has_eyes)
             org.brain = this.brain.serialize();
         org.species_name = this.species.name;
+        return org;
+    }
+
+    // Build an organism from the saved/serialized format (used to bring an
+    // organism from the simulation worker into the editor).
+    static fromRaw(raw) {
+        const Species = require("../Stats/Species");
+        const org = new Organism(0, 0, null);
+        org.loadRaw(raw);
+        org.species = new Species(org.anatomy, null, 0);
+        if (raw.species_name !== undefined)
+            org.species.name = raw.species_name;
         return org;
     }
 

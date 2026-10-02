@@ -21,6 +21,10 @@ class Species {
 
     calcAnatomyDetails() {
         if (!this.anatomy) return;
+        if (this.anatomy.countByName) { // cell counts from the simulation engine
+            this.cell_counts = this.anatomy.countByName();
+            return;
+        }
         var cell_counts = {};
         for (let c of CellStates.living) {
             cell_counts[c.name] = 0;

@@ -4,10 +4,13 @@
   "description": "Version 2 of the evolution simulator",
   "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node bench/compare.js && node bench/invariants.js --threads 3",
     "build": "webpack --mode=production",
     "build-dev": "webpack --mode=development",
-    "build-watch": "webpack --watch --mode=development"
+    "build-watch": "webpack --watch --mode=development",
+    "bench": "node bench/headless.js",
+    "bench:threads": "node bench/threads.js",
+    "build:engine": "bash scripts/build-engine.sh"
   },
   "repository": {
     "type": "git",

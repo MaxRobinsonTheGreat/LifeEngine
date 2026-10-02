@@ -10,6 +10,12 @@ var color_scheme = {
     "killer":"#F82380",
     "armor":"#7230DB",
     "eye":"#B6C1EA",
+    "healer":"#F2F2F2",
+    "camo":"#6B7A2F",
+    "leaf":"#0B8A5A",
+    "spike":"#FF7A00",
+    "booster":"#A0522D",
+    "poison":"#B6FF00",
     "eye-slit": "#0E1318"
 }
 
@@ -30,7 +36,7 @@ class ColorScheme {
             $('#'+cell_type+'.cell-legend-type').css('background-color', color_scheme[cell_type]);
             
         }
-        this.world_env.renderer.renderFullGrid(this.world_env.grid_map.grid);
+        this.world_env.renderFull();
         this.editor_env.renderer.renderFullGrid(this.editor_env.grid_map.grid);
     }
 }

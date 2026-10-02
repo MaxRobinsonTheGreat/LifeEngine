@@ -6,7 +6,56 @@
 - Added ability to change species name via UI
 
 ### Simulation Enhancements:
-- 
+- Performance: roughly 1.5x faster simulation ticks (identical results for the same RNG sequence) by caching rotated
+  body offsets, skipping passive cells, and replacing an O(n^2) organism-removal loop
+- Performance: "MAX" speed now runs batches of ticks per timer callback instead of being capped at ~250 ticks/sec by
+  browser timer clamping
+- Performance: rendering is decoupled from simulation (once per display frame via requestAnimationFrame) and batched
+  by cell color, cutting canvas fillStyle changes by ~100x
+- Stats text panel refreshes 4x/sec instead of every frame
+- Fixed stats chart intervals stacking when reopening the stats tab
+- Added headless benchmark (`npm run bench`)
+
+### Simulation Engine Rewrite:
+- The simulation is now written in Rust and compiled to WebAssembly (`engine/`), running in a Web Worker so drawing
+  and input never slow it down and the page stays at 60 fps
+- Exact mode reproduces the original simulation exactly (checked by `npm test`) and runs about 4-6x faster than the
+  original object-based code in Node (2-3.5x faster than the previous JS version in the browser)
+- Fast mode adds multi-core simulation for big worlds: the grid is split into tiles updated in parallel; on a 4-core
+  machine the 17,000-organism battleground world runs ~1.6x faster than exact mode (~6x the original build). Results
+  vary slightly run to run, so exact mode is still available under World Controls
+- Multi-core needs a cross-origin isolated page; `coi-serviceworker.js` provides that on static hosts. Without it the
+  single-threaded engine is used
+- Renderer draws only cells that changed between snapshots
+- World saves are produced in the worker and downloaded as a Blob (large worlds no longer go through a data: URL)
+- Fixed stats charts hanging (infinite loop) when the chart's last tick wasn't in the record, and crashing on an empty record
+
+### Simulation Accuracy:
+- Eyes/brains only act on what was seen this tick. Previously sightings piled up while the brain was being ignored
+  (and forever on non-moving organisms with eyes) and stale ones could drive later decisions
+- "Nothing seen" no longer counts as a sighting at max range that could mask a real one
+- An organism can no longer die twice (with one touch kill, killer-vs-killer hits double-counted deaths and drove
+  species populations negative)
+- Species populations are recounted from the organisms when loading a world (fixes "fossilize non existing species")
+- Numeric evolution controls are parsed as numbers (several were stored as strings, e.g. look range + 1 = "201")
+- Clearing organisms resets the average mutation statistic
+- Random organism generator: fixed missing cell on the right edge of each layer and early stop logic
+
+### New Cell Types:
+- Leaf: photosynthesis, chance each tick to feed its organism directly (no food on the grid, no mouth needed)
+- Spike: killer cells that damage it take 1 damage back
+- Booster: movers with a booster move 2 cells per tick
+- Poison: organisms with poison leave no food when they die
+- Healer: chance each tick to repair 1 damage (configurable)
+- Camo: organism becomes invisible to other organisms' eyes
+- Both can be disabled in Evolution Controls; old worlds load with them disabled
+
+### New Content:
+- Organisms: Ghost (camouflaged, self-healing predator), Cactus (leaf plant with spikes), Hornet (fast poisonous predator)
+- Organism: Apex, a predator found by an evolutionary search in the simulation itself; in a free-for-all with every
+  natural predator preset (no mutation, 6 seeds) it ended with the largest population in 5 of 6 runs
+- Organisms: Thornbush, Coral (plants), Grazer (food-seeking herbivore), Shark (eyed predator)
+- World: Food Chain (plants, grazers and sharks in three wall-separated regions)
 
 ## 1.0.5 (4/23/2023)
 

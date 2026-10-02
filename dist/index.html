@@ -6,6 +6,24 @@
 		<link rel="icon" href="./img/icon.png">
 		<link rel="stylesheet" href="./css/style.css">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
+		<script>
+			// Multi-threading needs a cross-origin isolated page. Static hosts can't
+			// send the headers for that, so a service worker adds them (see
+			// coi-serviceworker.js); the page reloads once when it first takes over.
+			(function () {
+				if (window.crossOriginIsolated || !window.isSecureContext || !('serviceWorker' in navigator)) return;
+				try { if (sessionStorage.getItem('coi-reloaded')) return; } catch (e) { return; }
+				navigator.serviceWorker.register('coi-serviceworker.js').then(function () {
+					function reload() {
+						try { sessionStorage.setItem('coi-reloaded', '1'); } catch (e) {}
+						window.lifeEngineReloading = true;
+						location.reload();
+					}
+					if (navigator.serviceWorker.controller) reload();
+					else navigator.serviceWorker.addEventListener('controllerchange', reload);
+				}).catch(function () {});
+			})();
+		</script>
 		<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 	</head>
 	<body>
@@ -61,6 +79,12 @@
 							<div class='cell-legend-type' id='killer' title="Killer: Harms organisms in adjacent cells."></div>
 							<div class='cell-legend-type' id='armor' title="Armor: Negates affects of killer cell."></div>
 							<div class='cell-legend-type' id='eye' title="Eye: Observes cells and decides movement."></div>
+							<div class='cell-legend-type' id='healer' title="Healer: Has a chance each tick to repair 1 damage on its organism."></div>
+							<div class='cell-legend-type' id='camo' title="Camo: Makes its organism invisible to other organisms' eyes."></div>
+							<div class='cell-legend-type' id='leaf' title="Leaf: Each tick, a chance to feed its own organism directly. The food never appears in the world."></div>
+							<div class='cell-legend-type' id='spike' title="Spike: A killer cell that damages a spike takes 1 damage itself."></div>
+							<div class='cell-legend-type' id='booster' title="Booster: A moving organism with a booster moves 2 cells per tick."></div>
+							<div class='cell-legend-type' id='poison' title="Poison: An organism with poison leaves no food behind when it dies."></div>
 							<div class='cell-legend-type' id='food' title="Food: Not part of an organism. Once an organism has eaten enough food, it will reproduce."></div>
 							<div class='cell-legend-type' id='wall' title="Wall: Not part of an organism. Blocks movement and reproduction."></div>
 						</div><br>
@@ -100,6 +124,16 @@
 								<div class='cell-type' id='killer' title="Killer: Harms organisms in adjacent cells."></div>
 								<div class='cell-type' id='armor' title="Armor: Negates affects of killer cell."></div>
 								<div class='cell-type' id='eye' title="Eye: Looks for cells to move away from or towards. Click again on a placed cell to rotate"></div>
+							</div>
+							<div style='grid-column: 3;'>
+								<div class='cell-type' id='healer' title="Healer: Has a chance each tick to repair 1 damage on its organism."></div>
+								<div class='cell-type' id='camo' title="Camo: Makes its organism invisible to other organisms' eyes."></div>
+								<div class='cell-type' id='leaf' title="Leaf: Each tick, a chance to feed its own organism directly. The food never appears in the world."></div>
+							</div>
+							<div style='grid-column: 4;'>
+								<div class='cell-type' id='spike' title="Spike: A killer cell that damages a spike takes 1 damage itself."></div>
+								<div class='cell-type' id='booster' title="Booster: A moving organism with a booster moves 2 cells per tick."></div>
+								<div class='cell-type' id='poison' title="Poison: An organism with poison leaves no food behind when it dies."></div>
 							</div>
 
 							<button id='clear-editor'>Clear</button>
@@ -151,6 +185,11 @@
 									<option value="killer">killer</option>
 									<option value="armor">armor</option>
 									<option value="eye">eye</option>
+									<option value="healer">healer</option>
+									<option value="leaf">leaf</option>
+									<option value="spike">spike</option>
+									<option value="booster">booster</option>
+									<option value="poison">poison</option>
 								</select>
 
 								<label for="reaction-edit">Reaction: </label>
@@ -198,6 +237,25 @@
 						<br>
 						<label for="clear-walls-reset" title='When on, walls will be cleared when the environment resets'>Clear walls on reset</label>
 						<input type="checkbox" id="clear-walls-reset">
+						<h3>Simulation Engine</h3>
+						<label for="engine-mode" title='Fast: the world is split into regions updated in parallel on several CPU cores; results differ slightly from run to run. Exact: one core, organisms update in a fixed order, so the same start always gives the same result.'>Mode:</label>
+						<select id="engine-mode">
+							<option value="fast">Fast (multi-core)</option>
+							<option value="exact">Exact (reproducible)</option>
+						</select>
+						<label for="engine-threads" title='CPU threads used in fast mode. Auto uses one per core, leaving one for the page.'>Threads:</label>
+						<select id="engine-threads">
+							<option value="0">Auto</option>
+							<option value="1">1</option>
+							<option value="2">2</option>
+							<option value="3">3</option>
+							<option value="4">4</option>
+							<option value="6">6</option>
+							<option value="8">8</option>
+							<option value="12">12</option>
+							<option value="16">16</option>
+						</select>
+						<p id="engine-status">Engine: starting...</p>
 						<br>
 						<button id='save-env' title="Download save file for entire world">Save World</button>
 						<label for="save-env-name" title='Save World as:'>Save As:</label>
@@ -234,6 +292,15 @@
 						<br>
 						<label for="extra-mover-cost" title='Additional food cost for movers to reproduce'>Extra mover reproduction cost:</label>
 						<input type="number" id="extra-mover-cost" value=0 max="1000" step="1">
+						<br>
+						<label for="extended-cells" title='When on, mutation and random generation can produce healer, camo, leaf, spike, booster and poison cells. Turn off for the classic six cell types.'>New cell types evolve</label>
+						<input type="checkbox" id="extended-cells" checked>
+						<br>
+						<label for="heal-prob" title='Probability (%) each tick that a healer cell repairs 1 point of damage on its organism.'>Healer repair chance:</label>
+						<input type="number" id="heal-prob" min="0" max="100" value=10 step="1">
+						<br>
+						<label for="leaf-prob" title='Probability (%) each tick that a leaf cell feeds its organism 1 food.'>Leaf feeding chance:</label>
+						<input type="number" id="leaf-prob" min="0" max="100" value=1 step="0.5">
 
 						
 					</div>

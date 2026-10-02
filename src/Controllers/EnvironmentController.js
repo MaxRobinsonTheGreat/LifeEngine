@@ -2,8 +2,6 @@ const CanvasController = require("./CanvasController");
 const Organism = require('../Organism/Organism');
 const Modes = require("./ControlModes");
 const CellStates = require("../Organism/Cell/CellStates");
-const Neighbors = require("../Grid/Neighbors");
-const FossilRecord = require("../Stats/FossilRecord");
 const WorldConfig = require("../WorldConfig");
 const Perlin = require("../Utils/Perlin");
 
@@ -14,6 +12,17 @@ class EnvironmentController extends CanvasController{
         this.org_to_clone = null;
         this.defineZoomControls();
         this.scale = 1;
+        this.mouse_inside = false;
+        this.select_pending = false;
+        this.canvas.addEventListener('mouseleave', () => { this.mouse_inside = false; });
+    }
+
+    // grid cell under the mouse, for the hover highlight (the worker resolves
+    // which organism is there), or null
+    hoverCell() {
+        if (!this.mouse_inside || !this.highlight_org)
+            return null;
+        return [this.mouse_c, this.mouse_r];
     }
 
     defineZoomControls() {
@@ -58,31 +67,34 @@ class EnvironmentController extends CanvasController{
     Iterate over grid from 0,0 to env.num_cols,env.num_rows and create random walls using perlin noise to create a more organic shape.
     */
     randomizeWalls(thickness=1) {
-        this.env.clearWalls();
         const noise_threshold = -0.017;
-        let avg_noise = 0;
         let resolution = 20;
         Perlin.seed();
-
+        const cells = [];
         for (let r = 0; r < this.env.num_rows; r++) {
             for (let c = 0; c < this.env.num_cols; c++) {
                 let xval = c/this.env.num_cols*(resolution/this.env.renderer.cell_size*(this.env.num_cols/this.env.num_rows));
                 let yval = r/this.env.num_rows*(resolution/this.env.renderer.cell_size*(this.env.num_rows/this.env.num_cols));
                 let noise = Perlin.get(xval, yval);
-                avg_noise += noise/(this.env.num_rows*this.env.num_cols);
-                if (noise > noise_threshold && noise < noise_threshold + thickness/resolution) {
-                    let cell = this.env.grid_map.cellAt(c, r);
-                    if (cell != null) {
-                        if(cell.owner != null) cell.owner.die();
-                        this.env.changeCell(c, r, CellStates.wall, null);
-                    }
-                }
+                if (noise > noise_threshold && noise < noise_threshold + thickness/resolution)
+                    cells.push(c, r);
             }
         }
+        // replaces existing walls, killing organisms in the way
+        this.env.setWalls(Int32Array.from(cells));
     }
 
+    // Grid contents live in the simulation worker, so only the position is
+    // tracked here; hover highlighting is resolved by the worker each frame.
     updateMouseLocation(offsetX, offsetY){
-        super.updateMouseLocation(offsetX, offsetY);
+        this.mouse_x = offsetX;
+        this.mouse_y = offsetY;
+        const colRow = this.env.grid_map.xyToColRow(this.mouse_x, this.mouse_y);
+        this.mouse_c = colRow[0];
+        this.mouse_r = colRow[1];
+        this.cur_cell = {col: this.mouse_c, row: this.mouse_r};
+        this.cur_org = null;
+        this.mouse_inside = true;
     }
 
     mouseMove() {
@@ -132,12 +144,7 @@ class EnvironmentController extends CanvasController{
                     break;
 
                 case Modes.Select:
-                    if (this.cur_org == null) {
-                        this.cur_org = this.findNearOrganism();
-                    }
-                    if (this.cur_org != null){
-                        this.control_panel.setEditorOrganism(this.cur_org);
-                    }
+                    this.selectNearOrganism();
                     break;
 
                 case Modes.Clone:
@@ -165,77 +172,33 @@ class EnvironmentController extends CanvasController{
         $('#env-canvas').css('left', new_left+'px');
     }
 
+    // Drop a copy of `organism` (an editor Organism) into the world.
     dropOrganism(organism, col, row) {
-
-        // close the organism and drop it in the world
-        var new_org = new Organism(col, row, this.env, organism);
-
-        if (new_org.isClear(col, row)) {
-            let new_species = !FossilRecord.speciesIsExtant(new_org.species.name);
-            if (new_org.species.extinct) {
-                FossilRecord.resurrect(new_org.species);
-            }
-            else if (new_species) {
-                FossilRecord.addSpeciesObj(new_org.species);
-                new_org.species.start_tick = this.env.total_ticks;
-                new_org.species.population = 0;
-            }
-
-            this.env.addOrganism(new_org);
-            new_org.species.addPop();
-            return true;
-        }
-        return false;
+        this.env.dropOrganisms([{raw: organism.serialize(), c: col, r: row}]);
+        return true;
     }
 
     dropCellType(col, row, state, killBlocking=false, ignoreState=null) {
-        for (var loc of Neighbors.inRange(WorldConfig.brush_size)){
-            var c=col + loc[0];
-            var r=row + loc[1];
-            var cell = this.env.grid_map.cellAt(c, r);
-            if (cell == null)
-                continue;
-            if (killBlocking && cell.owner != null){
-                cell.owner.die();
-            }
-            else if (cell.owner != null) {
-                continue;
-            }
-            if (ignoreState != null && cell.state == ignoreState)
-                continue;
-            this.env.changeCell(c, r, state, null);
-        }
+        this.env.brush(col, row, state, killBlocking, ignoreState);
     }
 
-    findNearOrganism() {
-        let closest = null;
-        let closest_dist = 100;
-        for (let loc of Neighbors.inRange(WorldConfig.brush_size)){
-            let c = this.cur_cell.col + loc[0];
-            let r = this.cur_cell.row + loc[1];
-            let cell = this.env.grid_map.cellAt(c, r);
-            let dist = Math.abs(loc[0]) + Math.abs(loc[1]);
-            if (cell != null && cell.owner != null) { 
-                if (closest === null || dist < closest_dist) {
-                    closest = cell.owner;
-                    closest_dist = dist;
-                }
-            }
+    // Copy the organism nearest the mouse into the editor.
+    async selectNearOrganism() {
+        if (this.select_pending)
+            return;
+        this.select_pending = true;
+        try {
+            const raw = await this.env.selectNear(this.cur_cell.col, this.cur_cell.row);
+            if (raw)
+                this.control_panel.setEditorOrganism(Organism.fromRaw(raw));
+        } finally {
+            this.select_pending = false;
         }
-        return closest;
     }
 
     killNearOrganisms() {
-        for (var loc of Neighbors.inRange(WorldConfig.brush_size)){
-            var c = this.cur_cell.col + loc[0];
-            var r = this.cur_cell.row + loc[1];
-            var cell = this.env.grid_map.cellAt(c, r);
-            if (cell != null && cell.owner != null)
-                cell.owner.die();
-        }
+        this.env.killNear(this.cur_cell.col, this.cur_cell.row);
     }
-
-
 }
 
 module.exports = EnvironmentController;

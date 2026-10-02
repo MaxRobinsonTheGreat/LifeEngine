@@ -48,31 +48,21 @@ class BodyCell{
         return this.org.env.grid_map.cellAt(real_c, real_r);
     }
 
+    // Rotation is a linear map of (loc_col, loc_row); lookup tables indexed by
+    // direction avoid a switch on every call (this is one of the hottest paths).
     rotatedCol(dir){
-        switch(dir){
-            case Directions.up:
-                return this.loc_col;
-            case Directions.down:
-                return this.loc_col * -1;
-            case Directions.left:
-                return this.loc_row;
-            case Directions.right:
-                return this.loc_row * -1;
-        }
+        return ROT_COL_C[dir] * this.loc_col + ROT_COL_R[dir] * this.loc_row;
     }
 
     rotatedRow(dir){
-        switch(dir){
-            case Directions.up:
-                return this.loc_row;
-            case Directions.down:
-                return this.loc_row * -1;
-            case Directions.left:
-                return this.loc_col * -1;
-            case Directions.right:
-                return this.loc_col;
-        }
+        return ROT_ROW_C[dir] * this.loc_col + ROT_ROW_R[dir] * this.loc_row;
     }
 }
+
+// indexed by Directions (up, right, down, left)
+const ROT_COL_C = [1, 0, -1, 0];
+const ROT_COL_R = [0, -1, 0, 1];
+const ROT_ROW_C = [0, 1, 0, -1];
+const ROT_ROW_R = [1, 0, -1, 0];
 
 module.exports = BodyCell;

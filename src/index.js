@@ -8,6 +8,7 @@ $('document').ready(function(){
         alert("Welcome to the Life Engine! Be aware the website is not built for mobile, so try on desktop for the best experience!");
     }
     var engine = new Engine();
+    window.engine = engine; // handy for debugging and benchmarking from the console
     engine.start(60);
 });
 

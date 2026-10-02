@@ -1,243 +1,239 @@
-const Environment = require('./Environment');
-const Renderer = require('../Rendering/Renderer');
-const GridMap = require('../Grid/GridMap');
-const Organism = require('../Organism/Organism');
-const CellStates = require('../Organism/Cell/CellStates');
+const WorldRenderer = require('../Rendering/WorldRenderer');
 const EnvironmentController = require('../Controllers/EnvironmentController');
+const CellStates = require('../Organism/Cell/CellStates');
 const Hyperparams = require('../Hyperparameters.js');
-const FossilRecord = require('../Stats/FossilRecord');
 const WorldConfig = require('../WorldConfig');
-const SerializeHelper = require('../Utils/SerializeHelper');
-const Species = require('../Stats/Species');
+const FossilRecord = require('../Stats/FossilRecord');
+const SimClient = require('../Sim/SimClient');
 
-class WorldEnvironment extends Environment{
+// Main-thread handle on the world. The simulation itself (the Rust/WebAssembly
+// engine, driven by src/Sim/SimHost.js) runs in a
+// Web Worker; this class forwards user actions to it, draws the snapshots it
+// sends back, and keeps a copy of the latest statistics for the UI.
+class WorldEnvironment {
     constructor(cell_size) {
-        super();
-        this.renderer = new Renderer('env-canvas', 'env', cell_size);
+        this.renderer = new WorldRenderer('env-canvas', 'env', cell_size);
         this.controller = new EnvironmentController(this, this.renderer.canvas);
         this.num_rows = Math.ceil(this.renderer.height / cell_size);
         this.num_cols = Math.ceil(this.renderer.width / cell_size);
-        this.grid_map = new GridMap(this.num_cols, this.num_rows, cell_size);
-        this.organisms = [];
-        this.walls = [];
-        this.total_mutability = 0;
-        this.largest_cell_count = 0;
+        this.grid_map = new GridShape(this.num_cols, this.num_rows, cell_size);
+        this.renderer.setGridSize(this.num_cols, this.num_rows);
+
+        // latest statistics reported by the simulation
+        this.stats = {ticks: 0, orgs: 0, species: 0, top: null, largest: 0, avg_mut: 0, resets: 0, tps: 0};
         this.reset_count = 0;
         this.total_ticks = 0;
-        this.data_update_rate = 100;
-        FossilRecord.setEnv(this);
+        this.largest_cell_count = 0;
+        FossilRecord.applyRecord(null);
+
+        this.client = new SimClient();
+        this.client.on('frame', (msg) => this.applyFrame(msg));
+        this.client.on('extinct', () => {
+            if (this.onExtinct) this.onExtinct();
+        });
+        this.client.on('fatal', (msg) => {
+            alert('The simulation engine failed to start: ' + msg.error);
+        });
+        this.last_hyper = '';
+        this.last_config = '';
+        this.client.send({
+            type: 'init', cols: this.num_cols, rows: this.num_rows, cell_size,
+            hyper: JSON.parse(JSON.stringify(Hyperparams)), config: {...WorldConfig},
+        });
+        this.syncSettings();
+        this.frame_pending = false;
+        this.last_record_request = 0;
     }
 
-    update() {
-        var to_remove = [];
-        for (var i in this.organisms) {
-            var org = this.organisms[i];
-            if (!org.living || !org.update()) {
-                to_remove.push(i);
-            }
-        }
-        this.removeOrganisms(to_remove);
-        if (Hyperparams.foodDropProb > 0) {
-            this.generateFood();
-        }
-        this.total_ticks ++;
-        if (this.total_ticks % this.data_update_rate == 0) {
-            FossilRecord.updateData();
-        }
-    }
-
-    render() {
-        if (WorldConfig.headless) {
-            this.renderer.cells_to_render.clear();
-            return;
-        }
-        this.renderer.renderCells();
-        this.renderer.renderHighlights();
-    }
-
-    renderFull() {
-        this.renderer.renderFullGrid(this.grid_map.grid);
-    }
-
-    removeOrganisms(org_indeces) {
-        let start_pop = this.organisms.length;
-        for (var i of org_indeces.reverse()){
-            this.total_mutability -= this.organisms[i].mutability;
-            this.organisms.splice(i, 1);
-        }
-        if (this.organisms.length === 0 && start_pop > 0) {
-            if (WorldConfig.auto_pause)
-                $('.pause-button')[0].click();
-            else if(WorldConfig.auto_reset) {
-                this.reset_count++;
-                this.reset(false);
-            }
-        }
-    }
-
-    OriginOfLife() {
-        var center = this.grid_map.getCenter();
-        var org = new Organism(center[0], center[1], this);
-        org.anatomy.addDefaultCell(CellStates.mouth, 0, 0);
-        org.anatomy.addDefaultCell(CellStates.producer, 1, 1);
-        org.anatomy.addDefaultCell(CellStates.producer, -1, -1);
-        this.addOrganism(org);
-        FossilRecord.addSpecies(org, null);
-    }
-
-    addOrganism(organism) {
-        organism.updateGrid();
-        this.total_mutability += organism.mutability;
-        this.organisms.push(organism);
-        if (organism.anatomy.cells.length > this.largest_cell_count) 
-            this.largest_cell_count = organism.anatomy.cells.length;
-    }
-
-    canAddOrganism() {
-        return this.organisms.length < Hyperparams.maxOrganisms || Hyperparams.maxOrganisms < 0;
+    get organisms() {
+        // StatsPanel/old callers only use the length
+        return {length: this.stats.orgs};
     }
 
     averageMutability() {
-        if (this.organisms.length < 1)
-            return 0;
-        if (Hyperparams.useGlobalMutability) {
-            return Hyperparams.globalMutability;
+        return this.stats.avg_mut;
+    }
+
+    // Push changed evolution controls / world config to the worker. Cheap enough
+    // to call every frame, so UI handlers don't each need to remember to sync.
+    syncSettings() {
+        const hyper = JSON.stringify(Hyperparams);
+        if (hyper !== this.last_hyper) {
+            this.last_hyper = hyper;
+            this.client.send({type: 'hyper', values: JSON.parse(hyper)});
         }
-        return this.total_mutability / this.organisms.length;
-    }
-
-    changeCell(c, r, state, owner) {
-        super.changeCell(c, r, state, owner);
-        this.renderer.addToRender(this.grid_map.cellAt(c, r));
-        if(state == CellStates.wall)
-            this.walls.push(this.grid_map.cellAt(c, r));
-    }
-
-    clearWalls() {
-        for(var wall of this.walls){
-            let wcell = this.grid_map.cellAt(wall.col, wall.row);
-            if (wcell && wcell.state == CellStates.wall)
-                this.changeCell(wall.col, wall.row, CellStates.empty, null);
+        const config = JSON.stringify(WorldConfig);
+        if (config !== this.last_config) {
+            this.last_config = config;
+            this.client.send({type: 'config', values: JSON.parse(config)});
         }
     }
 
-    clearOrganisms() {
-        for (var org of this.organisms)
-            org.die();
-        this.organisms = [];
-    }
-    
-    clearDeadOrganisms() {
-        let to_remove = [];
-        for (let i in this.organisms) {
-            let org = this.organisms[i];
-            if (!org.living)
-                to_remove.push(i);
-        }
-        this.removeOrganisms(to_remove);
+    // Called every display frame. Asks the worker for a snapshot unless one is
+    // already on its way (this naturally limits requests to what we can draw).
+    requestFrame(want_record) {
+        this.syncSettings();
+        if (this.frame_pending)
+            return;
+        this.frame_pending = true;
+        const now = Date.now();
+        const record = want_record && now - this.last_record_request > 1000;
+        if (record) this.last_record_request = now;
+        this.client.send({
+            type: 'frame',
+            grid: !WorldConfig.headless,
+            mouse: WorldConfig.headless ? null : this.controller.hoverCell(),
+            record,
+        });
     }
 
-    generateFood() {
-        var num_food = Math.max(Math.floor(this.grid_map.cols*this.grid_map.rows*Hyperparams.foodDropProb/50000), 1)
-        var prob = Hyperparams.foodDropProb;
-        for (var i=0; i<num_food; i++) {
-            if (Math.random() <= prob){
-                var c=Math.floor(Math.random() * this.grid_map.cols);
-                var r=Math.floor(Math.random() * this.grid_map.rows);
-
-                if (this.grid_map.cellAt(c, r).state == CellStates.empty){
-                    this.changeCell(c, r, CellStates.food, null);
-                }
-            }
+    applyFrame(msg) {
+        this.frame_pending = false;
+        this.stats = msg.stats;
+        this.reset_count = msg.stats.resets;
+        this.total_ticks = msg.stats.ticks;
+        this.largest_cell_count = msg.stats.largest;
+        if (msg.record)
+            FossilRecord.applyRecord(msg.record);
+        // a frame produced before a resize/load we already applied: skip drawing it
+        if (msg.cols !== this.grid_map.cols || msg.rows !== this.grid_map.rows)
+            return;
+        if (msg.grid) {
+            this.renderer.hover = msg.highlight;
+            this.renderer.draw(msg.grid);
         }
+    }
+
+    setGridSize(cols, rows, cell_size) {
+        cols = parseInt(cols);
+        rows = parseInt(rows);
+        if (cell_size != this.renderer.cell_size || cols != this.num_cols || rows != this.num_rows) {
+            this.renderer.cell_size = cell_size;
+            this.renderer.fillShape(rows*cell_size, cols*cell_size);
+        }
+        this.num_cols = cols;
+        this.num_rows = rows;
+        this.grid_map = new GridShape(cols, rows, cell_size);
+        this.renderer.setGridSize(cols, rows);
+        this.renderer.invalidate();
+    }
+
+    renderFull() {
+        this.renderer.invalidate();
+    }
+
+    start(fps) {
+        this.client.send({type: 'start', fps});
+    }
+
+    stop() {
+        this.client.send({type: 'stop'});
     }
 
     reset(confirm_reset=true, reset_life=true) {
         if (confirm_reset && !confirm('The current environment will be lost. Proceed?'))
             return false;
-
-        this.organisms = [];
-        this.grid_map.fillGrid(CellStates.empty, !WorldConfig.clear_walls_on_reset);
-        this.renderer.renderFullGrid(this.grid_map.grid);
-        this.total_mutability = 0;
-        this.total_ticks = 0;
-        FossilRecord.clear_record();
-        if (reset_life)
-            this.OriginOfLife();
+        this.client.send({type: 'reset', life: reset_life});
+        this.renderer.clearAllHighlights();
         return true;
     }
 
     resizeGridColRow(cell_size, cols, rows) {
+        cell_size = parseInt(cell_size);
+        this.client.send({type: 'resize', cols: parseInt(cols), rows: parseInt(rows), cell_size});
         this.renderer.cell_size = cell_size;
         this.renderer.fillShape(rows*cell_size, cols*cell_size);
-        this.grid_map.resize(cols, rows, cell_size);
+        this.setGridSize(cols, rows, cell_size);
     }
 
     resizeFillWindow(cell_size) {
+        cell_size = parseInt(cell_size);
         this.renderer.cell_size = cell_size;
         this.renderer.fillWindow('env');
-        this.num_cols = Math.ceil(this.renderer.width / cell_size);
-        this.num_rows = Math.ceil(this.renderer.height / cell_size);
-        this.grid_map.resize(this.num_cols, this.num_rows, cell_size);
+        const cols = Math.ceil(this.renderer.width / cell_size);
+        const rows = Math.ceil(this.renderer.height / cell_size);
+        this.client.send({type: 'resize', cols, rows, cell_size});
+        this.setGridSize(cols, rows, cell_size);
     }
 
-    serialize() {
-        this.clearDeadOrganisms();
-        let env = SerializeHelper.copyNonObjects(this);
-        env.grid = this.grid_map.serialize();
-        env.organisms = [];
-        for (let org of this.organisms){
-            env.organisms.push(org.serialize());
-        }
-        env.fossil_record = FossilRecord.serialize();
-        env.controls = Hyperparams;
-        return env;
+    clearWalls() {
+        this.client.send({type: 'clearWalls'});
     }
 
-    loadRaw(env) { // species name->stats map, evolution controls, 
-        this.organisms = [];
-        FossilRecord.clear_record();
-        let cell_size = env.grid.cell_size ? env.grid.cell_size : this.grid_map.cell_size;
-        this.resizeGridColRow(cell_size, env.grid.cols, env.grid.rows)
-        this.grid_map.loadRaw(env.grid);
-        for (let wall of env.grid.walls) {
-            this.walls.push(this.grid_map.cellAt(wall.c, wall.r));
-        }
+    // replace all walls with walls at [c0, r0, c1, r1, ...]
+    setWalls(cells) {
+        this.client.send({type: 'walls', cells});
+    }
 
-        // create species map
-        let species = {};
-        for (let name in env.fossil_record.species) {
-            let s = new Species(null, null, 0);
-            SerializeHelper.overwriteNonObjects(env.fossil_record.species[name], s)
-            species[name] = s; // the species needs an anatomy obj still
-        }
+    brush(c, r, state, kill_blocking=false, ignore_state=null) {
+        this.client.send({type: 'brush', c, r, size: parseInt(WorldConfig.brush_size), state: state.id,
+                          kill: kill_blocking, ignore: ignore_state ? ignore_state.id : -1});
+    }
 
-        for (let orgRaw of env.organisms) {
-            let org = new Organism(orgRaw.col, orgRaw.row, this);
-            org.loadRaw(orgRaw);
-            this.addOrganism(org);
-            let s = species[orgRaw.species_name];
-            if (!s){ // ideally, every organisms species should exists, but there is a bug that misses some species sometimes
-                s = new Species(org.anatomy, null, env.total_ticks);
-                species[orgRaw.species_name] = s;
-            }
-            if (!s.anatomy) {
-                //if the species doesn't have anatomy we need to initialize it
-                s.anatomy = org.anatomy;
-                s.calcAnatomyDetails();
-            }
-            s.name = orgRaw.species_name;
-            org.species = s;
+    killNear(c, r) {
+        this.client.send({type: 'kill', c, r, size: parseInt(WorldConfig.brush_size)});
+    }
+
+    // place copies of serialized organisms: [{raw, c, r}, ...]
+    dropOrganisms(list) {
+        this.client.send({type: 'drop', orgs: list});
+    }
+
+    // serialized organism nearest to (c, r) within the brush, or null
+    async selectNear(c, r) {
+        const reply = await this.client.request({type: 'select', c, r, size: parseInt(WorldConfig.brush_size)});
+        return reply.org;
+    }
+
+    renameSpecies(species, new_name) {
+        const old = species.name;
+        species.name = new_name;
+        this.client.send({type: 'rename', old, name: new_name});
+    }
+
+    // world save as a JSON string (same format as before)
+    async serialize() {
+        const reply = await this.client.request({type: 'save'});
+        return reply.json;
+    }
+
+    async loadRaw(env) {
+        if ($('#override-controls').is(':checked')) {
+            Hyperparams.loadJsonObj(env.controls);
+            // worlds saved before healer/camo existed keep their original rules
+            if (env.controls && env.controls.extendedCellTypes === undefined)
+                Hyperparams.extendedCellTypes = false;
         }
-        for (let name in species)
-            FossilRecord.addSpeciesObj(species[name]);
-        FossilRecord.loadRaw(env.fossil_record);
-        SerializeHelper.overwriteNonObjects(env, this);
-        if ($('#override-controls').is(':checked'))
-            Hyperparams.loadJsonObj(env.controls)
-        this.renderer.renderFullGrid(this.grid_map.grid);
+        this.syncSettings();
+        const reply = await this.client.request({type: 'load', world: env});
+        this.setGridSize(reply.cols, reply.rows, reply.cell_size);
+        this.renderer.clearAllHighlights();
+    }
+}
+
+// The grid geometry the controllers need (cell lookups happen in the worker).
+class GridShape {
+    constructor(cols, rows, cell_size) {
+        this.cols = cols;
+        this.rows = rows;
+        this.cell_size = cell_size;
+    }
+
+    getCenter() {
+        return [Math.floor(this.cols/2), Math.floor(this.rows/2)];
+    }
+
+    isValidLoc(col, row) {
+        return col < this.cols && row < this.rows && col >= 0 && row >= 0;
+    }
+
+    xyToColRow(x, y) {
+        let c = Math.floor(x/this.cell_size);
+        let r = Math.floor(y/this.cell_size);
+        c = Math.max(0, Math.min(this.cols - 1, c));
+        r = Math.max(0, Math.min(this.rows - 1, r));
+        return [c, r];
     }
 }
 
 module.exports = WorldEnvironment;
-

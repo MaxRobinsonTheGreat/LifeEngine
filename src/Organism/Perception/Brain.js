@@ -17,7 +17,7 @@ const Decision = {
 class Brain {
     constructor(owner){
         this.owner = owner;
-        this.observations = [];
+        this.clearObservations();
 
         // corresponds to CellTypes
         this.decisions = {};
@@ -45,27 +45,40 @@ class Brain {
         this.decisions[CellStates.mover.name] = Decision.getRandom();
         this.decisions[CellStates.armor.name] = Decision.getRandom();
         this.decisions[CellStates.eye.name] = Decision.getRandom();
+        this.decisions[CellStates.healer.name] = Decision.getRandom();
+        this.decisions[CellStates.leaf.name] = Decision.getRandom();
+        this.decisions[CellStates.spike.name] = Decision.getRandom();
+        this.decisions[CellStates.booster.name] = Decision.getRandom();
+        this.decisions[CellStates.poison.name] = Decision.getRandom();
     }
 
-    observe(observation) {
-        this.observations.push(observation);
+    // Called at the start of every tick. Only what the eyes see this tick should
+    // drive the decision; previously sightings piled up while the brain was being
+    // ignored (and forever on non-movers) and stale ones could win later.
+    clearObservations() {
+        this.seen_cell = null;
+        this.seen_distance = Infinity;
+        this.seen_direction = 0;
+    }
+
+    // Keeps only the closest sighting (first one wins ties, as before).
+    observe(cell, distance, direction) {
+        if (cell === null || cell.owner === this.owner)
+            return;
+        if (distance < this.seen_distance) {
+            this.seen_cell = cell;
+            this.seen_distance = distance;
+            this.seen_direction = direction;
+        }
     }
 
     decide() {
         var decision = Decision.neutral;
-        var closest = Hyperparams.lookRange + 1;
-        var move_direction = 0;
-        for (var obs of this.observations) {
-            if (obs.cell == null || obs.cell.owner == this.owner) {
-                continue;
-            }
-            if (obs.distance < closest) {
-                decision = this.decisions[obs.cell.state.name];
-                move_direction = obs.direction;
-                closest = obs.distance;
-            }
+        if (this.seen_cell !== null) {
+            decision = this.decisions[this.seen_cell.state.name];
         }
-        this.observations = [];
+        var move_direction = this.seen_direction;
+        this.clearObservations();
         if (decision == Decision.chase) {
             this.owner.changeDirection(move_direction);
             return true;

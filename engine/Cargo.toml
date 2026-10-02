@@ -1,0 +1,18 @@
+[package]
+name = "life_engine"
+version = "0.1.0"
+edition = "2021"
+description = "Simulation core of The Life Engine, compiled to WebAssembly"
+license = "GPL-3.0-only"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+path = "src/lib.rs"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+debug = false

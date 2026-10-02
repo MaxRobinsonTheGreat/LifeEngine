@@ -44,8 +44,8 @@ const FossilRecord = {
         this.extant_species[new_name] = species;
     },
 
-    numExtantSpecies() {return Object.values(this.extant_species).length},
-    numExtinctSpecies() {return Object.values(this.extinct_species).length},
+    numExtantSpecies() {return Object.keys(this.extant_species).length},
+    numExtinctSpecies() {return Object.keys(this.extinct_species).length},
     speciesIsExtant(species_name) {return !!this.extant_species[species_name]},
 
     fossilize: function(species) {
@@ -106,8 +106,10 @@ const FossilRecord = {
             cell_counts[c.name] = 0;
         }
         var first=true;
-        for (let s of Object.values(this.extant_species)) {
-            if (!first && this.numExtantSpecies() > 10 && s.cumulative_pop < this.min_discard){
+        var all_species = Object.values(this.extant_species);
+        var many_species = all_species.length > 10; // hoisted: was recomputed per species (O(n^2))
+        for (let s of all_species) {
+            if (!first && many_species && s.cumulative_pop < this.min_discard){
                 continue;
             }
             for (let name in s.cell_counts) {
@@ -144,8 +146,8 @@ const FossilRecord = {
     },
 
     clear_record() {
-        this.extant_species = [];
-        this.extinct_species = [];
+        this.extant_species = {};
+        this.extinct_species = {};
         this.setData();
     },
 
@@ -167,6 +169,13 @@ const FossilRecord = {
         }
         record.species = species;
         return record;
+    },
+
+    // Main thread: replace the chart data with a copy sent by the simulation worker.
+    applyRecord(record) {
+        const keys = ['tick_record', 'pop_counts', 'species_counts', 'av_mut_rates', 'av_cells', 'av_cell_counts'];
+        for (const key of keys)
+            this[key] = record ? record[key] : [];
     },
 
     loadRaw(record) {

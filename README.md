@@ -30,6 +30,61 @@ To load custom creations (found in `/dist/assets`), you must have a simple web s
 - Watch mode (dev mode that auto-builds when you save a file): `npm run build-watch`
 - Dev mode (better error messages): `npm run build-dev` 
 
+### Architecture
+The simulation is written in Rust (`engine/`), compiled to WebAssembly, and runs in a Web Worker so it never competes
+with drawing or input:
+- `engine/src/world.rs` holds the world (grid in flat arrays, organisms sharing immutable genomes) and the **exact**
+  tick, which reproduces the original JavaScript simulation exactly for the same random seed.
+- `engine/src/fast.rs` is the **fast** tick: the grid is split into 32x32 tiles in a 2x2 checkerboard and tiles of one
+  color are updated in parallel on several threads (`engine/src/threads.rs`). It only kicks in for populations of
+  2500+ organisms; smaller worlds use the exact tick, which is quicker there. Its results differ slightly from run to
+  run (see the comment at the top of `fast.rs` for the exact differences).
+- `src/Sim/WasmWorld.js` drives the engine from JS: evolution controls, species and fossil record bookkeeping (from
+  events the engine reports), and loading/saving in the usual world format.
+- `src/Sim/SimHost.js` runs the tick loop in the worker and starts the helper threads; `src/Sim/SimClient.js` is the
+  page side. If no worker can be created, the same worker code runs on the page's thread.
+- `src/Environments/WorldEnvironment.js` forwards UI actions to the worker and draws the snapshots it sends back.
+- The organism editor uses the original object-based classes in `src/Organism`; organisms move between the editor and
+  the world in the save format.
+
+Choose the mode and thread count under World Controls -> Simulation Engine.
+
+### Multi-core and cross-origin isolation
+Threads share memory through `SharedArrayBuffer`, which browsers only allow on cross-origin isolated pages. Static
+hosts (GitHub Pages, `python -m http.server`) can't send the required headers, so `dist/coi-serviceworker.js` adds
+them; `index.html` registers it and the page reloads once on the first visit. Where that isn't possible (opened from
+`file://`, Safari, service workers disabled) the game uses the single-threaded engine build. If your server can send
+`Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Embedder-Policy: require-corp` (or `credentialless`)
+itself, the service worker isn't needed.
+
+### Building the engine
+The compiled engines are committed (`src/Sim/wasm/engine-mt.wasm`, `engine-st.wasm`), so `npm run build` doesn't need
+Rust. To change the engine, install Rust with the nightly toolchain (needed for WebAssembly threads):
+```
+rustup toolchain install nightly --component rust-src --target wasm32-unknown-unknown
+npm run build:engine   # rebuilds both .wasm files
+npm run build
+```
+
+### Tests
+`npm test` runs two suites:
+- `bench/compare.js`: the original object-based simulation (kept in `bench/reference`) and the Rust engine's exact mode
+  run side by side on the same random seed across several worlds and organisms; both must end in exactly the same state.
+- `bench/invariants.js`: fast mode (and exact mode) on several scenarios with multiple threads, checking every 50 ticks
+  that the grid, organism list, species populations and counters agree, plus a save/load round trip.
+
+### Headless benchmark
+`npm run bench` runs the engine in Node (no browser) with a seeded RNG and prints ticks/second plus a state hash. The
+same seed always produces the same hash in exact mode, so a performance change that keeps the hash identical did not
+change simulation behavior. `npm run bench:threads` compares exact mode with fast mode on 1..N threads, all starting
+from the same grown world.
+- `npm run bench -- --ticks 5000 --seed 7 --cols 300 --rows 200`
+- `npm run bench -- --world dist/assets/worlds/zoo.json --render` (load a world; `--render` also exercises the renderer)
+- `npm run bench -- --org dist/assets/organisms/shark.json` (start from a single organism)
+- `npm run bench -- --engine wasm-fast --threads 3` runs fast mode; `--engine object` the original implementation
+
+In the browser, the running engine is exposed as `window.engine` for debugging from the console.
+
 
 # How the Simulation Works
 ## The Environment
@@ -50,6 +105,14 @@ Organism Cells are only found in organisms, and cannot exist on their own in the
 - Killer - Red, harms organisms in directly adjacent cells (besides itself).
 - Armor - Purple, negates the effects of killer cells.
 - Eye - Light purple with a slit, allows the organism to see and move intelligently. See further description below.
+- Healer - White, each tick has a chance (`Healer repair chance`, default 10%) to repair 1 point of damage on its organism.
+- Camo - Olive, makes its organism invisible to other organisms' eyes: they see straight through its body.
+- Leaf - Dark green, photosynthesis: each tick a chance (`Leaf feeding chance`, default 1%) to feed its own organism 1 food directly. The food never appears in the world, so it can't be stolen, and leaf organisms don't need a mouth. Like producers, leaves don't work on movers unless `Movers can produce food` is on.
+- Spike - Orange, a killer cell that damages a spike takes 1 damage itself.
+- Booster - Brown, a moving organism with a booster moves 2 cells per tick.
+- Poison - Lime, an organism with poison leaves no food behind when it dies, so killing it gains predators nothing.
+
+These six cell types can be turned off with the `New cell types evolve` evolution control to get the classic six cell types. Worlds saved before healer/camo existed load with them turned off.
 
 ## Organisms
 Organisms are structures of cells that eat food, reproduce, and die.

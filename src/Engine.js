@@ -3,10 +3,10 @@ const ControlPanel = require('./Controllers/ControlPanel');
 const OrganismEditor = require('./Environments/OrganismEditor');
 const ColorScheme = require('./Rendering/ColorScheme');
 
-// If the simulation speed is below this value, a new interval will be created to handle ui rendering
-// at a reasonable speed. If it is above, the simulation interval will be used to update the ui.
-const min_render_speed = 60;
+const now = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
 
+// The simulation runs in a Web Worker (see src/Sim). This thread only handles
+// input and draws: once per display frame it asks the worker for a snapshot.
 class Engine {
     constructor(){
         this.fps = 60;
@@ -15,84 +15,54 @@ class Engine {
         this.controlpanel = new ControlPanel(this);
         this.colorscheme = new ColorScheme(this.env, this.organism_editor);
         this.colorscheme.loadColorScheme();
-        this.env.OriginOfLife();
-        
-        this.sim_last_update = Date.now();
-        this.sim_delta_time = 0;
+        this.env.onExtinct = () => {
+            // auto pause: the worker already stopped itself
+            if (this.running)
+                $('.pause-button')[0].click();
+        };
 
-        this.ui_last_update = Date.now();
-        this.ui_delta_time = 0;
-
-        this.actual_fps = 0;
+        this.ui_last_update = now();
         this.running = false;
+        this.startRenderLoop();
+    }
+
+    get actual_fps() {
+        return this.running ? this.env.stats.tps : 0;
     }
 
     start(fps=60) {
         if (fps <= 0)
             fps = 1;
         this.fps = fps;
-        this.sim_loop = setInterval(()=>{
-            this.updateSimDeltaTime();
-            this.environmentUpdate();
-        }, 1000/fps);
+        this.env.start(fps);
         this.running = true;
-        if (this.fps >= min_render_speed) {
-            if (this.ui_loop != null) {
-                clearInterval(this.ui_loop);
-                this.ui_loop = null;
-            }
-        }
-        else
-            this.setUiLoop();
     }
-    
+
     stop() {
-        clearInterval(this.sim_loop);
+        this.env.stop();
         this.running = false;
-        this.setUiLoop();
     }
 
     restart(fps) {
-        clearInterval(this.sim_loop);
         this.start(fps);
     }
 
-    setUiLoop() {
-        if (!this.ui_loop) {
-            this.ui_loop = setInterval(()=> {
-                this.updateUIDeltaTime();
-                this.necessaryUpdate();
-            }, 1000/min_render_speed);
-        }
+    startRenderLoop() {
+        const frame = () => {
+            this.renderFrame();
+            requestAnimationFrame(frame);
+        };
+        requestAnimationFrame(frame);
     }
 
-    updateSimDeltaTime() {
-        this.sim_delta_time = Date.now() - this.sim_last_update;
-        this.sim_last_update = Date.now();
-        if (!this.ui_loop) // if the ui loop isn't running, use the sim delta time
-            this.ui_delta_time = this.sim_delta_time;
-    }
-
-    updateUIDeltaTime() {
-        this.ui_delta_time = Date.now() - this.ui_last_update;
-        this.ui_last_update = Date.now();
-    }
-
-    environmentUpdate() {
-        this.actual_fps = (1000/this.sim_delta_time);
-        this.env.update(this.sim_delta_time);
-        if(this.ui_loop == null) {
-            this.necessaryUpdate();
-        }
-            
-    }
-
-    necessaryUpdate() {
-        this.env.render();
-        this.controlpanel.update(this.ui_delta_time);
+    renderFrame() {
+        const t = now();
+        const ui_delta_time = t - this.ui_last_update;
+        this.ui_last_update = t;
+        this.env.requestFrame(this.controlpanel.tab_id === 'stats');
+        this.controlpanel.update(ui_delta_time);
         this.organism_editor.update();
     }
-
 }
 
 module.exports = Engine;

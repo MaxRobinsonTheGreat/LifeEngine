@@ -206,6 +206,12 @@ class ControlPanel {
         $('#clear-walls-reset').change(function() {
             WorldConfig.clear_walls_on_reset = this.checked;
         });
+        $('#engine-mode').change(function() {
+            WorldConfig.engine_mode = this.value;
+        });
+        $('#engine-threads').change(function() {
+            WorldConfig.threads = parseInt(this.value);
+        });
         $('#reset-with-editor-org').click( () => {
             let env = this.engine.env;
             if (!env.reset(true, false)) return;
@@ -213,17 +219,21 @@ class ControlPanel {
             let org = this.editor_controller.env.getCopyOfOrg();
             this.env_controller.dropOrganism(org, center[0], center[1])
         });
-        $('#save-env').click( () => {
+        $('#save-env').click( async () => {
             let was_running = this.engine.running;
             this.setPaused(true);
-            let env = this.engine.env.serialize();
-            let data = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(env));
-            let downloadEl = document.getElementById('download-el');
-            downloadEl.setAttribute("href", data);
-            downloadEl.setAttribute("download", $('#save-env-name').val()+".json");
-            downloadEl.click();
-            if (was_running)
-                this.setPaused(false);
+            try {
+                let json = await this.engine.env.serialize();
+                let url = URL.createObjectURL(new Blob([json], {type: 'application/json'}));
+                let downloadEl = document.getElementById('download-el');
+                downloadEl.setAttribute("href", url);
+                downloadEl.setAttribute("download", $('#save-env-name').val()+".json");
+                downloadEl.click();
+                setTimeout(() => URL.revokeObjectURL(url), 10000);
+            } finally {
+                if (was_running)
+                    this.setPaused(false);
+            }
         });
         $('#load-env').click(() => {
             LoadController.loadJson((env)=>{
@@ -248,12 +258,17 @@ class ControlPanel {
         });
     }
 
-    loadEnv(env) {
+    async loadEnv(env) {
         if (this.tab_id == 'stats')
             this.stats_panel.stopAutoRender();
         let was_running = this.engine.running;
         this.setPaused(true);
-        this.engine.env.loadRaw(env);
+        try {
+            await this.engine.env.loadRaw(env);
+        } catch (e) {
+            console.error(e);
+            alert('Failed to load world');
+        }
         if (was_running)
             this.setPaused(false);
         this.updateHyperparamUIValues();
@@ -264,10 +279,10 @@ class ControlPanel {
 
     defineHyperparameterControls() {
         $('#food-prod-prob').change(function() {
-            Hyperparams.foodProdProb = $('#food-prod-prob').val();
+            Hyperparams.foodProdProb = parseFloat($('#food-prod-prob').val());
         }.bind(this));
         $('#lifespan-multiplier').change(function() {
-            Hyperparams.lifespanMultiplier = $('#lifespan-multiplier').val();
+            Hyperparams.lifespanMultiplier = parseFloat($('#lifespan-multiplier').val());
         }.bind(this));
 
         $('#rot-enabled').change(function() {
@@ -277,16 +292,25 @@ class ControlPanel {
             Hyperparams.instaKill = this.checked;
         });
         $('#look-range').change(function() {
-            Hyperparams.lookRange = $('#look-range').val();
+            Hyperparams.lookRange = parseFloat($('#look-range').val());
         });
         $('#see-through-self').change(function() {
             Hyperparams.seeThroughSelf = this.checked;
         });
         $('#food-drop-rate').change(function() {
-            Hyperparams.foodDropProb = $('#food-drop-rate').val();
+            Hyperparams.foodDropProb = parseFloat($('#food-drop-rate').val());
         });
         $('#extra-mover-cost').change(function() {
             Hyperparams.extraMoverFoodCost = parseInt($('#extra-mover-cost').val());
+        });
+        $('#extended-cells').change(function() {
+            Hyperparams.extendedCellTypes = this.checked;
+        });
+        $('#heal-prob').change(function() {
+            Hyperparams.healProb = parseFloat($('#heal-prob').val());
+        });
+        $('#leaf-prob').change(function() {
+            Hyperparams.leafProb = parseFloat($('#leaf-prob').val());
         });
         $('#org-limit').change(function() {
             Hyperparams.maxOrganisms = parseInt($('#org-limit').val());
@@ -309,13 +333,13 @@ class ControlPanel {
         $('.mut-prob').change( function() {
             switch(this.id){
                 case "add-prob":
-                    Hyperparams.addProb = this.value;
+                    Hyperparams.addProb = parseFloat(this.value);
                     break;
                 case "change-prob":
-                    Hyperparams.changeProb = this.value;
+                    Hyperparams.changeProb = parseFloat(this.value);
                     break;
                 case "remove-prob":
-                    Hyperparams.removeProb = this.value;
+                    Hyperparams.removeProb = parseFloat(this.value);
                     break;
             }
             $('#add-prob').val(Math.floor(Hyperparams.addProb));
@@ -377,6 +401,9 @@ class ControlPanel {
         $('#org-limit').val(Hyperparams.maxOrganisms);
         $('#look-range').val(Hyperparams.lookRange);
         $('#see-through-self').prop('checked', Hyperparams.seeThroughSelf);
+        $('#extended-cells').prop('checked', Hyperparams.extendedCellTypes);
+        $('#heal-prob').val(Hyperparams.healProb);
+        $('#leaf-prob').val(Hyperparams.leafProb);
         $('#global-mutation').val(Hyperparams.globalMutability);
 
         if (!Hyperparams.useGlobalMutability) {
@@ -455,6 +482,7 @@ class ControlPanel {
         }.bind(this));
 
         window.onbeforeunload = function (e) {
+            if (window.lifeEngineReloading) return; // one-time reload enabling multi-threading
             e = e || window.event;
             let return_str = 'this will cause a confirmation on page close'
             if (e) {
@@ -499,6 +527,21 @@ class ControlPanel {
         this.editor_controller.setDetailsPanel();
     }
 
+    updateEngineStatus() {
+        const e = this.engine.env.stats.engine;
+        if (!e) return;
+        let text = 'Engine: Rust/WebAssembly, ' + e.mode + ' mode';
+        if (e.mode === 'fast') {
+            text += ', ' + e.threads + (e.threads === 1 ? ' thread' : ' threads');
+            if (!e.shared)
+                text += ' (multi-core needs a cross-origin isolated page; see README)';
+        }
+        if (text !== this.last_engine_status) {
+            this.last_engine_status = text;
+            $('#engine-status').text(text);
+        }
+    }
+
     changeEngineSpeed(change_val) {
         this.engine.restart(change_val)
         this.fps = this.engine.fps;
@@ -522,12 +565,18 @@ class ControlPanel {
     }
 
     update(delta_time) {
-        $('#fps-actual').text("Actual FPS: " + Math.floor(this.engine.actual_fps));
-        $('#reset-count').text("Auto reset count: " + this.engine.env.reset_count);
-        this.stats_panel.updateDetails();
+        // Text stats don't need to refresh every frame; DOM writes and the
+        // species scan behind them are comparatively expensive.
+        this.text_update_timer = (this.text_update_timer || 0) - delta_time;
+        if (this.text_update_timer <= 0) {
+            this.text_update_timer = 250;
+            $('#fps-actual').text("Actual FPS: " + Math.floor(this.engine.actual_fps));
+            $('#reset-count').text("Auto reset count: " + this.engine.env.reset_count);
+            this.stats_panel.updateDetails();
+            this.updateEngineStatus();
+        }
         if (WorldConfig.headless)
             this.updateHeadlessIcon(delta_time);
-
     }
 
 }

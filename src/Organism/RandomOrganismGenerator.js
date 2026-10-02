@@ -23,22 +23,22 @@ class RandomOrganismGenerator {
             // top
             y = -layer;
             for (x = -layer; x <= layer; x++)
-                someCellSpawned = RandomOrganismGenerator.trySpawnCell(organism, x, y, spawnChance);
+                someCellSpawned = RandomOrganismGenerator.trySpawnCell(organism, x, y, spawnChance) || someCellSpawned;
 
             // bottom
             y = layer;
             for (x = -layer; x <= layer; x++) 
-                someCellSpawned = RandomOrganismGenerator.trySpawnCell(organism, x, y, spawnChance);
+                someCellSpawned = RandomOrganismGenerator.trySpawnCell(organism, x, y, spawnChance) || someCellSpawned;
 
             // left
             x = -layer;
             for (y = -layer + 1; y <= layer - 1; y++) 
-                someCellSpawned = RandomOrganismGenerator.trySpawnCell(organism, x, y, spawnChance);
+                someCellSpawned = RandomOrganismGenerator.trySpawnCell(organism, x, y, spawnChance) || someCellSpawned;
 
             // right
             x = layer;
-            for (y = -layer + 1; y < layer - 1; y++)
-                someCellSpawned = RandomOrganismGenerator.trySpawnCell(organism, x, y, spawnChance);
+            for (y = -layer + 1; y <= layer - 1; y++)
+                someCellSpawned = RandomOrganismGenerator.trySpawnCell(organism, x, y, spawnChance) || someCellSpawned;
 
             if (!someCellSpawned)
                 break;

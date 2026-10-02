@@ -1,5 +1,41 @@
 [
     {
+        "name": "Apex",
+        "value": "apex",
+        "subname": "evolved super predator"
+    },
+    {
+        "name": "Thornbush",
+        "value": "thornbush"
+    },
+    {
+        "name": "Coral",
+        "value": "coral"
+    },
+    {
+        "name": "Grazer",
+        "value": "grazer"
+    },
+    {
+        "name": "Shark",
+        "value": "shark"
+    },
+    {
+        "name": "Ghost",
+        "value": "ghost",
+        "subname": "camo + healer"
+    },
+    {
+        "name": "Cactus",
+        "value": "cactus",
+        "subname": "leaf + spike"
+    },
+    {
+        "name": "Hornet",
+        "value": "hornet",
+        "subname": "booster + poison"
+    },
+    {
         "name": "Ball",
         "value": "Ball"
     },

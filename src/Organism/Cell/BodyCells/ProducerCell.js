@@ -11,20 +11,17 @@ class ProducerCell extends BodyCell{
     performFunction() {
         if (this.org.anatomy.is_mover && !Hyperparams.moversCanProduce)
             return;
+        // roll first: most ticks produce nothing, so skip the location math
+        if (Math.random() * 100 > Hyperparams.foodProdProb)
+            return;
+        var growable = Hyperparams.growableNeighbors;
+        var loc = growable[Math.floor(Math.random() * growable.length)];
+        var c = this.getRealCol() + loc[0];
+        var r = this.getRealRow() + loc[1];
         var env = this.org.env;
-        var prob = Hyperparams.foodProdProb;
-        var real_c = this.getRealCol();
-        var real_r = this.getRealRow();
-        if (Math.random() * 100 <= prob) {
-            var loc = Hyperparams.growableNeighbors[Math.floor(Math.random() * Hyperparams.growableNeighbors.length)]
-            var loc_c=loc[0];
-            var loc_r=loc[1];
-            var cell = env.grid_map.cellAt(real_c+loc_c, real_r+loc_r);
-            if (cell != null && cell.state == CellStates.empty){
-                env.changeCell(real_c+loc_c, real_r+loc_r, CellStates.food, null);
-                return;
-            }
-        }
+        var idx = env.grid_map.indexOf(c, r);
+        if (idx !== -1 && env.grid_map.state_ids[idx] === CellStates.empty.id)
+            env.changeCell(c, r, CellStates.food, null);
     }
 }
 

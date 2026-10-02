@@ -2,7 +2,6 @@ const CellStates = require("../CellStates");
 const BodyCell = require("./BodyCell");
 const Hyperparams = require("../../../Hyperparameters");
 const Directions = require("../../Directions");
-const Observation = require("../../Perception/Observation")
 
 class EyeCell extends BodyCell{
     constructor(org, loc_col, loc_row){
@@ -34,50 +33,39 @@ class EyeCell extends BodyCell{
     }
 
     performFunction() {
-        var obs = this.look();
-        this.org.brain.observe(obs);
+        this.look();
     }
 
+    // Scan forward up to lookRange cells and report the first non-empty cell to the brain.
     look() {
-        var env = this.org.env;
+        var org = this.org;
+        var grid_map = org.env.grid_map;
+        var state_ids = grid_map.state_ids;
+        var empty_id = CellStates.empty.id;
+        var see_through_self = Hyperparams.seeThroughSelf;
         var direction = this.getAbsoluteDirection();
-        var addCol = 0;
-        var addRow = 0;
-        switch(direction) {
-            case Directions.up:
-                addRow = -1;
-                break;
-            case Directions.down:
-                addRow = 1;
-                break;
-            case Directions.right:
-                addCol = 1;
-                break;
-            case Directions.left:
-                addCol = -1;
-                break;
-        }
-        var start_col = this.getRealCol();
-        var start_row = this.getRealRow();
-        var col = start_col;
-        var row = start_row;
-        var cell = null;
-        for (var i=0; i<Hyperparams.lookRange; i++){
-            col+=addCol;
-            row+=addRow;
-            cell = env.grid_map.cellAt(col, row);
-            if (cell == null) {
-                break;
-            }
-            if (cell.owner === this.org && Hyperparams.seeThroughSelf) {
+        var scalar = Directions.scalars[direction];
+        var add_col = scalar[0];
+        var add_row = scalar[1];
+        var col = this.getRealCol();
+        var row = this.getRealRow();
+        var range = Hyperparams.lookRange;
+        for (var i = 1; i <= range; i++){
+            col += add_col;
+            row += add_row;
+            var idx = grid_map.indexOf(col, row);
+            if (idx === -1)
+                return;
+            if (state_ids[idx] === empty_id)
                 continue;
-            }
-            if (cell.state !== CellStates.empty) {
-                var distance = Math.abs(start_col-col) + Math.abs(start_row-row);
-                return new Observation(cell, distance, direction);
-            }
+            var cell = grid_map.flat[idx];
+            if (cell.owner === org && see_through_self)
+                continue;
+            if (cell.owner !== null && cell.owner !== org && cell.owner.anatomy.has_camo)
+                continue; // camouflaged organisms are invisible
+            org.brain.observe(cell, i, direction);
+            return;
         }
-        return new Observation(cell, Hyperparams.lookRange, direction);
     }
 }
 

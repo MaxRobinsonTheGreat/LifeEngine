@@ -11,7 +11,11 @@ class Renderer {
         this.fillWindow(container_id)
 		this.height = this.canvas.height;
         this.width = this.canvas.width;
-        this.cells_to_render = new Set();
+        // Dirty-cell queue. A per-cell flag dedupes entries, which is much cheaper
+        // than a Set on the simulation hot path (every changeCell lands here).
+        this.cells_to_render = [];
+        // reusable per-state buckets so each frame sets fillStyle once per state
+        this.buckets = new Map();
         this.cells_to_highlight = new Set();
         this.highlighted_cells = new Set();
     }
@@ -29,22 +33,64 @@ class Renderer {
 
     clear() {
         this.ctx.fillStyle = 'white';
-        this.ctx.fillRect(0, 0, this.height, this.width);
+        this.ctx.fillRect(0, 0, this.width, this.height);
     }
 
     renderFullGrid(grid) {
         for (var col of grid) {
             for (var cell of col){
-                this.renderCell(cell);
+                this.bucketCell(cell);
             }
         }
+        this.flushBuckets();
     }
 
     renderCells() {
-        for (var cell of this.cells_to_render) {
-            this.renderCell(cell);
+        var queue = this.cells_to_render;
+        for (var i = 0; i < queue.length; i++) {
+            var cell = queue[i];
+            cell.render_pending = false;
+            this.bucketCell(cell);
         }
-        this.cells_to_render.clear();
+        queue.length = 0;
+        this.flushBuckets();
+    }
+
+    clearRenderQueue() {
+        var queue = this.cells_to_render;
+        for (var i = 0; i < queue.length; i++)
+            queue[i].render_pending = false;
+        queue.length = 0;
+    }
+
+    bucketCell(cell) {
+        var bucket = this.buckets.get(cell.state);
+        if (bucket === undefined) {
+            bucket = [];
+            this.buckets.set(cell.state, bucket);
+        }
+        bucket.push(cell);
+    }
+
+    // Draw all bucketed cells grouped by state: one fillStyle change per state
+    // instead of one per cell. States with custom rendering (eyes) draw per cell.
+    flushBuckets() {
+        var ctx = this.ctx;
+        var size = this.cell_size;
+        for (var [state, bucket] of this.buckets) {
+            if (bucket.length === 0)
+                continue;
+            if (state.custom_render) {
+                for (var i = 0; i < bucket.length; i++)
+                    state.render(ctx, bucket[i], size);
+            }
+            else {
+                ctx.fillStyle = state.color;
+                for (var i = 0; i < bucket.length; i++)
+                    ctx.fillRect(bucket[i].x, bucket[i].y, size, size);
+            }
+            bucket.length = 0;
+        }
     }
 
     renderCell(cell) {
@@ -59,10 +105,13 @@ class Renderer {
     }
 
     addToRender(cell) {
-        if (this.highlighted_cells.has(cell)){
+        if (this.highlighted_cells.size !== 0 && this.highlighted_cells.has(cell)){
             this.cells_to_highlight.add(cell);
         }
-        this.cells_to_render.add(cell);
+        if (!cell.render_pending) {
+            cell.render_pending = true;
+            this.cells_to_render.push(cell);
+        }
     }
 
     renderHighlights() {
