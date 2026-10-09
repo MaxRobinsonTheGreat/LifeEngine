@@ -1,6 +1,6 @@
 // A cell exists in a grid map.
 class Cell{
-    constructor(state, col, row, x, y){
+    constructor(state, col, row, x, y, fertility) {
         this.owner = null; // owner organism
         this.cell_owner = null; // specific body cell of the owner organism that occupies this grid cell
         this.setType(state);
@@ -8,10 +8,16 @@ class Cell{
         this.row = row;
         this.x = x;
         this.y = y;
+        
+        this.setFertility(fertility);
     }
 
     setType(state) {
         this.state = state;
+    }
+
+    setFertility(fertility) {
+        this.fertility = fertility;
     }
 }
 
