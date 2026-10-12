@@ -56,6 +56,7 @@ Organisms are structures of cells that eat food, reproduce, and die.
 When an organism dies, every cell in the grid that was occupied by a cell in its body will be changed to food.
 Their lifespan is calculated by multiplying the number of cells they have by the hyperparameter `Lifespan Multiplier`. They will survive for that many ticks unless killed by another organism.
 When touched by a killer cell, an organism will take damage. Once it has taken as much damage as it has cells in its body, it will die. If the hyperparameter `One touch kill` is on, an organism will immediatly die when touched by a killer cell.
+Newborn offspring have `Neonatal Immunity` during the first 25% of their maximum lifespan. While neonatal, they are immune to all killer-cell damage, including one-touch kills and killer-cell retaliation.
 
 ## Reproduction
 Once an organism has eaten as much food as it has cells in its body, it will attempt to reproduce. 

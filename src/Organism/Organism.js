@@ -13,6 +13,7 @@ class Organism {
         this.r = row;
         this.env = env;
         this.lifetime = 0;
+        this.is_offspring = parent !== null;
         this.food_collected = 0;
         this.living = true;
         this.anatomy = new Anatomy(this)
@@ -54,6 +55,10 @@ class Organism {
 
     maxHealth() {
         return this.anatomy.cells.length;
+    }
+
+    isNeonatal() {
+        return this.is_offspring && this.lifetime < this.lifespan() * Hyperparams.neonatalImmunity;
     }
 
     reproduce() {
@@ -252,6 +257,9 @@ class Organism {
     }
 
     harm() {
+        if (this.isNeonatal()) {
+            return;
+        }
         this.damage++;
         if (this.damage >= this.maxHealth() || Hyperparams.instaKill) {
             this.die();
