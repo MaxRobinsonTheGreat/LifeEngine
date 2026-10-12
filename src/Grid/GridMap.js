@@ -106,6 +106,15 @@ class GridMap {
         for (let w of grid.walls)
             this.setCellType(w.c, w.r, CellStates.wall);
     }
+
+
+    setCellFertility(col, row, fertility) {
+        if(!this.isValidLoc(col, row)) {
+            return;
+        }
+
+        this.grid[col][row].setFertility(fertility);
+    }
 }
 
 module.exports = GridMap;
