@@ -10,6 +10,7 @@ const Decision = {
     stop: 5,
     turn_left: 6,
     turn_right: 7,
+    hide: 8, // burrow underground (needs a claw cell); never picked by getRandom
     getRandom: function() {
         const range = Hyperparams.rotationEnabled ? 8 : 6
         return Math.floor(Math.random() * range);
@@ -227,6 +228,8 @@ class Brain {
         let preyDirection = 0;
         let closestPredatorDistance = Infinity;
         let predatorDirection = 0;
+        let closestFoodDistance = Infinity;
+        let foodDirection = 0;
         for (let i = 0; i < this.observations.length; i++) {
             let obs = this.observations[i];
             if (obs.cell == null || obs.cell.owner == this.owner) {
@@ -235,7 +238,7 @@ class Brain {
 
             const other = obs.cell.owner;
             if (this.owner.is_predator) {
-                if (other && other.is_prey && other.living && obs.distance < closestPreyDistance) {
+                if (other && other.is_prey && other.living && !other.isHidden() && obs.distance < closestPreyDistance) {
                     closestPreyDistance = obs.distance;
                     preyDirection = obs.direction;
                 }
@@ -246,6 +249,10 @@ class Brain {
                     obs.distance < closestPredatorDistance) {
                     closestPredatorDistance = obs.distance;
                     predatorDirection = obs.direction;
+                }
+                else if (obs.cell.state == CellStates.food && obs.distance < closestFoodDistance) {
+                    closestFoodDistance = obs.distance;
+                    foodDirection = obs.direction;
                 }
                 continue;
             }
@@ -266,13 +273,22 @@ class Brain {
             move_direction = preyDirection;
         }
         else if (this.owner.is_prey) {
-            decision = {
-                decision: closestPredatorDistance < Infinity ? Decision.retreat : Decision.neutral,
-                state: this.state
-            };
-            if (closestPredatorDistance < Infinity) {
+            const sees_predator = closestPredatorDistance < Infinity;
+            let prey_decision = Decision.neutral;
+            if (sees_predator) {
+                // prey with a claw burrow instead of running
+                prey_decision = this.owner.anatomy.has_claw ? Decision.hide : Decision.retreat;
                 move_direction = predatorDirection;
             }
+            else if (this.owner.anatomy.has_claw && closestFoodDistance < Infinity) {
+                // burrowing prey go after food when no predator is around
+                prey_decision = Decision.chase;
+                move_direction = foodDirection;
+            }
+            decision = {
+                decision: prey_decision,
+                state: this.state
+            };
         }
         this.state = decision.state;
         return {decision: decision.decision, move_direction};

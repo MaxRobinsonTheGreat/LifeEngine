@@ -364,6 +364,12 @@ class ControlPanel {
         $('#extra-mover-cost').change(function() {
             Hyperparams.extraMoverFoodCost = parseInt($('#extra-mover-cost').val());
         });
+        $('#hide-duration').change(function() {
+            Hyperparams.hideDuration = parseInt($('#hide-duration').val());
+        });
+        $('#hide-fertility-cost').change(function() {
+            Hyperparams.hideFertilityCost = parseFloat($('#hide-fertility-cost').val());
+        });
         $('#org-limit').change(function() {
             Hyperparams.maxOrganisms = parseInt($('#org-limit').val());
         });
@@ -465,6 +471,8 @@ class ControlPanel {
         $('#dont-kill-same-species').prop('checked', Hyperparams.dontKillSameSpecies);
         $('#food-drop-rate').val(Hyperparams.foodDropProb);
         $('#extra-mover-cost').val(Hyperparams.extraMoverFoodCost);
+        $('#hide-duration').val(Hyperparams.hideDuration);
+        $('#hide-fertility-cost').val(Hyperparams.hideFertilityCost);
         $('#org-limit').val(Hyperparams.maxOrganisms);
         $('#look-range').val(Hyperparams.lookRange);
         $('#see-through-self').prop('checked', Hyperparams.seeThroughSelf);

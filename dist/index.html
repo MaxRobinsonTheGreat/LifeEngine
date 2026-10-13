@@ -242,6 +242,12 @@
 						<label for="extra-mover-cost" title='Additional food cost for movers to reproduce'>Extra mover reproduction cost:</label>
 						<input type="number" id="extra-mover-cost" value=0 max="1000" step="1">
 						<br>
+						<label for="hide-duration" title='How many ticks a prey with a claw cell stays hidden underground after seeing a predator'>Hide duration:</label>
+						<input type="number" id="hide-duration" min="1" value=10 step="1">
+						<br>
+						<label for="hide-fertility-cost" title='How much fertility each soil cell under an organism loses when it hides'>Hide fertility cost:</label>
+						<input type="number" id="hide-fertility-cost" min="0" value=1>
+						<br>
 						<a id="download-el" style="display: none;"></a>
 						<input id="upload-hyperparams" style="display: none;" type="file">
 					</div>

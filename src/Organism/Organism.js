@@ -24,6 +24,7 @@ class Organism {
         this.is_predator = false;
         this.is_prey = false;
         this.ignore_brain_for = 0;
+        this.hide_ticks = 0; // ticks left hiding underground
         this.mutability = 5;
         this.damage = 0;
         this.brain = new Brain(this);
@@ -286,6 +287,21 @@ class Organism {
         return true;
     }
 
+    isHidden() {
+        return this.hide_ticks > 0;
+    }
+
+    // burrow underground for hideDuration ticks, depleting the soil underneath
+    hide() {
+        this.hide_ticks = Hyperparams.hideDuration;
+        for (var cell of this.anatomy.cells) {
+            var real_cell = this.getRealCell(cell);
+            if (real_cell != null)
+                real_cell.setFertility(Math.max(real_cell.fertility - Hyperparams.hideFertilityCost, 0));
+        }
+        this.updateGrid(); // re-render as hidden
+    }
+
     harm() {
         this.damage++;
         if (this.damage >= this.maxHealth() || Hyperparams.instaKill) {
@@ -316,6 +332,13 @@ class Organism {
         this.lifetime++;
         if (this.lifetime > this.lifespan()) {
             this.die();
+            return this.living;
+        }
+        // hidden organisms stay put and do nothing until they surface
+        if (this.isHidden()) {
+            this.hide_ticks--;
+            if (!this.isHidden())
+                this.updateGrid(); // re-render as surfaced
             return this.living;
         }
         if (this.food_collected >= this.foodNeeded()) {
@@ -368,6 +391,11 @@ class Organism {
                     dontmove = true;
                     break;
                 case Decision.stop:
+                    dontmove = true;
+                    break;
+                case Decision.hide:
+                    if (this.anatomy.has_claw)
+                        this.hide();
                     dontmove = true;
                     break;
             }

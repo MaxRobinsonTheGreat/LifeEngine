@@ -102,6 +102,10 @@ class EyeCell extends BodyCell{
                 if (cell.owner === this.org) {
                     continue;
                 }
+                // organisms hiding underground are invisible
+                if (cell.owner && cell.owner.isHidden()) {
+                    continue;
+                }
                 if (cell.state !== CellStates.empty) {
                     if (cell.owner && cell.owner.is_prey && cell.owner.living &&
                         (!closestObservation || distance < closestObservation.distance)) {

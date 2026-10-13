@@ -92,24 +92,49 @@ class RandomOrganismGenerator {
 
             organisms.push(predator);
 
-            const prey = new Organism(
-                groupCol + preyOffset,
-                row,
-                env
-            );
-            prey.is_prey = true;
-            prey.move_range = 4;
-            prey.move_speed = 2;
-            prey.direction = Directions.left;
-            prey.anatomy.addDefaultCell(CellStates.mouth, 1, 0);
-            prey.anatomy.addDefaultCell(CellStates.mover, 0, 0);
-            const preyEye = prey.anatomy.addDefaultCell(CellStates.eye, -1, 0);
-            preyEye.direction = Directions.left;
-            prey.brain.decisions[CellStates.killer.name] = Brain.Decision.retreat;
-            organisms.push(prey);
+            // regular prey to the right of the predator, burrowing prey to the left, both facing it
+            // (the predator reaches 2 cells left but only 1 right, hence the extra -1)
+            organisms.push(RandomOrganismGenerator.createPrey(env, groupCol + preyOffset, row));
+            organisms.push(RandomOrganismGenerator.createClawPrey(env, groupCol - preyOffset - 1, row));
         }
 
         return organisms;
+    }
+
+    // horizontal prey: eye(looking left) - mover - mouth
+    static createPrey(env, col, row) {
+        const prey = RandomOrganismGenerator.newPrey(env, col, row, Directions.left);
+        prey.anatomy.addDefaultCell(CellStates.mouth, 1, 0);
+        prey.anatomy.addDefaultCell(CellStates.mover, 0, 0);
+        const preyEye = prey.anatomy.addDefaultCell(CellStates.eye, -1, 0);
+        preyEye.direction = Directions.left;
+        prey.brain.decisions[CellStates.killer.name] = Brain.Decision.retreat;
+        return prey;
+    }
+
+    // cross-shaped burrowing prey around a central mover:
+    //         mouth
+    //  mouth  mover  eye(looking up)
+    //         claw
+    static createClawPrey(env, col, row) {
+        const prey = RandomOrganismGenerator.newPrey(env, col, row, Directions.right);
+        prey.anatomy.addDefaultCell(CellStates.mover, 0, 0);
+        const preyEye = prey.anatomy.addDefaultCell(CellStates.eye, 1, 0);
+        preyEye.direction = Directions.up;
+        prey.anatomy.addDefaultCell(CellStates.mouth, 0, -1);
+        prey.anatomy.addDefaultCell(CellStates.mouth, -1, 0);
+        prey.anatomy.addDefaultCell(CellStates.claw, 0, 1);
+        prey.brain.decisions[CellStates.killer.name] = Brain.Decision.retreat;
+        return prey;
+    }
+
+    static newPrey(env, col, row, direction) {
+        const prey = new Organism(col, row, env);
+        prey.is_prey = true;
+        prey.move_range = 4;
+        prey.move_speed = 2;
+        prey.direction = direction;
+        return prey;
     }
 
     static trySpawnCell(organism, x, y, spawnChance) {

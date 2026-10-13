@@ -30,7 +30,7 @@ class KillerCell extends BodyCell{
     }
 
     killNeighbor(n_cell) {
-        if(n_cell == null || n_cell.owner == null || n_cell.owner == this.org || !n_cell.owner.living || n_cell.state == CellStates.armor) 
+        if(n_cell == null || n_cell.owner == null || n_cell.owner == this.org || !n_cell.owner.living || n_cell.owner.isHidden() || n_cell.state == CellStates.armor)
             return;
         if (this.org.is_predator) {
             if (!n_cell.owner.is_prey)
