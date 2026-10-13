@@ -33,6 +33,10 @@ const Hyperparams = {
         this.extraMoverFoodCost = 0;
 
         this.maxOrganisms = -1;
+
+        this.maxFertility = 10;
+
+        this.fertilityRegenRate = 1;
     },
 
     loadJsonObj(obj) {
