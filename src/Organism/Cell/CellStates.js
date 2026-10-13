@@ -1,3 +1,5 @@
+const Hyperparams = require('../../Hyperparameters.js');
+
 // A cell state is used to differentiate type and render the cell
 class CellState{
     constructor(name) {
@@ -14,6 +16,15 @@ class CellState{
 class Empty extends CellState {
     constructor() {
         super('empty');
+    }
+
+    render(ctx, cell, size) {
+        ctx.fillStyle = this.color;
+        ctx.fillRect(cell.x, cell.y, size, size);
+
+        var ratio = cell.fertility / Hyperparams.maxFertility;
+        ctx.fillStyle = 'rgba(101, 67, 33, ' + ((1 - ratio) * 0.6) + ')';
+        ctx.fillRect(cell.x, cell.y, size, size);
     }
 }
 class Food extends CellState {

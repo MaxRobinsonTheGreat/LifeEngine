@@ -37,6 +37,10 @@ const Hyperparams = {
         this.hideFertilityCost = 1; // fertility removed from each grid cell under the organism when it hides
 
         this.maxOrganisms = -1;
+
+        this.maxFertility = 10;
+
+        this.fertilityRegenRate = 0.2;
     },
 
     loadJsonObj(obj) {
