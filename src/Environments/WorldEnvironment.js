@@ -41,6 +41,12 @@ class WorldEnvironment extends Environment{
         if (Hyperparams.foodDropProb > 0) {
             this.generateFood();
         }
+
+        let fertility_changes = this.grid_map.regenerateFertility();
+        for (let cell of fertility_changes) {
+            this.renderer.addToRender(cell);
+        }
+
         this.total_ticks ++;
         if (this.total_ticks % this.data_update_rate == 0) {
             FossilRecord.updateData();
@@ -245,6 +251,23 @@ class WorldEnvironment extends Environment{
         if ($('#override-controls').is(':checked'))
             Hyperparams.loadJsonObj(env.controls)
         this.renderer.renderFullGrid(this.grid_map.grid);
+    }
+
+    /** for debugging purposes */
+    changeCellFertility(c, r, fertility) {
+        this.grid_map.setCellFertility(c, r, fertility);
+        this.renderer.addToRender(this.grid_map.cellAt(c, r));
+    }
+
+    /** for burrowing */
+    decrementCellFertility(c, r, amount) {
+        let cell = this.grid_map.cellAt(c, r);
+        if (!cell) {
+            return;
+        }
+        let newFertility = Math.max(0, cell.fertility - amount);
+        this.grid_map.setCellFertility(c, r, newFertility);
+        this.renderer.addToRender(cell);
     }
 }
 
