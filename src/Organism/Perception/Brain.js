@@ -223,11 +223,33 @@ class Brain {
         };
         let closest = Hyperparams.lookRange + 1;
         let move_direction = 0;
+        let closestPreyDistance = Infinity;
+        let preyDirection = 0;
+        let closestPredatorDistance = Infinity;
+        let predatorDirection = 0;
         for (let i = 0; i < this.observations.length; i++) {
             let obs = this.observations[i];
             if (obs.cell == null || obs.cell.owner == this.owner) {
                 continue;
             }
+
+            const other = obs.cell.owner;
+            if (this.owner.is_predator) {
+                if (other && other.is_prey && other.living && obs.distance < closestPreyDistance) {
+                    closestPreyDistance = obs.distance;
+                    preyDirection = obs.direction;
+                }
+                continue;
+            }
+            if (this.owner.is_prey) {
+                if (other && other.is_predator && obs.distance <= 2 &&
+                    obs.distance < closestPredatorDistance) {
+                    closestPredatorDistance = obs.distance;
+                    predatorDirection = obs.direction;
+                }
+                continue;
+            }
+
             if (obs.distance < closest) {
                 const eye_index = (i < this.decisions.length) ? i : 0;
                 if (this.state >= this.num_states) {
@@ -239,6 +261,19 @@ class Brain {
             }
         }
         this.observations = [];
+        if (this.owner.is_predator && closestPreyDistance < Infinity) {
+            decision = {decision: Decision.chase, state: this.state};
+            move_direction = preyDirection;
+        }
+        else if (this.owner.is_prey) {
+            decision = {
+                decision: closestPredatorDistance < Infinity ? Decision.retreat : Decision.neutral,
+                state: this.state
+            };
+            if (closestPredatorDistance < Infinity) {
+                move_direction = predatorDirection;
+            }
+        }
         this.state = decision.state;
         return {decision: decision.decision, move_direction};
     }

@@ -9,6 +9,7 @@ const FossilRecord = require('../Stats/FossilRecord');
 const WorldConfig = require('../WorldConfig');
 const SerializeHelper = require('../Utils/SerializeHelper');
 const Species = require('../Stats/Species');
+const RandomOrganismGenerator = require('../Organism/RandomOrganismGenerator');
 
 class WorldEnvironment extends Environment{
     constructor(engine, cell_size) {
@@ -77,13 +78,10 @@ class WorldEnvironment extends Environment{
     }
 
     OriginOfLife() {
-        var center = this.grid_map.getCenter();
-        var org = new Organism(center[0], center[1], this);
-        org.anatomy.addDefaultCell(CellStates.mouth, 0, 0);
-        org.anatomy.addDefaultCell(CellStates.producer, 1, 1);
-        org.anatomy.addDefaultCell(CellStates.producer, -1, -1);
-        this.addOrganism(org);
-        FossilRecord.addSpecies(org, null);
+        for (const organism of RandomOrganismGenerator.generatePredatorPrey(this)) {
+            this.addOrganism(organism);
+            FossilRecord.addSpecies(organism, null);
+        }
     }
 
     addOrganism(organism) {
@@ -249,4 +247,3 @@ class WorldEnvironment extends Environment{
 }
 
 module.exports = WorldEnvironment;
-
