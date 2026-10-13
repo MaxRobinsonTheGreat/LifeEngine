@@ -140,6 +140,12 @@ class EditorController extends CanvasController{
             FossilRecord.changeSpeciesName(this.env.organism.species, new_name);
         }.bind(this));
 
+        $('#role-edit').change ( function() {
+            const role = $('#role-edit').val();
+            this.env.organism.is_predator = role === 'predator';
+            this.env.organism.is_prey = role === 'prey';
+        }.bind(this));
+
         $('#move-range-edit').change ( function() {
             this.env.organism.move_range = parseInt($('#move-range-edit').val());
         }.bind(this));
@@ -197,6 +203,7 @@ class EditorController extends CanvasController{
 
         $('#species-name-edit').val(org.species.name);
         $('.cell-count').text("Cell count: "+org.anatomy.cells.length);
+        $('#role-edit').val(org.is_predator ? 'predator' : (org.is_prey ? 'prey' : 'none'));
         if (this.setMoveRangeVisibility()){
             $('#move-range-edit').val(org.move_range);
         }

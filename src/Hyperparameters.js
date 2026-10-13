@@ -28,19 +28,19 @@ const Hyperparams = {
         this.seeThroughSelf = false;
         this.evolveIndependentEyeDecisions = true;
 
-        this.foodDropProb = 0;
+        this.foodDropProb = 5;
 
         this.extraMoverFoodCost = 0;
 
         // claw cells: prey hide underground when they see a predator
-        this.hideDuration = 50; // ticks spent hidden
-        this.hideFertilityCost = 1; // fertility removed from each grid cell under the organism when it hides
+        this.hideDuration = 100; // ticks spent hidden
+        this.hideFertilityCost = 10; // fertility removed from each grid cell under the organism when it hides
 
         this.maxOrganisms = -1;
 
         this.maxFertility = 10;
 
-        this.fertilityRegenRate = 0.2;
+        this.fertilityRegenRate = 0.05;
     },
 
     loadJsonObj(obj) {
