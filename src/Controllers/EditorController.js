@@ -115,6 +115,9 @@ class EditorController extends CanvasController{
                 case "armor":
                     self.edit_cell_type = CellStates.armor;
                     break;
+                case "claw":
+                    self.edit_cell_type = CellStates.claw;
+                    break;
                 case "eye":
                     self.edit_cell_type = CellStates.eye;
                     break;
