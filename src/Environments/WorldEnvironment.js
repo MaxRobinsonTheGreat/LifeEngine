@@ -74,6 +74,7 @@ class WorldEnvironment extends Environment{
             this.organisms.splice(i, 1);
         }
         if (this.organisms.length === 0 && start_pop > 0) {
+            FossilRecord.onTotalExtinction();
             if (WorldConfig.auto_pause)
                 $('.pause-button')[0].click();
             else if(WorldConfig.auto_reset) {

@@ -102,7 +102,8 @@ class Organism {
             org.r = new_r;
             this.env.addOrganism(org);
             org.updateGrid();
-            if (mutated) {
+            // a mutated child only founds a new species once it has drifted far enough from its species' founder
+            if (mutated && FossilRecord.isNewSpecies(org, this.species)) {
                 FossilRecord.addSpecies(org, this.species);
             }
             else {
@@ -299,6 +300,7 @@ class Organism {
             if (real_cell != null)
                 real_cell.setFertility(Math.max(real_cell.fertility - Hyperparams.hideFertilityCost, 0));
         }
+        FossilRecord.recordBurrow(this);
         this.updateGrid(); // re-render as hidden
     }
 
@@ -316,6 +318,7 @@ class Organism {
             const deathState = this.is_predator || this.is_prey ? CellStates.empty : CellStates.food;
             this.env.changeCell(real_c, real_r, deathState, null);
         }
+        FossilRecord.recordDeath(this);
         this.species.decreasePop();
         this.living = false;
     }

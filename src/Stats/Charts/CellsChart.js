@@ -6,7 +6,7 @@ class CellsChart extends ChartController {
     constructor() {
         super("Organism Size / Composition", 
             "Avg. Number of Cells per Organism",
-            "Note: to maintain efficiency, species with very small populations are discarded when collecting cell statistics.");
+            "Cell counts are averaged over every living organism, including claw (burrowing) cells.");
     }
 
     setData() {
@@ -43,11 +43,10 @@ class CellsChart extends ChartController {
         var t = FossilRecord.tick_record[i];
         var p = FossilRecord.av_cells[i];
         this.data[0].dataPoints.push({x:t, y:p});
-        var j=1;
-        for (var name in FossilRecord.av_cell_counts[i]) {
-            var count = FossilRecord.av_cell_counts[i][name];
+        var counts = FossilRecord.av_cell_counts[i] || {};
+        for (var j=1; j<this.data.length; j++) {
+            var count = counts[this.data[j].name] || 0;
             this.data[j].dataPoints.push({x:t,y:count})
-            j++;
         }
     }
 }
