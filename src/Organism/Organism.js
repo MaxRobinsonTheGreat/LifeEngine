@@ -20,6 +20,9 @@ class Organism {
         this.rotation = Directions.up; // direction of rotation
         this.move_count = 0;
         this.move_range = 4;
+        this.move_speed = 1;
+        this.is_predator = false;
+        this.is_prey = false;
         this.ignore_brain_for = 0;
         this.mutability = 5;
         this.damage = 0;
@@ -31,6 +34,9 @@ class Organism {
 
     inherit(parent) {
         this.move_range = parent.move_range;
+        this.move_speed = parent.move_speed;
+        this.is_predator = parent.is_predator;
+        this.is_prey = parent.is_prey;
         this.mutability = parent.mutability;
         this.species = parent.species;
         for (var c of parent.anatomy.cells){
@@ -291,7 +297,8 @@ class Organism {
         for (var cell of this.anatomy.cells) {
             var real_c = this.c + cell.rotatedCol(this.rotation);
             var real_r = this.r + cell.rotatedRow(this.rotation);
-            this.env.changeCell(real_c, real_r, CellStates.food, null);
+            const deathState = this.is_predator || this.is_prey ? CellStates.empty : CellStates.food;
+            this.env.changeCell(real_c, real_r, deathState, null);
         }
         this.species.decreasePop();
         this.living = false;
@@ -365,16 +372,19 @@ class Organism {
                     break;
             }
             if (!dontmove) {
-                let moved = this.attemptMove();
-                if (!moved) {
-                    // if stuck, try to rotate or change direction
-                    let rotated = this.attemptRotate();
-                    if (!rotated) {
-                        this.changeDirection(Directions.getRandomDirection());
+                for (let step = 0; step < this.move_speed; step++) {
+                    let moved = this.attemptMove();
+                    if (!moved) {
+                        // if stuck, try to rotate or change direction
+                        let rotated = this.attemptRotate();
+                        if (!rotated) {
+                            this.changeDirection(Directions.getRandomDirection());
+                        }
+                        break;
                     }
-                }
-                else {
-                    this.move_count++;
+                    else {
+                        this.move_count++;
+                    }
                 }
             }
         }
