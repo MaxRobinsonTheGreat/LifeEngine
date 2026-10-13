@@ -36,7 +36,7 @@ const Hyperparams = {
 
         this.maxFertility = 10;
 
-        this.fertilityRegenRate = 1;
+        this.fertilityRegenRate = 0.2;
     },
 
     loadJsonObj(obj) {
