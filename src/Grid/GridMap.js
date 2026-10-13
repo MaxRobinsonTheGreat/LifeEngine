@@ -1,5 +1,6 @@
 const Cell = require('../Organism/Cell/GridCell');
 const CellStates = require('../Organism/Cell/CellStates');
+const Hyperparams = require('../Hyperparameters.js');
 
 class GridMap {
     constructor(cols, rows, cell_size) {
@@ -28,6 +29,7 @@ class GridMap {
                 cell.setType(state);
                 cell.owner = null;
                 cell.cell_owner = null;
+                cell.setFertility(Hyperparams.maxFertility);
             }
         }
     }
@@ -114,6 +116,18 @@ class GridMap {
         }
 
         this.grid[col][row].setFertility(fertility);
+    }
+
+    regenerateFertility() {
+        let changed = [];
+        for (var col of this.grid) {
+            for (var cell of col) {
+                if (cell.regenerateFertility()) {
+                    changed.push(cell);
+                }
+            }
+        }
+        return changed;
     }
 }
 
