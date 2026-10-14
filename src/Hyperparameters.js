@@ -37,6 +37,10 @@ const Hyperparams = {
         this.maxFertility = 10;
 
         this.fertilityRegenRate = 0.2;
+
+        this.fertilityTerrainSeed = 42;
+        this.fertilityPatchThreshold = 0;
+        this.fertilityPatchResolution = 20;
     },
 
     loadJsonObj(obj) {
