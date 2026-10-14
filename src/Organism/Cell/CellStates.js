@@ -23,7 +23,7 @@ class Empty extends CellState {
         ctx.fillRect(cell.x, cell.y, size, size);
 
         var ratio = cell.fertility / Hyperparams.maxFertility;
-        ctx.fillStyle = 'rgba(101, 67, 33, ' + ((1 - ratio) * 0.6) + ')';
+        ctx.fillStyle = 'rgba(101, 67, 33, ' + (ratio * 0.6) + ')';
         ctx.fillRect(cell.x, cell.y, size, size);
     }
 }
