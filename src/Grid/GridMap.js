@@ -29,7 +29,7 @@ class GridMap {
                 cell.setType(state);
                 cell.owner = null;
                 cell.cell_owner = null;
-                cell.setFertility(Hyperparams.maxFertility);
+                cell.setFertility(cell.fertility_cap);
             }
         }
     }
@@ -116,6 +116,14 @@ class GridMap {
         }
 
         this.grid[col][row].setFertility(fertility);
+    }
+
+    setCellFertilityCap(col, row, fertility_cap) {
+        if(!this.isValidLoc(col, row)) {
+            return;
+        }
+
+        this.grid[col][row].setFertilityCap(fertility_cap);
     }
 
     regenerateFertility() {

@@ -6,6 +6,7 @@ const Neighbors = require("../Grid/Neighbors");
 const FossilRecord = require("../Stats/FossilRecord");
 const WorldConfig = require("../WorldConfig");
 const Perlin = require("../Utils/Perlin");
+const Hyperparams = require("../Hyperparameters.js");   
 
 class EnvironmentController extends CanvasController{
     constructor(env, canvas) {
@@ -79,6 +80,24 @@ class EnvironmentController extends CanvasController{
                 }
             }
         }
+    }
+
+    generateFertilityTerrain() {
+        const patch_threshold = 0;
+        let resolution = 20;
+        Perlin.seed();
+
+        for (let r = 0; r < this.env.num_rows; r++) {
+            for (let c = 0; c < this.env.num_cols; c++) {
+                let xval = c/this.env.num_cols*(resolution/this.env.renderer.cell_size*(this.env.num_cols/this.env.num_rows));
+                let yval = r/this.env.num_rows*(resolution/this.env.renderer.cell_size*(this.env.num_rows/this.env.num_cols));
+                let noise = Perlin.get(xval, yval);
+                let cap = noise > patch_threshold ? Hyperparams.maxFertility : 0;
+                this.env.grid_map.setCellFertilityCap(c, r, cap);
+                this.env.grid_map.setCellFertility(c, r, cap);
+            }
+        }
+        this.env.renderer.renderFullGrid(this.env.grid_map.grid);
     }
 
     updateMouseLocation(offsetX, offsetY){
