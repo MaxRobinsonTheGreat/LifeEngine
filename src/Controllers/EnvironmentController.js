@@ -7,6 +7,7 @@ const FossilRecord = require("../Stats/FossilRecord");
 const WorldConfig = require("../WorldConfig");
 const Perlin = require("../Utils/Perlin");
 const Hyperparams = require("../Hyperparameters.js");   
+const createSeededPerlin = require("../Utils/SeededPerlin.js");
 
 class EnvironmentController extends CanvasController{
     constructor(env, canvas) {
@@ -97,6 +98,43 @@ class EnvironmentController extends CanvasController{
                 this.env.grid_map.setCellFertility(c, r, cap);
             }
         }
+        this.env.renderer.renderFullGrid(this.env.grid_map.grid);
+    }
+
+    /*
+        Generates fertile patches connected by permanently infertile pathways, using a seeded
+        noise generator so the same inputs always produce the same layout - needed so the group
+        can reuse fixed observation layouts instead of a different random one every run.
+
+        seed - fixes the exact noise pattern. Same seed = same layout, every time.
+        patch_threshold - cutoff on the noise value: a cell with noise above this becomes a
+                        fertile patch, at or below it becomes a permanently infertile pathway
+                        (fertility cap = 0). Raise this for smaller/sparser patches with wider
+                        pathways; lower it for bigger, more connected fertile regions.
+        resolution - how many noise "bumps" get stretched across the whole grid. Lower
+                    values give fewer, larger patches; higher values give many small,
+                    scattered ones.
+    */
+    //seeded version of generateFertilityTerrain, so that we can have fixed starting configurations for the environment
+    generateFertilityTerrain(seed, patch_threshold=0, resolution=20) {
+        let noise_gen = createSeededPerlin(seed);
+
+        for (let r = 0; r < this.env.num_rows; r++) {
+            for (let c = 0; c < this.env.num_cols; c++) {
+
+                //map this cell's grid position into noise-space coordinates
+                let xval = c/this.env.num_cols*(resolution/this.env.renderer.cell_size*(this.env.num_cols/this.env.num_rows));
+                let yval = r/this.env.num_rows*(resolution/this.env.renderer.cell_size*(this.env.num_rows/this.env.num_cols));
+                let noise = noise_gen.get(xval, yval); // noise value, roughly centered around 0
+
+                //above threshold = fertile patch, otherwise a permanently infertile pathway
+                let cap = noise > patch_threshold ? Hyperparams.maxFertility : 0;
+
+                this.env.grid_map.setCellFertilityCap(c, r, cap); //the permanent ceiling for this cell
+                this.env.grid_map.setCellFertility(c, r, cap); //start the cell's live fertility at that ceiling
+            }
+        }
+
         this.env.renderer.renderFullGrid(this.env.grid_map.grid);
     }
 
