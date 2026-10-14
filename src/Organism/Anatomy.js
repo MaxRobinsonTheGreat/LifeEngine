@@ -14,6 +14,7 @@ class Anatomy {
         this.is_producer = false;
         this.is_mover = false;
         this.has_eyes = false;
+        this.has_claw = false;
     }
 
     canAddCellAt(c, r) {
@@ -83,6 +84,7 @@ class Anatomy {
         this.is_producer = false;
         this.is_mover = false;
         this.has_eyes = false;
+        this.has_claw = false;
         for (var cell of this.cells) {
             if (cell.state == CellStates.producer)
                 this.is_producer = true;
@@ -90,6 +92,8 @@ class Anatomy {
                 this.is_mover = true;
             if (cell.state == CellStates.eye)
                 this.has_eyes = true;
+            if (cell.state == CellStates.claw)
+                this.has_claw = true;
         }
     }
 
