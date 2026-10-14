@@ -24,6 +24,7 @@ class Organism {
         this.ignore_brain_for = 0;
         this.mutability = 5;
         this.damage = 0;
+        this.neonatal_immunity = parent !== null;
         this.brain = new Brain(this);
         if (parent != null) {
             this.inherit(parent);
@@ -252,6 +253,9 @@ class Organism {
     }
 
     harm() {
+        if (this.neonatal_immunity && this.lifetime < this.lifespan() * 0.25) {
+            return;
+        }
         this.damage++;
         if (this.damage >= this.maxHealth() || Hyperparams.instaKill) {
             this.die();
