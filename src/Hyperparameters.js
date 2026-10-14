@@ -35,6 +35,7 @@ const Hyperparams = {
         // claw cells: prey hide underground when they see a predator
         this.hideDuration = 100; // ticks spent hidden
         this.hideFertilityCost = 10; // fertility removed from each grid cell under the organism when it hides
+        this.minBurrowFertility = 5; // average fertility needed under the organism to burrow
 
         this.maxOrganisms = -1;
 

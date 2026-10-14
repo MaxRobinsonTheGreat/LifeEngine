@@ -291,6 +291,22 @@ class Organism {
         return this.hide_ticks > 0;
     }
 
+    // needs a claw, and the soil under the body must be fertile enough on average to dig into
+    canBurrow() {
+        if (!this.anatomy.has_claw)
+            return false;
+        var total = 0;
+        var count = 0;
+        for (var cell of this.anatomy.cells) {
+            var real_cell = this.getRealCell(cell);
+            if (real_cell != null) {
+                total += real_cell.fertility;
+                count++;
+            }
+        }
+        return count > 0 && total / count >= Hyperparams.minBurrowFertility;
+    }
+
     // burrow underground for hideDuration ticks, depleting the soil underneath
     hide() {
         this.hide_ticks = Hyperparams.hideDuration;
@@ -394,7 +410,7 @@ class Organism {
                     dontmove = true;
                     break;
                 case Decision.hide:
-                    if (this.anatomy.has_claw)
+                    if (this.canBurrow())
                         this.hide();
                     dontmove = true;
                     break;
