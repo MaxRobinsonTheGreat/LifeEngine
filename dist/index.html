@@ -275,14 +275,45 @@
 						<p id='top-species'>Most Populous Species: </p>
 						<p id='largest-org'>Largest Organism Ever: </p>
 						<p id='avg-mut'>Average Mutation Rate: </p>
+						<p id='avg-fitness'>Average Lifespan (fitness): </p>
+						<p id='burrower-count'>Organisms with Claw Cells: </p>
+						<p id='soil-health'>Average Soil Fertility: </p>
+						<label for="species-threshold" title='An offspring founds a new species once its body differs from its species founder by this many cells (added, removed or changed). Only affects new births.'>New species after</label>
+						<input type="number" id="species-threshold" min="1" value=3 step="1"> mutations<br>
 						<label for="chart-option">Chart: </label>
 						<select name="chart-option" id="chart-option">
 							<option value="population">Population</option>
 							<option value="species">Species</option>
 							<option value="mut-rate">Organism Structure</option>
 							<option value="mut-rate">Mutation Rate</option>
+							<option value="fitness">Fitness (Lifespan)</option>
+							<option value="burrow-soil">Burrowing &amp; Soil</option>
+							<option value="group-pop">Population by Group</option>
+							<option value="group-fitness">Fitness by Group</option>
 						</select>
+						<div id='group-controls'>
+							<label for="group-by">Group by: </label>
+							<select name="group-by" id="group-by">
+								<option value="lineage">Lineage (seeded organism)</option>
+								<option value="role">Role (plant / predator / prey)</option>
+								<option value="followed">Followed species + descendants</option>
+							</select>
+							<button id='show-all-groups' title='Show every line again after hiding some via the legend'>Show all</button><br>
+							<button id='follow-species' title='Use the Select tool to click an organism in the world, then press this to chart its species and all species that evolved from it'>Follow selected organism's species</button>
+							<span id='followed-name'></span>
+						</div>
 						<p id='chart-note'></p>
+						<h3>Key Moments</h3>
+						<div id='key-moments'></div>
+						<h3>Export Metrics (CSV)</h3>
+						<button id='export-timeseries' title='One row per sample: population, species, fitness, cell averages, claw organisms, hidden organisms, burrows and soil'>Time Series</button>
+						<button id='export-species-log' title='One row per species per sample: population, deaths, fitness and burrows over time'>Per-Species Log</button>
+						<button id='export-species' title='One row per species (living and extinct): lifespan, peak population, fitness and body plan'>Species Summary</button>
+						<button id='export-groups' title='One row per lineage / role per sample: population, deaths, fitness and burrows'>Groups Log</button>
+						<button id='export-events' title='Key moments: first burrow, claw cells appearing / disappearing, soil degrading, notable species establishing and going extinct'>Key Moments</button>
+						<button id='export-all'>All</button><br>
+						<label for="auto-save-logs" title='Downloads every CSV when all organisms die (before the world resets). Also downloads the per-species and groups logs as numbered parts whenever they reach 100,000 rows, then clears them from memory. When off, those logs stop growing at 100,000 rows.'>Auto-save logs to Downloads</label>
+						<input type="checkbox" id="auto-save-logs">
 					</div>
 					<div class='right-half'>
 						<div id="chartContainer"></div>

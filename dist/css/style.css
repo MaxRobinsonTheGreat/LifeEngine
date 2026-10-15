@@ -153,6 +153,11 @@ input:hover,input:active {
 
 #tab-container {
     grid-column: 2 / 4;
+    /* fill the panel height (300px minus the .control-set margins) and let the active tab scroll */
+    box-sizing: border-box;
+    height: 290px;
+    display: flex;
+    flex-direction: column;
 }
 
 .tabnav {
@@ -189,6 +194,8 @@ input:hover,input:active {
     padding: 10px;
     overflow-y: auto;
     padding-bottom: 0px;
+    flex: 1 1 0;
+    min-height: 0;
 }
 
 .tab#about {
@@ -290,6 +297,20 @@ input:hover,input:active {
 #chartContainer {
     height: 200px; 
     width: 100%;
+}
+
+#key-moments {
+    max-height: 120px;
+    overflow-y: auto;
+    font-size: 12px;
+}
+
+#key-moments p {
+    margin: 2px 0;
+}
+
+#species-threshold {
+    width: 50px;
 }
 
 .community-section {

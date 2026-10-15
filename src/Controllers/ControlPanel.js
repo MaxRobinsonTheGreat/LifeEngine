@@ -23,7 +23,7 @@ class ControlPanel {
         this.editor_controller = this.engine.organism_editor.controller;
         this.env_controller.setControlPanel(this);
         this.editor_controller.setControlPanel(this);
-        this.stats_panel = new StatsPanel(this.engine.env);
+        this.stats_panel = new StatsPanel(this.engine.env, this.engine.organism_editor);
         this.headless_opacity = 1;
         this.opacity_change_rate = -0.8;
         this.paused=false;
