@@ -28,7 +28,7 @@ const Hyperparams = {
         this.seeThroughSelf = false;
         this.evolveIndependentEyeDecisions = true;
 
-        this.foodDropProb = 5;
+        this.foodDropProb = 0;
 
         this.extraMoverFoodCost = 0;
 
@@ -41,7 +41,7 @@ const Hyperparams = {
 
         this.maxFertility = 10;
 
-        this.fertilityRegenRate = 0.2;
+        this.fertilityRegenRate = 0.01;
         this.minPlantFertility = 5; // average fertility needed under a plant for it to be born there
 
         this.fertilityTerrainSeed = 42;
