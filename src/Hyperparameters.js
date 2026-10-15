@@ -3,6 +3,7 @@ const Neighbors = require("./Grid/Neighbors");
 const Hyperparams = {
     setDefaults: function() {
         this.lifespanMultiplier = 150;
+        this.predatorLifespanMultiplier = 2;
         this.foodProdProb = 5;
         this.killableNeighbors = Neighbors.adjacent;
         this.edibleNeighbors = Neighbors.adjacent;
@@ -41,7 +42,7 @@ const Hyperparams = {
 
         this.maxFertility = 10;
 
-        this.fertilityRegenRate = 0.01;
+        this.fertilityRegenRate = 0.05;
         this.minPlantFertility = 5; // average fertility needed under a plant for it to be born there
 
         this.fertilityTerrainSeed = 42;

@@ -56,7 +56,8 @@ class Organism {
     }
 
     lifespan() {
-        return this.anatomy.cells.length * Hyperparams.lifespanMultiplier;
+        const predatorMultiplier = this.is_predator ? Hyperparams.predatorLifespanMultiplier : 1;
+        return this.anatomy.cells.length * Hyperparams.lifespanMultiplier * predatorMultiplier;
     }
 
     maxHealth() {
@@ -438,8 +439,11 @@ class Organism {
                     dontmove = true;
                     break;
             }
-            // Predators move once every three updates, while other organisms keep their normal pace.
-            if (!dontmove && (!this.is_predator || this.lifetime % 3 === 0)) {
+            // Predators and burrowing prey move less often than other organisms.
+            const isBurrowingPrey = this.is_prey && this.anatomy.has_claw;
+            const predatorCanMove = !this.is_predator || this.lifetime % 3 === 0;
+            const burrowingPreyCanMove = !isBurrowingPrey || this.lifetime % 2 === 0;
+            if (!dontmove && predatorCanMove && burrowingPreyCanMove) {
                 const moveSpeed = this.is_prey ? Math.min(this.move_speed, 1) : this.move_speed;
                 for (let step = 0; step < moveSpeed; step++) {
                     let moved = this.attemptMove();

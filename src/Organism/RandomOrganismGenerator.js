@@ -83,8 +83,7 @@ class RandomOrganismGenerator {
             const eyeBottom = a.addDefaultCell(CellStates.eye, 1, 0);
             eyeBottom.direction = Directions.right;
 
-            // brain: hunt prey, eat food, avoid other Killers
-            predator.brain.decisions[CellStates.food.name] = Brain.Decision.chase;
+            // brain: hunt prey and avoid other Killers
             predator.brain.decisions[CellStates.mouth.name] = Brain.Decision.chase;
             predator.brain.decisions[CellStates.mover.name] = Brain.Decision.chase;
             predator.brain.decisions[CellStates.eye.name] = Brain.Decision.chase;
