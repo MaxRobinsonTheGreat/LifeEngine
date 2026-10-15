@@ -361,6 +361,9 @@ class ControlPanel {
         $('#food-drop-rate').change(function() {
             Hyperparams.foodDropProb = $('#food-drop-rate').val();
         });
+        $('#fertility-regen-rate').change(function() {
+            Hyperparams.fertilityRegenRate = parseFloat($('#fertility-regen-rate').val());
+        });
         $('#extra-mover-cost').change(function() {
             Hyperparams.extraMoverFoodCost = parseInt($('#extra-mover-cost').val());
         });
@@ -476,6 +479,7 @@ class ControlPanel {
         $('#food-blocks').prop('checked', Hyperparams.foodBlocksReproduction);
         $('#dont-kill-same-species').prop('checked', Hyperparams.dontKillSameSpecies);
         $('#food-drop-rate').val(Hyperparams.foodDropProb);
+        $('#fertility-regen-rate').val(Hyperparams.fertilityRegenRate);
         $('#extra-mover-cost').val(Hyperparams.extraMoverFoodCost);
         $('#hide-duration').val(Hyperparams.hideDuration);
         $('#hide-fertility-cost').val(Hyperparams.hideFertilityCost);
