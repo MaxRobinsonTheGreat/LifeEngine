@@ -2,3 +2,4 @@ node_modules/*
 dist/js/bundle.js
 ./package-lock.json
 dist/js/bundle.js.LICENSE.txt
+METRICS.md

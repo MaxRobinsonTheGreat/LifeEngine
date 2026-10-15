@@ -3,6 +3,8 @@ const SpeciesChart = require("./Charts/SpeciesChart");
 const MutationChart = require("./Charts/MutationChart");
 const CellsChart = require("./Charts/CellsChart");
 const FitnessChart = require("./Charts/FitnessChart");
+const LifespanChart = require("./Charts/LifespanChart");
+const GrowthChart = require("./Charts/GrowthChart");
 const BurrowSoilChart = require("./Charts/BurrowSoilChart");
 const GroupChart = require("./Charts/GroupChart");
 const FossilRecord = require("./FossilRecord");
@@ -15,11 +17,15 @@ const ChartSelections = [
     () => new CellsChart(),
     () => new MutationChart(),
     () => new FitnessChart(),
+    () => new LifespanChart(),
+    () => new GrowthChart(),
     () => new BurrowSoilChart(),
     (panel) => new GroupChart(panel, 'pop'),
+    (panel) => new GroupChart(panel, 'growth'),
     (panel) => new GroupChart(panel, 'fitness'),
+    (panel) => new GroupChart(panel, 'lifespan'),
 ];
-const GROUP_CHARTS = [6, 7];
+const GROUP_CHARTS = [8, 9, 10, 11];
 
 class StatsPanel {
     constructor(env, editor) {
@@ -165,7 +171,11 @@ class StatsPanel {
 
         let last = FossilRecord.tick_record.length - 1;
         let fitness = FossilRecord.fitness_all[last];
-        $('#avg-fitness').text("Average Lifespan (fitness): " + (fitness === null || fitness === undefined ? "-" : Math.round(fitness) + " ticks"));
+        $('#avg-fitness').text("Fitness (Avg. Offspring of Organisms that Died): " + (fitness === null || fitness === undefined ? "-" : Math.round(fitness * 100) / 100));
+        let lifespan = FossilRecord.lifespan_at_death_all[last];
+        let growth = FossilRecord.growth_rates[last];
+        $('#growth-rate').text("Growth Rate (per Capita): " + (growth === null || growth === undefined ? "-" : Math.round(growth * 1000) / 1000));
+        $('#avg-lifespan').text("Avg. Lifespan at Death: " + (lifespan === null || lifespan === undefined ? "-" : Math.round(lifespan) + " ticks"));
         $('#burrower-count').text("Organisms with Claw Cells: " + FossilRecord.burrower_counts[last] + " (" + FossilRecord.hidden_counts[last] + " underground)");
         let soil = FossilRecord.soil_means[last];
         $('#soil-health').text("Average Soil Fertility: " + (soil === null || soil === undefined ? "n/a" : Math.round(soil * 100) / 100));

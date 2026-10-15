@@ -14,6 +14,7 @@ class Organism {
         this.env = env;
         this.lifetime = 0;
         this.food_collected = 0;
+        this.offspring = 0; // children successfully placed in the world (fitness)
         this.living = true;
         this.anatomy = new Anatomy(this)
         this.direction = Directions.down; // direction of movement
@@ -107,6 +108,7 @@ class Organism {
             org.r = new_r;
             this.env.addOrganism(org);
             org.updateGrid();
+            this.offspring++;
             // a mutated child only founds a new species once it has drifted far enough from its species' founder
             if (mutated && FossilRecord.isNewSpecies(org, this.species)) {
                 FossilRecord.addSpecies(org, this.species);
@@ -114,6 +116,7 @@ class Organism {
             else {
                 org.species.addPop();
             }
+            FossilRecord.recordBirth(org);
         }
         Math.max(this.food_collected -= this.foodNeeded(), 0);
     }

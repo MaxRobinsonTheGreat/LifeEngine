@@ -3,9 +3,10 @@ const ChartController = require("./ChartController");
 
 class FitnessChart extends ChartController {
     constructor() {
-        super("Fitness (Average Lifespan)",
-            "Ticks",
-            "Fitness is the average number of ticks lived by organisms that died during each sample interval. " +
+        super("Fitness (Offspring per Organism)",
+            "Offspring",
+            "Fitness is lifetime reproductive success: the average number of offspring produced by the organisms that died during each sample interval. " +
+            "Only children that were actually placed in the world count. " +
             "\"Per species\" averages each species' value equally, so small species count as much as large ones.");
     }
 
@@ -17,7 +18,7 @@ class FitnessChart extends ChartController {
                 color: 'black',
                 showInLegend: true,
                 name: "fitness_all",
-                legendText: "Avg. lifespan (all organisms)",
+                legendText: "Avg. offspring (all organisms that died)",
                 dataPoints: []
             }
         );
@@ -27,17 +28,7 @@ class FitnessChart extends ChartController {
                 color: '#d62728',
                 showInLegend: true,
                 name: "fitness_species",
-                legendText: "Avg. lifespan (mean per species)",
-                dataPoints: []
-            }
-        );
-        this.data.push({
-                type: "line",
-                markerType: "none",
-                color: '#1f77b4',
-                showInLegend: true,
-                name: "species_age",
-                legendText: "Avg. age of living species",
+                legendText: "Avg. offspring (mean per species)",
                 dataPoints: []
             }
         );
@@ -48,7 +39,6 @@ class FitnessChart extends ChartController {
         var t = FossilRecord.tick_record[i];
         this.data[0].dataPoints.push({x:t, y:FossilRecord.fitness_all[i]});
         this.data[1].dataPoints.push({x:t, y:FossilRecord.fitness_species[i]});
-        this.data[2].dataPoints.push({x:t, y:FossilRecord.av_species_age[i]});
     }
 }
 
