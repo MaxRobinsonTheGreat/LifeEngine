@@ -373,6 +373,9 @@ class ControlPanel {
         $('#min-burrow-fertility').change(function() {
             Hyperparams.minBurrowFertility = parseFloat($('#min-burrow-fertility').val());
         });
+        $('#min-plant-fertility').change(function() {
+            Hyperparams.minPlantFertility = parseFloat($('#min-plant-fertility').val());
+        });
         $('#org-limit').change(function() {
             Hyperparams.maxOrganisms = parseInt($('#org-limit').val());
         });
@@ -477,6 +480,7 @@ class ControlPanel {
         $('#hide-duration').val(Hyperparams.hideDuration);
         $('#hide-fertility-cost').val(Hyperparams.hideFertilityCost);
         $('#min-burrow-fertility').val(Hyperparams.minBurrowFertility);
+        $('#min-plant-fertility').val(Hyperparams.minPlantFertility);
         $('#org-limit').val(Hyperparams.maxOrganisms);
         $('#look-range').val(Hyperparams.lookRange);
         $('#see-through-self').prop('checked', Hyperparams.seeThroughSelf);

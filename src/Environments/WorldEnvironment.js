@@ -89,6 +89,11 @@ class WorldEnvironment extends Environment{
             this.addOrganism(organism);
             FossilRecord.addSpecies(organism, null);
         }
+        // plants go in after the animals so they can avoid overlapping them
+        for (const plant of RandomOrganismGenerator.generatePlants(this)) {
+            this.addOrganism(plant);
+            FossilRecord.addSpecies(plant, null);
+        }
     }
 
     addOrganism(organism) {
