@@ -50,6 +50,11 @@ class Renderer {
 
     renderCell(cell) {
         cell.state.render(this.ctx, cell, this.cell_size);
+        if (cell.owner != null && cell.owner.isHidden()) {
+            // darken organisms hiding underground
+            this.ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+            this.ctx.fillRect(cell.x, cell.y, this.cell_size, this.cell_size);
+        }
     }
 
     renderOrganism(org) {

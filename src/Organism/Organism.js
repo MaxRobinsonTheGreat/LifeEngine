@@ -20,7 +20,11 @@ class Organism {
         this.rotation = Directions.up; // direction of rotation
         this.move_count = 0;
         this.move_range = 4;
+        this.move_speed = 1;
+        this.is_predator = false;
+        this.is_prey = false;
         this.ignore_brain_for = 0;
+        this.hide_ticks = 0; // ticks left hiding underground
         this.mutability = 5;
         this.damage = 0;
         this.brain = new Brain(this);
@@ -31,6 +35,9 @@ class Organism {
 
     inherit(parent) {
         this.move_range = parent.move_range;
+        this.move_speed = parent.move_speed;
+        this.is_predator = parent.is_predator;
+        this.is_prey = parent.is_prey;
         this.mutability = parent.mutability;
         this.species = parent.species;
         for (var c of parent.anatomy.cells){
@@ -280,6 +287,37 @@ class Organism {
         return true;
     }
 
+    isHidden() {
+        return this.hide_ticks > 0;
+    }
+
+    // needs a claw, and the soil under the body must be fertile enough on average to dig into
+    canBurrow() {
+        if (!this.anatomy.has_claw)
+            return false;
+        var total = 0;
+        var count = 0;
+        for (var cell of this.anatomy.cells) {
+            var real_cell = this.getRealCell(cell);
+            if (real_cell != null) {
+                total += real_cell.fertility;
+                count++;
+            }
+        }
+        return count > 0 && total / count >= Hyperparams.minBurrowFertility;
+    }
+
+    // burrow underground for hideDuration ticks, depleting the soil underneath
+    hide() {
+        this.hide_ticks = Hyperparams.hideDuration;
+        for (var cell of this.anatomy.cells) {
+            var real_cell = this.getRealCell(cell);
+            if (real_cell != null)
+                real_cell.setFertility(Math.max(real_cell.fertility - Hyperparams.hideFertilityCost, 0));
+        }
+        this.updateGrid(); // re-render as hidden
+    }
+
     harm() {
         this.damage++;
         if (this.damage >= this.maxHealth() || Hyperparams.instaKill) {
@@ -291,7 +329,8 @@ class Organism {
         for (var cell of this.anatomy.cells) {
             var real_c = this.c + cell.rotatedCol(this.rotation);
             var real_r = this.r + cell.rotatedRow(this.rotation);
-            this.env.changeCell(real_c, real_r, CellStates.food, null);
+            const deathState = this.is_predator || this.is_prey ? CellStates.empty : CellStates.food;
+            this.env.changeCell(real_c, real_r, deathState, null);
         }
         this.species.decreasePop();
         this.living = false;
@@ -309,6 +348,13 @@ class Organism {
         this.lifetime++;
         if (this.lifetime > this.lifespan()) {
             this.die();
+            return this.living;
+        }
+        // hidden organisms stay put and do nothing until they surface
+        if (this.isHidden()) {
+            this.hide_ticks--;
+            if (!this.isHidden())
+                this.updateGrid(); // re-render as surfaced
             return this.living;
         }
         if (this.food_collected >= this.foodNeeded()) {
@@ -363,18 +409,26 @@ class Organism {
                 case Decision.stop:
                     dontmove = true;
                     break;
+                case Decision.hide:
+                    if (this.canBurrow())
+                        this.hide();
+                    dontmove = true;
+                    break;
             }
             if (!dontmove) {
-                let moved = this.attemptMove();
-                if (!moved) {
-                    // if stuck, try to rotate or change direction
-                    let rotated = this.attemptRotate();
-                    if (!rotated) {
-                        this.changeDirection(Directions.getRandomDirection());
+                for (let step = 0; step < this.move_speed; step++) {
+                    let moved = this.attemptMove();
+                    if (!moved) {
+                        // if stuck, try to rotate or change direction
+                        let rotated = this.attemptRotate();
+                        if (!rotated) {
+                            this.changeDirection(Directions.getRandomDirection());
+                        }
+                        break;
                     }
-                }
-                else {
-                    this.move_count++;
+                    else {
+                        this.move_count++;
+                    }
                 }
             }
         }
