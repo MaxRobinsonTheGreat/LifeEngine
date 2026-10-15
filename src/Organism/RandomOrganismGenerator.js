@@ -132,7 +132,7 @@ class RandomOrganismGenerator {
         const prey = new Organism(col, row, env);
         prey.is_prey = true;
         prey.move_range = 4;
-        prey.move_speed = 2;
+        prey.move_speed = 1;
         prey.direction = direction;
         return prey;
     }

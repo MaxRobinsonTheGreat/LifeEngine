@@ -238,14 +238,15 @@ class Brain {
 
             const other = obs.cell.owner;
             if (this.owner.is_predator) {
-                if (other && other.is_prey && other.living && !other.isHidden() && obs.distance < closestPreyDistance) {
+                if (other && other.is_prey && other.living && !other.isHidden() &&
+                    obs.distance < closestPreyDistance) {
                     closestPreyDistance = obs.distance;
                     preyDirection = obs.direction;
                 }
                 continue;
             }
             if (this.owner.is_prey) {
-                if (other && other.is_predator && obs.distance <= 2 &&
+                if (other && other.is_predator && other.living && !other.isHidden() &&
                     obs.distance < closestPredatorDistance) {
                     closestPredatorDistance = obs.distance;
                     predatorDirection = obs.direction;
