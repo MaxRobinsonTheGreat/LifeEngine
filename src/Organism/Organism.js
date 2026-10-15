@@ -49,7 +49,10 @@ class Organism {
 
     // amount of food required before it can reproduce
     foodNeeded() {
-        return this.anatomy.is_mover ? this.anatomy.cells.length + Hyperparams.extraMoverFoodCost : this.anatomy.cells.length;
+        const baseFoodNeeded = this.anatomy.is_mover
+            ? this.anatomy.cells.length + Hyperparams.extraMoverFoodCost
+            : this.anatomy.cells.length;
+        return Math.ceil(baseFoodNeeded * 1.75);
     }
 
     lifespan() {
@@ -394,8 +397,9 @@ class Organism {
             let dontmove = false;
             switch (brain_decision) {
                 case Decision.neutral:
-                    // move move_range times, then randomly rotate/change direction
-                    if (this.move_count > this.move_range) {
+                    // Predators keep their last heading longer after losing sight of prey.
+                    const moveRange = this.is_predator ? this.move_range * 3 : this.move_range;
+                    if (this.move_count > moveRange) {
                         this.attemptRotate();
                         this.changeDirection(Directions.getRandomDirection());
                         this.move_count = 0;
@@ -431,8 +435,10 @@ class Organism {
                     dontmove = true;
                     break;
             }
-            if (!dontmove) {
-                for (let step = 0; step < this.move_speed; step++) {
+            // Predators move once every three updates, while other organisms keep their normal pace.
+            if (!dontmove && (!this.is_predator || this.lifetime % 3 === 0)) {
+                const moveSpeed = this.is_prey ? Math.min(this.move_speed, 1) : this.move_speed;
+                for (let step = 0; step < moveSpeed; step++) {
                     let moved = this.attemptMove();
                     if (!moved) {
                         // if stuck, try to rotate or change direction
