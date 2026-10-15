@@ -20,6 +20,7 @@ class WorldEnvironment extends Environment{
         this.num_rows = Math.ceil(this.renderer.height / cell_size);
         this.num_cols = Math.ceil(this.renderer.width / cell_size);
         this.grid_map = new GridMap(this.num_cols, this.num_rows, cell_size);
+        this.controller.generateFertilityTerrain(Hyperparams.fertilityTerrainSeed, Hyperparams.fertilityPatchThreshold, Hyperparams.fertilityPatchResolution);
         this.organisms = [];
         this.walls = [];
         this.total_mutability = 0;
@@ -88,6 +89,11 @@ class WorldEnvironment extends Environment{
         for (const organism of RandomOrganismGenerator.generatePredatorPrey(this)) {
             this.addOrganism(organism);
             FossilRecord.addSpecies(organism, null);
+        }
+        // plants go in after the animals so they can avoid overlapping them
+        for (const plant of RandomOrganismGenerator.generatePlants(this)) {
+            this.addOrganism(plant);
+            FossilRecord.addSpecies(plant, null);
         }
     }
 

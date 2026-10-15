@@ -35,7 +35,7 @@ class KillerCell extends BodyCell{
         if (this.org.is_predator) {
             if (!n_cell.owner.is_prey)
                 return;
-            const foodReward = this.org.foodNeeded();
+            const foodReward = n_cell.owner.anatomy.cells.length;
             n_cell.owner.die();
             this.org.food_collected += foodReward;
             return;

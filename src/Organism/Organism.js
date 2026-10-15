@@ -49,7 +49,10 @@ class Organism {
 
     // amount of food required before it can reproduce
     foodNeeded() {
-        return this.anatomy.is_mover ? this.anatomy.cells.length + Hyperparams.extraMoverFoodCost : this.anatomy.cells.length;
+        const baseFoodNeeded = this.anatomy.is_mover
+            ? this.anatomy.cells.length + Hyperparams.extraMoverFoodCost
+            : this.anatomy.cells.length;
+        return Math.ceil(baseFoodNeeded * 1.75);
     }
 
     lifespan() {
@@ -94,8 +97,9 @@ class Organism {
         var new_c = this.c + (direction_c*basemovement) + (direction_c*offset);
         var new_r = this.r + (direction_r*basemovement) + (direction_r*offset);
 
-        if (org.isClear(new_c, new_r, org.rotation, true) && 
-            org.isStraightPath(new_c, new_r, this.c, this.r, this) && 
+        if (org.isClear(new_c, new_r, org.rotation, true) &&
+            org.canGrowAt(new_c, new_r, org.rotation) &&
+            org.isStraightPath(new_c, new_r, this.c, this.r, this) &&
             this.env.canAddOrganism())
         {
             org.c = new_c;
@@ -292,6 +296,37 @@ class Organism {
         return this.hide_ticks > 0;
     }
 
+    // needs a claw, and the soil under the body must be fertile enough on average to dig into
+    canBurrow() {
+        return this.anatomy.has_claw && this.averageFertility() >= Hyperparams.minBurrowFertility;
+    }
+
+    // plants are stationary producers
+    isPlant() {
+        return this.anatomy.is_producer && !this.anatomy.is_mover;
+    }
+
+    // plants can only take root where the soil under their body is fertile enough on average
+    canGrowAt(col, row, rotation=this.rotation) {
+        if (!this.isPlant())
+            return true;
+        return this.averageFertility(col, row, rotation) >= Hyperparams.minPlantFertility;
+    }
+
+    // average soil fertility under the organism's body if it were placed at col, row
+    averageFertility(col=this.c, row=this.r, rotation=this.rotation) {
+        var total = 0;
+        var count = 0;
+        for (var cell of this.anatomy.cells) {
+            var real_cell = this.getRealCell(cell, col, row, rotation);
+            if (real_cell != null) {
+                total += real_cell.fertility;
+                count++;
+            }
+        }
+        return count > 0 ? total / count : 0;
+    }
+
     // burrow underground for hideDuration ticks, depleting the soil underneath
     hide() {
         this.hide_ticks = Hyperparams.hideDuration;
@@ -365,8 +400,9 @@ class Organism {
             let dontmove = false;
             switch (brain_decision) {
                 case Decision.neutral:
-                    // move move_range times, then randomly rotate/change direction
-                    if (this.move_count > this.move_range) {
+                    // Predators keep their last heading longer after losing sight of prey.
+                    const moveRange = this.is_predator ? this.move_range * 3 : this.move_range;
+                    if (this.move_count > moveRange) {
                         this.attemptRotate();
                         this.changeDirection(Directions.getRandomDirection());
                         this.move_count = 0;
@@ -397,13 +433,15 @@ class Organism {
                     dontmove = true;
                     break;
                 case Decision.hide:
-                    if (this.anatomy.has_claw)
+                    if (this.canBurrow())
                         this.hide();
                     dontmove = true;
                     break;
             }
-            if (!dontmove) {
-                for (let step = 0; step < this.move_speed; step++) {
+            // Predators move once every three updates, while other organisms keep their normal pace.
+            if (!dontmove && (!this.is_predator || this.lifetime % 3 === 0)) {
+                const moveSpeed = this.is_prey ? Math.min(this.move_speed, 1) : this.move_speed;
+                for (let step = 0; step < moveSpeed; step++) {
                     let moved = this.attemptMove();
                     if (!moved) {
                         // if stuck, try to rotate or change direction

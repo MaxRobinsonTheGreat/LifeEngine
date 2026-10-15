@@ -238,14 +238,15 @@ class Brain {
 
             const other = obs.cell.owner;
             if (this.owner.is_predator) {
-                if (other && other.is_prey && other.living && !other.isHidden() && obs.distance < closestPreyDistance) {
+                if (other && other.is_prey && other.living && !other.isHidden() &&
+                    obs.distance < closestPreyDistance) {
                     closestPreyDistance = obs.distance;
                     preyDirection = obs.direction;
                 }
                 continue;
             }
             if (this.owner.is_prey) {
-                if (other && other.is_predator && obs.distance <= 2 &&
+                if (other && other.is_predator && other.living && !other.isHidden() &&
                     obs.distance < closestPredatorDistance) {
                     closestPredatorDistance = obs.distance;
                     predatorDirection = obs.direction;
@@ -276,8 +277,8 @@ class Brain {
             const sees_predator = closestPredatorDistance < Infinity;
             let prey_decision = Decision.neutral;
             if (sees_predator) {
-                // prey with a claw burrow instead of running
-                prey_decision = this.owner.anatomy.has_claw ? Decision.hide : Decision.retreat;
+                // prey with a claw burrow instead of running, unless the soil is too depleted
+                prey_decision = this.owner.canBurrow() ? Decision.hide : Decision.retreat;
                 move_direction = predatorDirection;
             }
             else if (this.owner.anatomy.has_claw && closestFoodDistance < Infinity) {

@@ -39,10 +39,6 @@ class EyeCell extends BodyCell{
     }
 
     look() {
-        if (this.org.is_predator) {
-            return this.lookForPrey();
-        }
-
         var env = this.org.env;
         var direction = this.getAbsoluteDirection();
         var addCol = 0;
@@ -82,41 +78,6 @@ class EyeCell extends BodyCell{
             }
         }
         return new Observation(cell, Hyperparams.lookRange, direction);
-    }
-
-    lookForPrey() {
-        const env = this.org.env;
-        const directions = [Directions.up, Directions.right, Directions.down, Directions.left];
-        let closestObservation = null;
-
-        for (const direction of directions) {
-            const [addCol, addRow] = Directions.scalars[direction];
-            for (let distance = 1; distance <= Hyperparams.lookRange; distance++) {
-                const cell = env.grid_map.cellAt(
-                    this.org.c + addCol * distance,
-                    this.org.r + addRow * distance
-                );
-                if (cell == null) {
-                    break;
-                }
-                if (cell.owner === this.org) {
-                    continue;
-                }
-                // organisms hiding underground are invisible
-                if (cell.owner && cell.owner.isHidden()) {
-                    continue;
-                }
-                if (cell.state !== CellStates.empty) {
-                    if (cell.owner && cell.owner.is_prey && cell.owner.living &&
-                        (!closestObservation || distance < closestObservation.distance)) {
-                        closestObservation = new Observation(cell, distance, direction);
-                    }
-                    break;
-                }
-            }
-        }
-
-        return closestObservation || new Observation(null, Hyperparams.lookRange, Directions.up);
     }
 }
 
