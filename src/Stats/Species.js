@@ -22,11 +22,16 @@ class Species {
         this.name = Math.random().toString(36).substr(2, 10);
         this.extinct = false;
 
-        // fitness: how many ticks organisms of this species live for before dying
+        // recorded when organisms of this species die:
+        // lifespan at death (ticks lived) and fitness (offspring produced over the organism's life)
         this.total_deaths = 0;
         this.total_lifetime = 0;
+        this.total_offspring = 0;
         this.interval_deaths = 0; // reset by FossilRecord every time data is sampled
         this.interval_lifetime = 0;
+        this.interval_offspring = 0;
+        // births into this species (the founder of a new species counts as its first birth), for the growth rate
+        this.interval_births = 0;
 
         // burrowing: how often members of this species hide underground
         this.total_burrows = 0;
@@ -101,11 +106,17 @@ class Species {
         }
     }
 
-    recordDeath(lifetime) {
+    recordDeath(lifetime, offspring) {
         this.total_deaths++;
         this.total_lifetime += lifetime;
+        this.total_offspring += offspring;
         this.interval_deaths++;
         this.interval_lifetime += lifetime;
+        this.interval_offspring += offspring;
+    }
+
+    recordBirth() {
+        this.interval_births++;
     }
 
     recordBurrow() {
@@ -121,9 +132,14 @@ class Species {
         }
     }
 
-    // average ticks lived by organisms of this species (over its whole history)
-    fitness() {
+    // average ticks lived by organisms of this species that have died (over its whole history)
+    lifespanAtDeath() {
         return this.total_deaths > 0 ? this.total_lifetime / this.total_deaths : 0;
+    }
+
+    // average offspring produced by organisms of this species that have died (over its whole history)
+    fitness() {
+        return this.total_deaths > 0 ? this.total_offspring / this.total_deaths : 0;
     }
 
     lifespan() {

@@ -93,11 +93,29 @@ const FossilRecord = {
         return anatomy.has_claw ? 'Prey (burrowing)' : 'Prey (non-burrowing)';
     },
 
+    // births are counted for the group the child joins (its own species and role), so births - deaths
+    // matches the change in that group's population
+    recordBirth(org) {
+        org.species.recordBirth();
+        this.role_intervals[this.classifyRole(org)].births++;
+    },
+
+    // per-capita rates over one sample interval. the population is averaged over the start and end of the interval,
+    // where the start is worked back from the births and deaths (so organisms added by the user don't count as growth)
+    perCapitaRates(pop_end, births, deaths) {
+        let pop_avg = (pop_end + (pop_end - births + deaths)) / 2;
+        if (pop_avg <= 0)
+            return {birth_rate: null, death_rate: null, growth: null};
+        return {birth_rate: births / pop_avg, death_rate: deaths / pop_avg, growth: (births - deaths) / pop_avg};
+    },
+
     recordDeath(org) {
-        org.species.recordDeath(org.lifetime);
+        let offspring = org.offspring || 0;
+        org.species.recordDeath(org.lifetime, offspring);
         let role = this.role_intervals[this.classifyRole(org)];
         role.deaths++;
         role.lifetime += org.lifetime;
+        role.offspring += offspring;
     },
 
     // called every time an organism hides underground
@@ -123,7 +141,7 @@ const FossilRecord = {
         species.end_tick = this.env.total_ticks;
         species.ancestor = undefined; // garbage collect ancestors
         delete this.extant_species[species.name];
-        // keep it until the next sample so its final deaths count towards fitness
+        // keep it until the next sample so its final deaths count towards fitness and lifespan at death
         this.recently_extinct.push(species);
         if (species.peak_pop >= this.notable_pop) {
             this.addEvent('species_extinct', 'Species "' + species.name + '" went extinct (peak pop ' + species.peak_pop + ', lasted ' + species.lifespan() + ' ticks)', species.name);
@@ -145,6 +163,7 @@ const FossilRecord = {
 
     summarizeSpecies(species) {
         let summary = SerializeHelper.copyNonObjects(species);
+        summary.lifespan_at_death = species.lifespanAtDeath();
         summary.fitness = species.fitness();
         summary.age = species.age(this.env.total_ticks);
         summary.lineage = species.getLineage();
@@ -164,8 +183,15 @@ const FossilRecord = {
         this.av_mut_rates = [];
         this.av_cells = [];
         this.av_cell_counts = [];
-        this.fitness_all = []; // avg ticks lived by every organism that died during the sample interval
+        // both are taken over the organisms that died during the sample interval
+        this.fitness_all = []; // avg offspring produced by every organism that died
         this.fitness_species = []; // unweighted mean over species of that same value
+        this.lifespan_at_death_all = []; // avg ticks lived by every organism that died
+        this.lifespan_at_death_species = []; // unweighted mean over species of that same value
+        // per-capita rates for the whole population over the sample interval (see perCapitaRates)
+        this.growth_rates = [];
+        this.birth_rates = [];
+        this.death_rates = [];
         this.av_species_age = [];
         this.burrower_counts = []; // organisms with at least one claw (burrowing) cell
         this.burrower_fracs = [];
@@ -174,7 +200,7 @@ const FossilRecord = {
         this.burrow_counts = []; // times organisms hid during the sample interval
         this.soil_means = [];
         this.soil_degraded_fracs = [];
-        // per sample: {lineage: {name: {pop, fitness}}, role: {...}}
+        // per sample: {lineage: {name: {pop, fitness, lifespan, growth, birth_rate, death_rate, burrows}}, role: {...}}
         this.group_samples = [];
 
         // uncapped records for exporting
@@ -186,7 +212,7 @@ const FossilRecord = {
         this.role_intervals = {};
         this.role_pops = {};
         for (let role of ROLES)
-            this.role_intervals[role] = {deaths: 0, lifetime: 0, burrows: 0};
+            this.role_intervals[role] = {births: 0, deaths: 0, lifetime: 0, offspring: 0, burrows: 0};
         this.interval_burrows = 0;
         this.first_burrow_seen = false;
         this.events = [];
@@ -219,6 +245,11 @@ const FossilRecord = {
             this.av_cell_counts.shift();
             this.fitness_all.shift();
             this.fitness_species.shift();
+            this.lifespan_at_death_all.shift();
+            this.lifespan_at_death_species.shift();
+            this.growth_rates.shift();
+            this.birth_rates.shift();
+            this.death_rates.shift();
             this.av_species_age.shift();
             this.burrower_counts.shift();
             this.burrower_fracs.shift();
@@ -232,24 +263,29 @@ const FossilRecord = {
         this.checkLogLimits();
     },
 
-    // lineage numbers are summed from the species, role numbers from the organisms (population) and deaths (fitness)
+    // lineage numbers are summed from the species, role numbers from the organisms (population), births (growth) and deaths
     calcGroups(tick) {
         let lineages = {};
         let all_species = Object.values(this.extant_species).concat(this.last_interval_species);
         for (let s of new Set(all_species)) {
             let name = s.getLineage();
-            if (!lineages[name]) lineages[name] = {pop: 0, deaths: 0, lifetime: 0, burrows: 0};
+            if (!lineages[name]) lineages[name] = {pop: 0, births: 0, deaths: 0, lifetime: 0, offspring: 0, burrows: 0};
             lineages[name].pop += s.population;
+            lineages[name].births += s.last_interval_births;
             lineages[name].deaths += s.last_interval_deaths;
             lineages[name].lifetime += s.last_interval_lifetime;
+            lineages[name].offspring += s.last_interval_offspring;
             lineages[name].burrows += s.last_interval_burrows;
         }
         let roles = {};
         for (let role of ROLES) {
             let interval = this.role_intervals[role];
-            roles[role] = {pop: this.role_pops[role] || 0, deaths: interval.deaths, lifetime: interval.lifetime, burrows: interval.burrows};
+            roles[role] = {pop: this.role_pops[role] || 0, births: interval.births, deaths: interval.deaths, lifetime: interval.lifetime,
+                offspring: interval.offspring, burrows: interval.burrows};
+            interval.births = 0;
             interval.deaths = 0;
             interval.lifetime = 0;
+            interval.offspring = 0;
             interval.burrows = 0;
         }
         let sample = {};
@@ -257,10 +293,15 @@ const FossilRecord = {
             sample[grouping] = {};
             for (let name in groups) {
                 let g = groups[name];
-                let fitness = g.deaths > 0 ? g.lifetime / g.deaths : null;
-                sample[grouping][name] = {pop: g.pop, fitness: fitness, burrows: g.burrows};
+                let fitness = g.deaths > 0 ? g.offspring / g.deaths : null;
+                let lifespan = g.deaths > 0 ? g.lifetime / g.deaths : null;
+                let rates = this.perCapitaRates(g.pop, g.births, g.deaths);
+                sample[grouping][name] = {pop: g.pop, fitness: fitness, lifespan: lifespan, growth: rates.growth,
+                    birth_rate: rates.birth_rate, death_rate: rates.death_rate, burrows: g.burrows};
+                let blank = (v) => v === null ? '' : v;
                 if (!this.log_paused)
-                    this.groups_log.push([tick, grouping, name, g.pop, g.deaths, fitness === null ? '' : fitness, g.burrows]);
+                    this.groups_log.push([tick, grouping, name, g.pop, g.deaths, blank(fitness), blank(lifespan), g.burrows,
+                        g.births, blank(rates.birth_rate), blank(rates.death_rate), blank(rates.growth)]);
             }
         }
         this.group_samples.push(sample);
@@ -333,40 +374,66 @@ const FossilRecord = {
         this.av_cell_counts.push(cell_counts);
     },
 
+    // fitness (offspring) and lifespan at death, both averaged over the organisms that died during the interval,
+    // plus births and the per-capita growth rate
     calcFitness(tick) {
+        let births = 0;
         let deaths = 0;
         let lifetime = 0;
+        let offspring = 0;
+        let pop = 0;
         let species_fitness_sum = 0;
+        let species_lifespan_sum = 0;
         let species_with_deaths = 0;
         let age_sum = 0;
         let living_species = Object.values(this.extant_species);
         // a set, in case a recently extinct species was resurrected by the user
         for (let s of new Set(living_species.concat(this.recently_extinct))) {
             let interval_fitness = null;
+            let interval_lifespan = null;
             if (s.interval_deaths > 0) {
-                interval_fitness = s.interval_lifetime / s.interval_deaths;
+                interval_fitness = s.interval_offspring / s.interval_deaths;
+                interval_lifespan = s.interval_lifetime / s.interval_deaths;
                 deaths += s.interval_deaths;
                 lifetime += s.interval_lifetime;
+                offspring += s.interval_offspring;
                 species_fitness_sum += interval_fitness;
+                species_lifespan_sum += interval_lifespan;
                 species_with_deaths++;
             }
+            let interval_births = s.interval_births || 0;
+            births += interval_births;
+            pop += s.population;
             if (!s.extinct)
                 age_sum += s.age(tick);
             if (!this.log_paused && (s.population > 0 || s.interval_deaths > 0)) {
+                let growth = this.perCapitaRates(s.population, interval_births, s.interval_deaths).growth;
                 this.species_log.push([tick, s.name, s.ancestor_name, s.getLineage(), s.population, s.interval_deaths,
-                    interval_fitness === null ? '' : interval_fitness, s.age(tick), s.hasCellType(BURROW_CELL) ? 1 : 0, s.interval_burrows]);
+                    interval_fitness === null ? '' : interval_fitness, interval_lifespan === null ? '' : interval_lifespan,
+                    s.age(tick), s.hasCellType(BURROW_CELL) ? 1 : 0, s.interval_burrows,
+                    interval_births, growth === null ? '' : growth]);
             }
+            s.last_interval_births = interval_births;
+            s.interval_births = 0;
             s.last_interval_burrows = s.interval_burrows;
             s.interval_burrows = 0;
             s.last_interval_deaths = s.interval_deaths;
             s.last_interval_lifetime = s.interval_lifetime;
+            s.last_interval_offspring = s.interval_offspring;
             s.interval_deaths = 0;
             s.interval_lifetime = 0;
+            s.interval_offspring = 0;
         }
         this.last_interval_species = this.recently_extinct; // so calcGroups still sees species that died out this interval
         this.recently_extinct = [];
-        this.fitness_all.push(deaths > 0 ? lifetime / deaths : null);
+        this.fitness_all.push(deaths > 0 ? offspring / deaths : null);
         this.fitness_species.push(species_with_deaths > 0 ? species_fitness_sum / species_with_deaths : null);
+        this.lifespan_at_death_all.push(deaths > 0 ? lifetime / deaths : null);
+        this.lifespan_at_death_species.push(species_with_deaths > 0 ? species_lifespan_sum / species_with_deaths : null);
+        let rates = this.perCapitaRates(pop, births, deaths);
+        this.growth_rates.push(rates.growth);
+        this.birth_rates.push(rates.birth_rate);
+        this.death_rates.push(rates.death_rate);
         this.av_species_age.push(living_species.length > 0 ? age_sum / living_species.length : 0);
     },
 
@@ -455,6 +522,11 @@ const FossilRecord = {
             avg_cells: this.av_cells[last],
             fitness_all: this.fitness_all[last],
             fitness_species: this.fitness_species[last],
+            lifespan_at_death_all: this.lifespan_at_death_all[last],
+            lifespan_at_death_species: this.lifespan_at_death_species[last],
+            growth_rate: this.growth_rates[last],
+            birth_rate: this.birth_rates[last],
+            death_rate: this.death_rates[last],
             avg_species_age: this.av_species_age[last],
             burrowers: this.burrower_counts[last],
             burrower_frac: this.burrower_fracs[last],
@@ -503,11 +575,12 @@ const FossilRecord = {
     },
 
     speciesLogCSV() {
-        return this.toCSV(['tick', 'species', 'ancestor', 'lineage', 'population', 'deaths', 'fitness', 'age', 'has_claw', 'burrows'], this.species_log);
+        return this.toCSV(['tick', 'species', 'ancestor', 'lineage', 'population', 'deaths', 'fitness', 'lifespan_at_death', 'age', 'has_claw', 'burrows', 'births', 'growth_rate'], this.species_log);
     },
 
     groupsLogCSV() {
-        return this.toCSV(['tick', 'grouping', 'group', 'population', 'deaths', 'fitness', 'burrows'], this.groups_log);
+        return this.toCSV(['tick', 'grouping', 'group', 'population', 'deaths', 'fitness', 'lifespan_at_death', 'burrows',
+            'births', 'birth_rate', 'death_rate', 'growth_rate'], this.groups_log);
     },
 
     speciesSummaryCSV() {
@@ -516,9 +589,9 @@ const FossilRecord = {
         let cell_names = CellStates.living.map(c => c.name);
         if (!cell_names.includes(BURROW_CELL)) cell_names.push(BURROW_CELL);
         let header = ['species', 'ancestor', 'lineage', 'extinct', 'start_tick', 'end_tick', 'age', 'peak_pop', 'peak_tick',
-            'cumulative_pop', 'deaths', 'fitness', 'burrows'].concat(cell_names);
+            'cumulative_pop', 'deaths', 'offspring', 'fitness', 'lifespan_at_death', 'burrows'].concat(cell_names);
         let rows = summaries.map(s => [s.name, s.ancestor_name, s.lineage, s.extinct, s.start_tick, s.end_tick, s.age, s.peak_pop,
-            s.peak_tick, s.cumulative_pop, s.total_deaths, s.fitness, s.total_burrows || 0]
+            s.peak_tick, s.cumulative_pop, s.total_deaths, s.total_offspring, s.fitness, s.lifespan_at_death, s.total_burrows || 0]
             .concat(cell_names.map(c => (s.cell_counts && s.cell_counts[c]) || 0)));
         return this.toCSV(header, rows);
     },
@@ -539,6 +612,11 @@ const FossilRecord = {
             av_cell_counts:this.av_cell_counts,
             fitness_all:this.fitness_all,
             fitness_species:this.fitness_species,
+            lifespan_at_death_all:this.lifespan_at_death_all,
+            lifespan_at_death_species:this.lifespan_at_death_species,
+            growth_rates:this.growth_rates,
+            birth_rates:this.birth_rates,
+            death_rates:this.death_rates,
             av_species_age:this.av_species_age,
             burrower_counts:this.burrower_counts,
             burrower_fracs:this.burrower_fracs,
@@ -569,9 +647,24 @@ const FossilRecord = {
         for (let key in record.records) {
             this[key] = record.records[key];
         }
+        // in saves made before offspring were counted, "fitness" held the lifespan at death
+        if (record.records && !record.records.lifespan_at_death_all) {
+            this.lifespan_at_death_all = this.fitness_all;
+            this.lifespan_at_death_species = this.fitness_species;
+            this.fitness_all = null;
+            this.fitness_species = null;
+            for (let sample of this.group_samples || []) {
+                for (let grouping in sample || {}) {
+                    for (let g of Object.values(sample[grouping])) {
+                        g.lifespan = g.fitness;
+                        g.fitness = null;
+                    }
+                }
+            }
+        }
         // saves made before these metrics existed won't have every array, so pad them to stay parallel
         let n = this.tick_record.length;
-        for (let key of ['fitness_all', 'fitness_species', 'av_species_age', 'burrower_counts', 'burrower_fracs', 'evolved_claw_counts', 'hidden_counts', 'burrow_counts', 'soil_means', 'soil_degraded_fracs', 'group_samples']) {
+        for (let key of ['fitness_all', 'fitness_species', 'lifespan_at_death_all', 'lifespan_at_death_species', 'growth_rates', 'birth_rates', 'death_rates', 'av_species_age', 'burrower_counts', 'burrower_fracs', 'evolved_claw_counts', 'hidden_counts', 'burrow_counts', 'soil_means', 'soil_degraded_fracs', 'group_samples']) {
             if (!Array.isArray(this[key]) || this[key].length !== n)
                 this[key] = new Array(n).fill(null);
         }

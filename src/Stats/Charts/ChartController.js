@@ -41,32 +41,7 @@ class ChartController {
 
     render() {
         this.setMinimum();
-        this.setKeyMoments();
         this.chart.render();
-    }
-
-    // draw world-level key moments (burrowing, soil loss, total extinction) as vertical lines.
-    // species-level events are left to the key moments list to avoid cluttering the chart
-    // (the first burrow names a species, but it marks when burrowing starts so it is drawn too)
-    setKeyMoments() {
-        let colors = {burrow_start: '#8c564b', burrow_end: '#8c564b', burrow_first: '#8c564b', claw_evolved: '#8c564b', total_extinction: 'black'};
-        let lines = [];
-        for (let e of FossilRecord.events) {
-            if (e.type === 'species_established' || e.type === 'species_extinct' || e.type === 'log_full')
-                continue;
-            lines.push({
-                value: e.tick,
-                color: colors[e.type] || '#2ca02c',
-                thickness: 1,
-                lineDashType: 'dash',
-                label: e.label,
-                labelFontColor: colors[e.type] || '#2ca02c',
-                labelFontSize: 10,
-                labelPlacement: 'inside',
-                showOnTop: true,
-            });
-        }
-        this.chart.options.axisX.stripLines = lines;
     }
 
     updateData() {

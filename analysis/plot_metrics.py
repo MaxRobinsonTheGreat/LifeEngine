@@ -45,7 +45,7 @@ def num(value):
 
 
 def smooth(values, window):
-    """Trailing mean that skips gaps (None), so sparse fitness values stay readable."""
+    """Trailing mean that skips gaps (None), so sparse fitness / lifespan values stay readable."""
     if window <= 1:
         return values
     out = []
@@ -53,6 +53,12 @@ def smooth(values, window):
         chunk = [v for v in values[max(0, i - window + 1):i + 1] if v is not None]
         out.append(sum(chunk) / len(chunk) if chunk else None)
     return out
+
+
+def growth_rate(pop_end, births, deaths):
+    """Same as FossilRecord.perCapitaRates: (births - deaths) over the average of the start and end population."""
+    pop_avg = (pop_end + (pop_end - births + deaths)) / 2
+    return (births - deaths) / pop_avg if pop_avg > 0 else None
 
 
 def draw_events(ax, events, include_species=False):
@@ -77,7 +83,7 @@ def group_series(groups_rows, grouping, field):
             continue
         xs, ys = series[row["group"]]
         xs.append(int(row["tick"]))
-        ys.append(num(row[field]))
+        ys.append(num(row.get(field, "")))
     return series
 
 
@@ -91,23 +97,32 @@ def plot_groups(groups_rows, events, out, window, top):
     for grouping in ("lineage", "role"):
         pop = group_series(groups_rows, grouping, "population")
         fit = group_series(groups_rows, grouping, "fitness")
+        life = group_series(groups_rows, grouping, "lifespan_at_death")
+        growth = group_series(groups_rows, grouping, "growth_rate")
         if not pop:
             continue
         names = top_groups(pop, top) if grouping == "lineage" else list(pop)
-        fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True, figsize=(11, 7))
+        fig, (ax1, ax4, ax2, ax3) = plt.subplots(4, 1, sharex=True, figsize=(11, 13))
         for name in names:
             color = ROLE_COLORS.get(name)
             ax1.plot(*pop[name], label=name, color=color)
+            xs, ys = growth[name]
+            ax4.plot(xs, smooth(ys, window), label=name, color=color)
             xs, ys = fit[name]
             ax2.plot(xs, smooth(ys, window), label=name, color=color)
+            xs, ys = life[name]
+            ax3.plot(xs, smooth(ys, window), label=name, color=color)
         ax1.set_ylabel("Population")
-        ax2.set_ylabel("Fitness (avg lifespan, ticks)")
-        ax2.set_xlabel("Tick")
-        for ax in (ax1, ax2):
+        ax4.set_ylabel("Growth rate\n(per capita, per 100 ticks)")
+        ax4.axhline(0, color="#999", linewidth=0.8)
+        ax2.set_ylabel("Fitness (avg offspring\nof organisms that died)")
+        ax3.set_ylabel("Lifespan at death\n(ticks, organisms that died)")
+        ax3.set_xlabel("Tick")
+        for ax in (ax1, ax4, ax2, ax3):
             draw_events(ax, events)
         label_events(ax1, events)
         ax1.legend(fontsize=8, loc="upper left")
-        ax1.set_title("Population and fitness by " + grouping + (" (smoothed over %d samples)" % window if window > 1 else ""))
+        ax1.set_title("Population, growth rate, fitness and lifespan at death by " + grouping + (" (smoothed over %d samples)" % window if window > 1 else ""))
         fig.tight_layout()
         fig.savefig(os.path.join(out, "groups_%s.png" % grouping), dpi=150)
         plt.close(fig)
@@ -187,7 +202,7 @@ def plot_followed(species_rows, events, out, root, window):
             memo[n] = result
         return result
 
-    totals = defaultdict(lambda: {"self": [0, 0, 0.0], "desc": [0, 0, 0.0]})  # pop, deaths, lifetime
+    totals = defaultdict(lambda: {"self": [0, 0, 0.0, 0.0, 0], "desc": [0, 0, 0.0, 0.0, 0]})  # pop, deaths, offspring, lifetime, births
     for r in species_rows:
         if not descends(r["species"]):
             continue
@@ -196,19 +211,30 @@ def plot_followed(species_rows, events, out, root, window):
         g[1] += int(r["deaths"])
         if r["fitness"] != "":
             g[2] += float(r["fitness"]) * int(r["deaths"])
+        if r.get("lifespan_at_death", "") != "":
+            g[3] += float(r["lifespan_at_death"]) * int(r["deaths"])
+        if r.get("births", "") != "":
+            g[4] += int(r["births"])
     if not totals:
         print("No rows found for species '%s'" % root)
         return
     ticks = sorted(totals)
-    fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True, figsize=(11, 7))
+    fig, (ax1, ax4, ax2, ax3) = plt.subplots(4, 1, sharex=True, figsize=(11, 13))
     for key, label in (("self", root), ("desc", root + " descendants")):
         ax1.plot(ticks, [totals[t][key][0] for t in ticks], label=label)
+        grow = [growth_rate(totals[t][key][0], totals[t][key][4], totals[t][key][1]) for t in ticks]
+        ax4.plot(ticks, smooth(grow, window), label=label)
         fit = [totals[t][key][2] / totals[t][key][1] if totals[t][key][1] else None for t in ticks]
         ax2.plot(ticks, smooth(fit, window), label=label)
+        life = [totals[t][key][3] / totals[t][key][1] if totals[t][key][1] else None for t in ticks]
+        ax3.plot(ticks, smooth(life, window), label=label)
     ax1.set_ylabel("Population")
-    ax2.set_ylabel("Fitness (avg lifespan, ticks)")
-    ax2.set_xlabel("Tick")
-    for ax in (ax1, ax2):
+    ax4.set_ylabel("Growth rate\n(per capita, per 100 ticks)")
+    ax4.axhline(0, color="#999", linewidth=0.8)
+    ax2.set_ylabel("Fitness (avg offspring\nof organisms that died)")
+    ax3.set_ylabel("Lifespan at death\n(ticks, organisms that died)")
+    ax3.set_xlabel("Tick")
+    for ax in (ax1, ax4, ax2, ax3):
         draw_events(ax, [e for e in events if not e["type"].startswith("species_") or e["species"] == root], include_species=True)
     ax1.legend(fontsize=8)
     ax1.set_title("Species '%s' and its descendants" % root)
@@ -221,7 +247,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("folder")
     parser.add_argument("--out", default="plots")
-    parser.add_argument("--smooth", type=int, default=5, help="samples to average fitness over (1 = off)")
+    parser.add_argument("--smooth", type=int, default=5, help="samples to average growth rate, fitness and lifespan at death over (1 = off)")
     parser.add_argument("--follow", help="species name to plot with all its descendant species")
     parser.add_argument("--top", type=int, default=8, help="max lineages to draw")
     args = parser.parse_args()

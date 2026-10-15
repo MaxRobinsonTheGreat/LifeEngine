@@ -1,5 +1,6 @@
 const FossilRecord = require("../FossilRecord");
 const ChartController = require("./ChartController");
+const GrowthChart = require("./GrowthChart");
 
 const PALETTE = ['#1f77b4', '#d62728', '#2ca02c', '#ff7f0e', '#9467bd', '#8c564b', '#e377c2', '#17becf', '#bcbd22', '#7f7f7f'];
 const ROLE_COLORS = {
@@ -9,8 +10,12 @@ const ROLE_COLORS = {
     'Prey (non-burrowing)': '#1f77b4',
 };
 const METRICS = {
-    pop: {title: "Population", y_axis: "Organisms"},
-    fitness: {title: "Fitness (Average Lifespan)", y_axis: "Ticks"},
+    pop: {title: "Population", y_axis: "Organisms", note: ""},
+    fitness: {title: "Fitness (Offspring per Organism)", y_axis: "Offspring",
+        note: "Fitness is the average number of offspring produced by the organisms that died during each sample interval. "},
+    growth: {title: "Growth Rate (per Capita)", y_axis: "Per organism per 100 ticks", note: GrowthChart.NOTE},
+    lifespan: {title: "Lifespan at Death", y_axis: "Ticks",
+        note: "Average ticks lived by the organisms that died during each sample interval (organisms still alive are not counted). "},
 };
 const NOTES = {
     lineage: "One line per lineage: a seeded organism and every species descended from it. Click a legend entry to hide/show it.",
@@ -18,13 +23,15 @@ const NOTES = {
     followed: "The followed species, its descendant species combined, and both together. Covers the per-species log kept in memory. Click a legend entry to hide/show it.",
 };
 
-// Population or fitness split by lineage, ecological role, or a followed species and its descendants.
+// Population, growth rate, fitness or lifespan at death split by lineage, ecological role, or a followed species and its descendants.
 // The series are rebuilt from the records on every update because new groups can appear at any time.
 class GroupChart extends ChartController {
     constructor(panel, metric) {
-        super(METRICS[metric].title + " by " + GroupChart.groupingLabel(panel), METRICS[metric].y_axis, NOTES[panel.grouping]);
+        super(METRICS[metric].title + " by " + GroupChart.groupingLabel(panel), METRICS[metric].y_axis, METRICS[metric].note + NOTES[panel.grouping]);
         this.panel = panel;
         this.metric = metric;
+        if (metric === 'growth')
+            GrowthChart.allowNegative(this.chart);
         this.chart.options.legend = {
             cursor: "pointer",
             itemclick: (e) => {
@@ -94,7 +101,8 @@ class GroupChart extends ChartController {
         let root = this.panel.followed_species;
         if (!root) return {};
         let log = FossilRecord.species_log;
-        // species_log columns: tick, species, ancestor, lineage, population, deaths, fitness, age, has_burrow
+        // species_log columns: tick, species, ancestor, lineage, population, deaths, fitness, lifespan_at_death, age, has_claw, burrows,
+        // births, growth_rate
         let parent = {};
         for (let row of log) parent[row[1]] = row[2];
         for (let s of Object.values(FossilRecord.extant_species)) parent[s.name] = s.ancestor_name;
@@ -119,19 +127,28 @@ class GroupChart extends ChartController {
             let name = row[1];
             if (!descends(name)) continue;
             let key = name === root ? 'self' : 'desc';
-            if (!by_tick.has(row[0])) by_tick.set(row[0], {self: {pop: 0, deaths: 0, lifetime: 0}, desc: {pop: 0, deaths: 0, lifetime: 0}});
+            let empty = () => ({pop: 0, births: 0, deaths: 0, lifetime: 0, offspring: 0});
+            if (!by_tick.has(row[0])) by_tick.set(row[0], {self: empty(), desc: empty()});
             let g = by_tick.get(row[0])[key];
             g.pop += row[4];
             g.deaths += row[5];
-            if (row[6] !== '') g.lifetime += row[6] * row[5];
+            g.births += row[11] || 0;
+            if (row[6] !== '') g.offspring += row[6] * row[5];
+            if (row[7] !== '') g.lifetime += row[7] * row[5];
         }
 
         let names = {self: root, desc: root + ' descendants', total: root + ' + descendants'};
         let series = {};
         for (let k in names) series[names[k]] = [];
-        let value = (g) => this.metric === 'pop' ? g.pop : (g.deaths > 0 ? g.lifetime / g.deaths : null);
+        let value = (g) => {
+            if (this.metric === 'pop') return g.pop;
+            if (this.metric === 'growth') return FossilRecord.perCapitaRates(g.pop, g.births, g.deaths).growth;
+            if (g.deaths === 0) return null;
+            return (this.metric === 'fitness' ? g.offspring : g.lifetime) / g.deaths;
+        };
         for (let [tick, g] of by_tick) {
-            let total = {pop: g.self.pop + g.desc.pop, deaths: g.self.deaths + g.desc.deaths, lifetime: g.self.lifetime + g.desc.lifetime};
+            let total = {pop: g.self.pop + g.desc.pop, births: g.self.births + g.desc.births, deaths: g.self.deaths + g.desc.deaths,
+                lifetime: g.self.lifetime + g.desc.lifetime, offspring: g.self.offspring + g.desc.offspring};
             series[names.self].push({x: tick, y: value(g.self)});
             series[names.desc].push({x: tick, y: value(g.desc)});
             series[names.total].push({x: tick, y: value(total)});
