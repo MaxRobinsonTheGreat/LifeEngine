@@ -101,6 +101,32 @@ class RandomOrganismGenerator {
         return organisms;
     }
 
+    // plants on an evenly spaced lattice, keeping only spots that are free and fertile enough,
+    // so the layout is the same every run for a given terrain. Call after the animals are on the grid.
+    static generatePlants(env) {
+        const plants = [];
+        const spacing = Math.max(8, Math.floor(Math.min(env.num_cols, env.num_rows) / 6));
+        for (let row = Math.floor(spacing / 2); row < env.num_rows - 1; row += spacing) {
+            for (let col = Math.floor(spacing / 2); col < env.num_cols - 1; col += spacing) {
+                const plant = RandomOrganismGenerator.createPlant(env, col, row);
+                if (plant.isClear(col, row) && plant.canGrowAt(col, row)) {
+                    plant.updateGrid(); // claim the spot so later plants can't overlap it
+                    plants.push(plant);
+                }
+            }
+        }
+        return plants;
+    }
+
+    // the classic Life Engine starting plant: a mouth with two diagonal producers
+    static createPlant(env, col, row) {
+        const plant = new Organism(col, row, env);
+        plant.anatomy.addDefaultCell(CellStates.mouth, 0, 0);
+        plant.anatomy.addDefaultCell(CellStates.producer, 1, 1);
+        plant.anatomy.addDefaultCell(CellStates.producer, -1, -1);
+        return plant;
+    }
+
     // horizontal prey: eye(looking left) - mover - mouth
     static createPrey(env, col, row) {
         const prey = RandomOrganismGenerator.newPrey(env, col, row, Directions.left);

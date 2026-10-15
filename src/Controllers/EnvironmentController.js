@@ -227,7 +227,7 @@ class EnvironmentController extends CanvasController{
         // clone the organism and drop it in the world
         var new_org = new Organism(col, row, this.env, organism);
 
-        if (new_org.isClear(col, row)) {
+        if (new_org.isClear(col, row) && new_org.canGrowAt(col, row)) {
             let new_species = !FossilRecord.speciesIsExtant(new_org.species.name);
             if (new_org.species.extinct) {
                 FossilRecord.resurrect(new_org.species);

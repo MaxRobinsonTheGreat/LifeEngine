@@ -42,6 +42,7 @@ const Hyperparams = {
         this.maxFertility = 10;
 
         this.fertilityRegenRate = 0.2;
+        this.minPlantFertility = 5; // average fertility needed under a plant for it to be born there
 
         this.fertilityTerrainSeed = 42;
         this.fertilityPatchThreshold = 0;

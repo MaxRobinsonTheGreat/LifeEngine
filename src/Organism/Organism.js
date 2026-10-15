@@ -94,8 +94,9 @@ class Organism {
         var new_c = this.c + (direction_c*basemovement) + (direction_c*offset);
         var new_r = this.r + (direction_r*basemovement) + (direction_r*offset);
 
-        if (org.isClear(new_c, new_r, org.rotation, true) && 
-            org.isStraightPath(new_c, new_r, this.c, this.r, this) && 
+        if (org.isClear(new_c, new_r, org.rotation, true) &&
+            org.canGrowAt(new_c, new_r, org.rotation) &&
+            org.isStraightPath(new_c, new_r, this.c, this.r, this) &&
             this.env.canAddOrganism())
         {
             org.c = new_c;
@@ -293,18 +294,33 @@ class Organism {
 
     // needs a claw, and the soil under the body must be fertile enough on average to dig into
     canBurrow() {
-        if (!this.anatomy.has_claw)
-            return false;
+        return this.anatomy.has_claw && this.averageFertility() >= Hyperparams.minBurrowFertility;
+    }
+
+    // plants are stationary producers
+    isPlant() {
+        return this.anatomy.is_producer && !this.anatomy.is_mover;
+    }
+
+    // plants can only take root where the soil under their body is fertile enough on average
+    canGrowAt(col, row, rotation=this.rotation) {
+        if (!this.isPlant())
+            return true;
+        return this.averageFertility(col, row, rotation) >= Hyperparams.minPlantFertility;
+    }
+
+    // average soil fertility under the organism's body if it were placed at col, row
+    averageFertility(col=this.c, row=this.r, rotation=this.rotation) {
         var total = 0;
         var count = 0;
         for (var cell of this.anatomy.cells) {
-            var real_cell = this.getRealCell(cell);
+            var real_cell = this.getRealCell(cell, col, row, rotation);
             if (real_cell != null) {
                 total += real_cell.fertility;
                 count++;
             }
         }
-        return count > 0 && total / count >= Hyperparams.minBurrowFertility;
+        return count > 0 ? total / count : 0;
     }
 
     // burrow underground for hideDuration ticks, depleting the soil underneath
