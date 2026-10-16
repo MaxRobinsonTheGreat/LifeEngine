@@ -278,7 +278,10 @@ class Brain {
             let prey_decision = Decision.neutral;
             if (sees_predator) {
                 // prey with a claw burrow instead of running, unless the soil is too depleted
-                prey_decision = this.owner.canBurrow() ? Decision.hide : Decision.retreat;
+                // (or, with burrowOnlyWhenClose, the predator is still far enough away to run from)
+                const close_enough = !Hyperparams.burrowOnlyWhenClose ||
+                    closestPredatorDistance <= Hyperparams.burrowTriggerRange;
+                prey_decision = this.owner.canBurrow() && close_enough ? Decision.hide : Decision.retreat;
                 move_direction = predatorDirection;
             }
             else if (closestFoodDistance < Infinity) {

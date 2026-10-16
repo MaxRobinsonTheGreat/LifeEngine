@@ -385,6 +385,24 @@ class ControlPanel {
         $('#min-burrow-fertility').change(function() {
             Hyperparams.minBurrowFertility = parseFloat($('#min-burrow-fertility').val());
         });
+        $('#claw-cells-free').change(function() {
+            Hyperparams.clawCellsFree = this.checked;
+        });
+        $('#hibernate-while-hidden').change(function() {
+            Hyperparams.hibernateWhileHidden = this.checked;
+        });
+        $('#stay-hidden-near-predator').change(function() {
+            Hyperparams.stayHiddenNearPredator = this.checked;
+        });
+        $('#stay-hidden-range').change(function() {
+            Hyperparams.stayHiddenRange = parseInt($('#stay-hidden-range').val());
+        });
+        $('#burrow-only-when-close').change(function() {
+            Hyperparams.burrowOnlyWhenClose = this.checked;
+        });
+        $('#burrow-trigger-range').change(function() {
+            Hyperparams.burrowTriggerRange = parseInt($('#burrow-trigger-range').val());
+        });
         $('#min-plant-fertility').change(function() {
             Hyperparams.minPlantFertility = parseFloat($('#min-plant-fertility').val());
         });
@@ -496,6 +514,12 @@ class ControlPanel {
         $('#hide-duration').val(Hyperparams.hideDuration);
         $('#hide-fertility-cost').val(Hyperparams.hideFertilityCost);
         $('#min-burrow-fertility').val(Hyperparams.minBurrowFertility);
+        $('#claw-cells-free').prop('checked', Hyperparams.clawCellsFree);
+        $('#hibernate-while-hidden').prop('checked', Hyperparams.hibernateWhileHidden);
+        $('#stay-hidden-near-predator').prop('checked', Hyperparams.stayHiddenNearPredator);
+        $('#stay-hidden-range').val(Hyperparams.stayHiddenRange);
+        $('#burrow-only-when-close').prop('checked', Hyperparams.burrowOnlyWhenClose);
+        $('#burrow-trigger-range').val(Hyperparams.burrowTriggerRange);
         $('#min-plant-fertility').val(Hyperparams.minPlantFertility);
         $('#org-limit').val(Hyperparams.maxOrganisms);
         $('#look-range').val(Hyperparams.lookRange);

@@ -272,6 +272,22 @@
 						<label for="min-burrow-fertility" title='Average soil fertility needed under an organism for it to burrow. On poorer soil, prey run instead.'>Min burrow fertility:</label>
 						<input type="number" id="min-burrow-fertility" min="0" value=5>
 						<br>
+						<label for="claw-cells-free" title='When on, claw cells do not count toward the food an organism needs to reproduce.'>Claw cells are free</label>
+						<input type="checkbox" id="claw-cells-free">
+						<br>
+						<label for="hibernate-while-hidden" title='When on, ticks spent hidden underground do not count toward how long an organism can live.'>Don't age while hidden</label>
+						<input type="checkbox" id="hibernate-while-hidden">
+						<br>
+						<label for="stay-hidden-near-predator" title='When on, a hidden organism stays underground while a predator is within the range below, for up to another hide duration.'>Stay hidden near predators</label>
+						<input type="checkbox" id="stay-hidden-near-predator">
+						<label for="stay-hidden-range" title='How close (in cells) a predator has to be to keep a hidden organism underground.'>within</label>
+						<input type="number" id="stay-hidden-range" min="1" max="50" value=6 step="1">
+						<br>
+						<label for="burrow-only-when-close" title='When on, prey with a claw only burrow when the predator they see is within the range below. Further away, they run instead.'>Only burrow when predator is close</label>
+						<input type="checkbox" id="burrow-only-when-close">
+						<label for="burrow-trigger-range" title='How close (in cells) a seen predator has to be before prey with a claw burrow.'>within</label>
+						<input type="number" id="burrow-trigger-range" min="1" max="50" value=8 step="1">
+						<br>
 						<label for="min-plant-fertility" title='Average soil fertility needed under a plant (a producer that cannot move) for it to be born or placed there.'>Min plant fertility:</label>
 						<input type="number" id="min-plant-fertility" min="0" value=5>
 						<br>

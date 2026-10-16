@@ -26,6 +26,8 @@ class Organism {
         this.is_prey = false;
         this.ignore_brain_for = 0;
         this.hide_ticks = 0; // ticks left hiding underground
+        this.hibernated_ticks = 0; // ticks spent hidden that don't count toward the lifespan (hibernateWhileHidden)
+        this.extra_hide_ticks = 0; // ticks this burrow was extended because a predator was still close (stayHiddenNearPredator)
         this.mutability = 5;
         this.damage = 0;
         this.brain = new Brain(this);
@@ -50,9 +52,15 @@ class Organism {
 
     // amount of food required before it can reproduce
     foodNeeded() {
+        let cell_count = this.anatomy.cells.length;
+        if (Hyperparams.clawCellsFree) {
+            // claw cells cost nothing to reproduce, but every organism still pays for at least one cell
+            const claw_count = this.anatomy.cells.filter(cell => cell.state == CellStates.claw).length;
+            cell_count = Math.max(cell_count - claw_count, 1);
+        }
         const baseFoodNeeded = this.anatomy.is_mover
-            ? this.anatomy.cells.length + Hyperparams.extraMoverFoodCost
-            : this.anatomy.cells.length;
+            ? cell_count + Hyperparams.extraMoverFoodCost
+            : cell_count;
         return Math.ceil(baseFoodNeeded * 1.75);
     }
 
@@ -334,6 +342,7 @@ class Organism {
     // burrow underground for hideDuration ticks, depleting the soil underneath
     hide() {
         this.hide_ticks = Hyperparams.hideDuration;
+        this.extra_hide_ticks = 0;
         for (var cell of this.anatomy.cells) {
             var real_cell = this.getRealCell(cell);
             if (real_cell != null)
@@ -341,6 +350,19 @@ class Organism {
         }
         FossilRecord.recordBurrow(this);
         this.updateGrid(); // re-render as hidden
+    }
+
+    // whether any living predator cell is within range (manhattan distance) of this organism's centre
+    predatorNearby(range) {
+        for (var dc = -range; dc <= range; dc++) {
+            var span = range - Math.abs(dc);
+            for (var dr = -span; dr <= span; dr++) {
+                var cell = this.env.grid_map.cellAt(this.c + dc, this.r + dr);
+                if (cell != null && cell.owner != null && cell.owner != this && cell.owner.is_predator && cell.owner.living)
+                    return true;
+            }
+        }
+        return false;
     }
 
     harm() {
@@ -372,12 +394,22 @@ class Organism {
 
     update() {
         this.lifetime++;
-        if (this.lifetime > this.lifespan()) {
+        // lifetime still counts every tick lived (for stats), hibernated ticks are just excluded from ageing
+        if (this.isHidden() && Hyperparams.hibernateWhileHidden)
+            this.hibernated_ticks++;
+        if (this.lifetime - this.hibernated_ticks > this.lifespan()) {
             this.die();
             return this.living;
         }
         // hidden organisms stay put and do nothing until they surface
         if (this.isHidden()) {
+            // about to surface: stay down while a predator is still close, for up to another hideDuration ticks
+            if (this.hide_ticks == 1 && Hyperparams.stayHiddenNearPredator &&
+                this.extra_hide_ticks < Hyperparams.hideDuration &&
+                this.predatorNearby(Hyperparams.stayHiddenRange)) {
+                this.extra_hide_ticks++;
+                return this.living;
+            }
             this.hide_ticks--;
             if (!this.isHidden())
                 this.updateGrid(); // re-render as surfaced

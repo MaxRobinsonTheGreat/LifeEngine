@@ -92,8 +92,11 @@ class RandomOrganismGenerator {
             organisms.push(predator);
 
             // regular prey to the right of the predator, burrowing prey to the left, both facing it
-            // (the predator reaches 2 cells left but only 1 right, hence the extra -1)
-            organisms.push(RandomOrganismGenerator.createPrey(env, groupCol + preyOffset, row));
+            // (the predator reaches 2 cells left but only 1 right, hence the extra -1).
+            // the regular prey starts rotated so its eye looks left at the predator, otherwise it walks straight into it
+            const prey = RandomOrganismGenerator.createPrey(env, groupCol + preyOffset, row);
+            prey.rotation = Directions.left;
+            organisms.push(prey);
             organisms.push(RandomOrganismGenerator.createClawPrey(env, groupCol - preyOffset - 1, row));
         }
 
@@ -126,30 +129,27 @@ class RandomOrganismGenerator {
         return plant;
     }
 
-    // horizontal prey: eye(looking left) - mover - mouth
-    static createPrey(env, col, row) {
-        const prey = RandomOrganismGenerator.newPrey(env, col, row, Directions.left);
-        prey.anatomy.addDefaultCell(CellStates.mouth, 1, 0);
-        prey.anatomy.addDefaultCell(CellStates.mover, 0, 0);
-        const preyEye = prey.anatomy.addDefaultCell(CellStates.eye, -1, 0);
-        preyEye.direction = Directions.left;
-        prey.brain.decisions[CellStates.killer.name] = Brain.Decision.retreat;
-        return prey;
-    }
-
-    // cross-shaped burrowing prey around a central mover:
+    // prey around a central mover, the same body as the burrowing prey minus the claw:
     //         mouth
     //  mouth  mover  eye(looking up)
-    //         claw
-    static createClawPrey(env, col, row) {
-        const prey = RandomOrganismGenerator.newPrey(env, col, row, Directions.right);
+    static createPrey(env, col, row, direction=Directions.left) {
+        const prey = RandomOrganismGenerator.newPrey(env, col, row, direction);
         prey.anatomy.addDefaultCell(CellStates.mover, 0, 0);
         const preyEye = prey.anatomy.addDefaultCell(CellStates.eye, 1, 0);
         preyEye.direction = Directions.up;
         prey.anatomy.addDefaultCell(CellStates.mouth, 0, -1);
         prey.anatomy.addDefaultCell(CellStates.mouth, -1, 0);
-        prey.anatomy.addDefaultCell(CellStates.claw, 0, 1);
         prey.brain.decisions[CellStates.killer.name] = Brain.Decision.retreat;
+        return prey;
+    }
+
+    // cross-shaped burrowing prey: the regular prey with a claw underneath
+    //         mouth
+    //  mouth  mover  eye(looking up)
+    //         claw
+    static createClawPrey(env, col, row) {
+        const prey = RandomOrganismGenerator.createPrey(env, col, row, Directions.right);
+        prey.anatomy.addDefaultCell(CellStates.claw, 0, 1);
         return prey;
     }
 
