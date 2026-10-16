@@ -442,10 +442,12 @@ class Organism {
                     dontmove = true;
                     break;
             }
-            // Predators and burrowing prey move less often than other organisms.
+            // Predators and burrowing prey use configurable movement intervals.
             const isBurrowingPrey = this.is_prey && this.anatomy.has_claw;
-            const predatorCanMove = !this.is_predator || this.lifetime % 3 === 0;
-            const burrowingPreyCanMove = !isBurrowingPrey || this.lifetime % 2 === 0;
+            const predatorCanMove = !this.is_predator ||
+                this.lifetime % Hyperparams.predatorMoveInterval === 0;
+            const burrowingPreyCanMove = !isBurrowingPrey ||
+                this.lifetime % Hyperparams.burrowerMoveInterval === 0;
             if (!dontmove && predatorCanMove && burrowingPreyCanMove) {
                 const moveSpeed = this.is_prey ? Math.min(this.move_speed, 1) : this.move_speed;
                 for (let step = 0; step < moveSpeed; step++) {

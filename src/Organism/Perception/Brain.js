@@ -281,8 +281,8 @@ class Brain {
                 prey_decision = this.owner.canBurrow() ? Decision.hide : Decision.retreat;
                 move_direction = predatorDirection;
             }
-            else if (this.owner.anatomy.has_claw && closestFoodDistance < Infinity) {
-                // burrowing prey go after food when no predator is around
+            else if (closestFoodDistance < Infinity) {
+                // prey go after food when no predator is around
                 prey_decision = Decision.chase;
                 move_direction = foodDirection;
             }

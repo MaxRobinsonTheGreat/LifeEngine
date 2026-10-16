@@ -342,6 +342,15 @@ class ControlPanel {
         $('#lifespan-multiplier').change(function() {
             Hyperparams.lifespanMultiplier = $('#lifespan-multiplier').val();
         }.bind(this));
+        $('#predator-lifespan-multiplier').change(function() {
+            Hyperparams.predatorLifespanMultiplier = parseFloat($('#predator-lifespan-multiplier').val());
+        }.bind(this));
+        $('#predator-move-interval').change(function() {
+            Hyperparams.predatorMoveInterval = parseInt($('#predator-move-interval').val());
+        });
+        $('#burrower-move-interval').change(function() {
+            Hyperparams.burrowerMoveInterval = parseInt($('#burrower-move-interval').val());
+        });
 
         $('#rot-enabled').change(function() {
             Hyperparams.rotationEnabled = this.checked;
@@ -467,6 +476,9 @@ class ControlPanel {
     updateHyperparamUIValues(){
         $('#food-prod-prob').val(Hyperparams.foodProdProb);
         $('#lifespan-multiplier').val(Hyperparams.lifespanMultiplier);
+        $('#predator-lifespan-multiplier').val(Hyperparams.predatorLifespanMultiplier);
+        $('#predator-move-interval').val(Hyperparams.predatorMoveInterval);
+        $('#burrower-move-interval').val(Hyperparams.burrowerMoveInterval);
         $('#rot-enabled').prop('checked', Hyperparams.rotationEnabled);
         $('#insta-kill').prop('checked', Hyperparams.instaKill);
         $('#evolved-mutation').prop('checked', !Hyperparams.useGlobalMutability);

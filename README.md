@@ -55,9 +55,9 @@ Organism Cells are only found in organisms, and cannot exist on their own in the
 ## Organisms
 Organisms are structures of cells that eat food, reproduce, and die.
 When an organism dies, every cell in the grid that was occupied by a cell in its body will be changed to food.
-Their lifespan is calculated by multiplying the number of cells they have by the hyperparameter `Lifespan Multiplier`. They will survive for that many ticks unless killed by another organism.
+Their lifespan is calculated by multiplying the number of cells they have by the hyperparameter `Lifespan Multiplier`. Predators additionally multiply that lifespan by the `Predator Lifespan Multiplier` hyperparameter, which defaults to 2; other organisms survive for the calculated number of ticks unless killed by another organism.
 When touched by a killer cell, an organism will take damage. Once it has taken as much damage as it has cells in its body, it will die. If the hyperparameter `One touch kill` is on, an organism will immediatly die when touched by a killer cell.
-Predators cannot eat food or kill non-prey organisms. Killing prey gives a predator one food unit per prey body cell, matching the food yield of eating food from a plant of the same size. Predators move once every three updates, chase prey they see through their normal directional eyes, and keep their heading longer after prey leave sight. Prey take at most one movement step per update, retreat from visible predators, or hide if they can burrow.
+Predators cannot eat food or kill non-prey organisms. Killing prey gives a predator one food unit per prey body cell, matching the food yield of eating food from a plant of the same size. Predators move according to the `Predator Movement Interval` hyperparameter (default 3 updates), chase prey they see through their normal directional eyes, and keep their heading longer after prey leave sight. Prey take at most one movement step per update, chase visible food when no predator is nearby, and retreat from visible predators or hide if they can burrow. Burrowing prey move according to the `Burrower Movement Interval` hyperparameter (default 3 updates).
 
 ## Reproduction
 Once an organism has collected 1.5 times its normal reproduction food requirement (its cell count, plus any extra mover cost), it will attempt to reproduce.
